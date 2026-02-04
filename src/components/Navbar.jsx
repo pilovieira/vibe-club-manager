@@ -20,15 +20,32 @@ const Navbar = () => {
 
   const currentLang = languages.find(l => l.code === language);
 
-  const handleLogin = () => {
-    // Simpler login for prototype: Toggle between Admin and Member
-    // In real app, this would open a modal or redirect
-    if (!user) {
-      // Default login as Admin for demo, or prompt
-      const success = login('admin@carclub.com');
-      if (success) navigate('/members');
+  const handleLogout = async (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    console.log('Navbar: Logout initiated...');
+
+    // Fallback timer to ensure we refresh even if things hang
+    const fallbackTimer = setTimeout(() => {
+      console.log('Navbar: Logout fallback refresh triggered');
+      window.location.replace('/');
+    }, 2000);
+
+    try {
+      await logout();
+      clearTimeout(fallbackTimer);
+      console.log('Navbar: Logout successful, refreshing page');
+      window.location.replace('/');
+    } catch (err) {
+      console.error('Navbar: Logout error', err);
+      window.location.replace('/');
     }
   };
+
+  const displayName = user?.profile?.name || user?.user_metadata?.full_name || user?.email;
+  const displayAvatar = user?.profile?.avatar || user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${displayName}&background=random`;
 
   return (
     <nav className="navbar">
@@ -54,8 +71,8 @@ const Navbar = () => {
               className="lang-toggle"
               onBlur={() => setTimeout(() => setShowLangMenu(false), 200)}
             >
-              <span className="lang-flag">{currentLang.flag}</span>
-              <span className="lang-name">{currentLang.name}</span>
+              <span className="lang-flag">{currentLang?.flag || '🇧🇷'}</span>
+              <span className="lang-name">{currentLang?.name || 'Português'}</span>
               <span className="lang-arrow">{showLangMenu ? '▲' : '▼'}</span>
             </button>
             {showLangMenu && (
@@ -78,16 +95,26 @@ const Navbar = () => {
           </div>
           {user ? (
             <div className="user-menu">
-              <img src={user.avatar} alt="avatar" className="nav-avatar" />
+              <img src={displayAvatar} alt="avatar" className="nav-avatar" />
               <div className="user-info">
-                <span className="user-name">{user.name}</span>
-                <button onClick={logout} className="btn-text">{t('nav.logout')}</button>
+                <div className="user-name-row">
+                  <span className="user-name">{displayName}</span>
+                  {isAdmin && (
+                    <span className="role-badge admin">Admin</span>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="btn-text logout-btn"
+                >
+                  {t('nav.logout')}
+                </button>
               </div>
             </div>
           ) : (
             <div className="auth-buttons">
-              <button onClick={() => login('admin@carclub.com')} className="btn btn-primary">{t('nav.loginAdmin')}</button>
-              <button onClick={() => login('john@example.com')} className="btn btn-outline" style={{ marginLeft: '10px' }}>{t('nav.loginMember')}</button>
+              <button onClick={() => navigate('/login')} className="btn btn-primary">{t('nav.login')}</button>
             </div>
           )}
         </div>
@@ -224,9 +251,33 @@ const Navbar = () => {
           flex-direction: column;
           line-height: 1.2;
         }
+        .user-name-row {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin-bottom: 0.1rem;
+        }
         .user-name {
           font-size: 0.875rem;
           font-weight: 600;
+        }
+        .role-badge {
+          font-size: 0.65rem;
+          padding: 0.1rem 0.4rem;
+          border-radius: 1rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.02em;
+        }
+        .role-badge.admin {
+          background: rgba(239, 68, 68, 0.15);
+          color: #ef4444;
+          border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .role-badge.member {
+          background: rgba(59, 130, 246, 0.15);
+          color: #3b82f6;
+          border: 1px solid rgba(59, 130, 246, 0.3);
         }
         .btn-text {
           background: none;

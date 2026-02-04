@@ -5,23 +5,50 @@ import { useLanguage } from '../context/LanguageContext';
 import { Link } from 'react-router-dom';
 
 const AdminMonthlySummary = () => {
-    const { isAdmin } = useAuth();
+    const { isAdmin, loading } = useAuth();
     const { t } = useLanguage();
     const [members, setMembers] = useState([]);
     const [contributions, setContributions] = useState([]);
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM format
 
     useEffect(() => {
-        setMembers(mockService.getMembers());
-        setContributions(mockService.getAllContributions());
-    }, []);
+        if (loading || !isAdmin) return;
 
-
+        const fetchData = async () => {
+            try {
+                const fetchedMembers = await mockService.getMembers();
+                setMembers(fetchedMembers);
+                const fetchedContributions = await mockService.getAllContributions();
+                setContributions(fetchedContributions);
+            } catch (err) {
+                console.error('Error fetching summary data:', err);
+            }
+        };
+        fetchData();
+    }, [loading, isAdmin]);
 
     const [displayYear, displayMonth] = selectedDate.split('-');
-    const monthName = new Date(parseInt(displayYear), parseInt(displayMonth) - 1).toLocaleString('default', { month: 'long' });
+    const dateObj = new Date(parseInt(displayYear), parseInt(displayMonth) - 1);
+    const monthName = dateObj.toLocaleString('default', { month: 'long' });
 
-    if (!isAdmin) return <div className="container">{t('admin.accessDenied')}</div>;
+    if (loading) {
+        return <div className="container" style={{ paddingTop: '2rem' }}>{t('common.loading')}...</div>;
+    }
+
+    if (!isAdmin) {
+        return (
+            <div className="container" style={{ paddingTop: '2rem' }}>
+                <div className="card error-card">
+                    <h1>{t('admin.accessDenied')}</h1>
+                    <p>{t('admin.accessDeniedMsg')}</p>
+                    <Link to="/" className="btn btn-primary" style={{ marginTop: '1rem', display: 'inline-block' }}>{t('admin.goHome')}</Link>
+                </div>
+                <style>{`
+                    .error-card { text-align: center; border-color: var(--danger); padding: 2rem; }
+                `}</style>
+            </div>
+        );
+    }
 
     return (
         <div className="container admin-summary-page">
@@ -49,11 +76,7 @@ const AdminMonthlySummary = () => {
                     {members.map(member => {
                         const contribution = contributions.find(c => {
                             if (c.memberId !== member.id) return false;
-
-                            // Safety check for missing date
                             if (!c.date) return false;
-
-                            // Use string comparison to avoid timezone issues with Date()
                             const [cYear, cMonth] = c.date.split('-');
                             const [year, month] = selectedDate.split('-');
                             return cYear === year && cMonth === month;
@@ -62,17 +85,22 @@ const AdminMonthlySummary = () => {
                         const isPaid = !!contribution;
 
                         const handleTogglePayment = () => {
-                            if (isPaid) return; // Cannot mark as unpaid from here
-
-                            const [year, month] = selectedDate.split('-');
-                            // Add payment (1st of month)
+                            if (isPaid) return;
                             if (confirm(`Mark ${member.name} as PAID for ${monthName}?`)) {
-                                mockService.addContribution({
-                                    memberId: member.id,
-                                    date: `${selectedDate}-01`,
-                                    amount: 50 // Default amount
-                                });
-                                setContributions(mockService.getAllContributions());
+                                const addPaymentAsync = async () => {
+                                    try {
+                                        await mockService.addContribution({
+                                            member_id: member.id,
+                                            date: `${selectedDate}-01`,
+                                            amount: 50
+                                        });
+                                        const updatedContributions = await mockService.getAllContributions();
+                                        setContributions(updatedContributions);
+                                    } catch (err) {
+                                        console.error('Error adding payment:', err);
+                                    }
+                                };
+                                addPaymentAsync();
                             }
                         };
 

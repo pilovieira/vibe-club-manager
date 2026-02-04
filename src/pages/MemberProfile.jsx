@@ -6,10 +6,11 @@ import { useLanguage } from '../context/LanguageContext';
 
 const MemberProfile = () => {
     const { id } = useParams();
-    const navigate = useNavigate();
-    const { user } = useAuth();
     const { t } = useLanguage();
+    const navigate = useNavigate();
     const [member, setMember] = useState(null);
+    const { user, isAdmin, loading } = useAuth();
+    const [isEditing, setIsEditing] = useState(false);
     const [cars, setCars] = useState([]);
 
     // Add Car State
@@ -17,48 +18,66 @@ const MemberProfile = () => {
     const [carData, setCarData] = useState({ make: '', model: '', year: '', description: '', photoUrl: '' });
 
     // Edit Profile State
-    const [isEditing, setIsEditing] = useState(false);
     const [error, setError] = useState('');
     const [editData, setEditData] = useState({
         name: '', username: '', email: '', avatar: '', description: '', dateBirth: '', status: 'active', gender: 'male'
     });
 
     useEffect(() => {
-        const m = mockService.getMemberById(id);
-        if (!m) {
-            navigate('/members'); // Redirect if not found
+        if (loading) return;
+
+        if (!user) {
+            navigate('/login');
             return;
         }
-        setMember(m);
-        setCars(mockService.getCars(id));
 
-        // Initialize edit data
-        setEditData({
-            name: m.name,
-            username: m.username || '',
-            email: m.email,
-            avatar: m.avatar,
-            description: m.description || '',
-            dateBirth: m.dateBirth || '',
-            status: m.status,
-            gender: m.gender || 'male'
-        });
-        setError('');
-    }, [id, navigate]);
+        const fetchMemberData = async () => {
+            try {
+                const m = await mockService.getMemberById(id);
+                if (!m) {
+                    navigate('/members'); // Redirect if not found
+                    return;
+                }
+                setMember(m);
+                const memberCars = await mockService.getCars(id);
+                setCars(memberCars || []);
+
+                // Initialize edit data
+                setEditData({
+                    name: m.name,
+                    username: m.username || '',
+                    email: m.email,
+                    avatar: m.avatar,
+                    description: m.description || '',
+                    dateBirth: m.dateBirth || '',
+                    status: m.status || 'active',
+                    gender: m.gender || 'male'
+                });
+                setError('');
+            } catch (err) {
+                console.error('Error fetching member details:', err);
+                navigate('/members');
+            }
+        };
+        fetchMemberData();
+    }, [id, user, loading, navigate]);
 
     const handleUpdateProfile = (e) => {
         e.preventDefault();
         setError('');
 
         try {
-            const updated = mockService.updateMember(member.id, {
-                ...editData,
-                username: editData.username.toLowerCase().trim(),
-                avatar: editData.avatar.trim() || member.avatar // Keep old avatar if empty
-            });
+            const fetchUpdate = async () => {
+                const updated = await mockService.updateMember(member.id, {
+                    ...editData,
+                    username: editData.username.toLowerCase().trim(),
+                    avatar: editData.avatar.trim() || member.avatar // Keep old avatar if empty
+                });
 
-            setMember(updated);
-            setIsEditing(false);
+                setMember(updated);
+                setIsEditing(false);
+            };
+            fetchUpdate();
         } catch (err) {
             if (err.message === 'Username already exists') {
                 setError(t('error.usernameExists'));
@@ -74,24 +93,30 @@ const MemberProfile = () => {
     const handleSaveCar = (e) => {
         e.preventDefault();
 
-        if (editingCarId) {
-            // Update existing car
-            const updated = mockService.updateCar({
-                ...carData,
-                id: editingCarId,
-                memberId: id
-            });
-            setCars(cars.map(c => c.id === editingCarId ? updated : c));
-        } else {
-            // Add new car
-            const newCar = mockService.addCar({
-                ...carData,
-                memberId: id
-            });
-            setCars([...cars, newCar]);
-        }
-
-        resetCarForm();
+        const saveCarAsync = async () => {
+            try {
+                if (editingCarId) {
+                    // Update existing car
+                    const updated = await mockService.updateCar({
+                        ...carData,
+                        id: editingCarId,
+                        member_id: id // using member_id to match snake_case in schema
+                    });
+                    setCars(cars.map(c => c.id === editingCarId ? updated : c));
+                } else {
+                    // Add new car
+                    const newCar = await mockService.addCar({
+                        ...carData,
+                        member_id: id // using member_id to match snake_case in schema
+                    });
+                    setCars([...cars, newCar]);
+                }
+                resetCarForm();
+            } catch (err) {
+                console.error('Error saving car:', err);
+            }
+        };
+        saveCarAsync();
     };
 
     const startEditCar = (car) => {
@@ -111,8 +136,15 @@ const MemberProfile = () => {
 
     const handleDeleteCar = (carId) => {
         if (window.confirm(t('profile.confirmDeleteCar'))) {
-            mockService.deleteCar(carId);
-            setCars(cars.filter(c => c.id !== carId));
+            const deleteCarAsync = async () => {
+                try {
+                    await mockService.deleteCar(carId);
+                    setCars(cars.filter(c => c.id !== carId));
+                } catch (err) {
+                    console.error('Error deleting car:', err);
+                }
+            };
+            deleteCarAsync();
         }
     };
 
@@ -129,17 +161,26 @@ const MemberProfile = () => {
             ? t('profile.confirmDeactivate')
             : t('profile.confirmActivate');
         if (window.confirm(confirmMsg)) {
-            const newStatus = member.status === 'active' ? 'inactive' : 'active';
-            const updated = mockService.updateMemberStatus(member.id, newStatus);
-            setMember({ ...member, status: newStatus });
-            setEditData({ ...editData, status: newStatus });
+            const toggleStatusAsync = async () => {
+                try {
+                    const newStatus = member.status === 'active' ? 'inactive' : 'active';
+                    const updated = await mockService.updateMemberStatus(member.id, newStatus);
+                    setMember({ ...member, status: newStatus });
+                    setEditData({ ...editData, status: newStatus });
+                } catch (err) {
+                    console.error('Error updating status:', err);
+                }
+            };
+            toggleStatusAsync();
         }
     };
 
     if (!member) return <div className="container">Loading...</div>;
 
     const isOwnProfile = user && user.id === member.id;
-    const canEdit = isOwnProfile || (user && user.role === 'admin');
+    const canEdit = isOwnProfile || isAdmin;
+
+    const memberRole = member.role || 'member';
 
     return (
         <div className="container profile-page">
@@ -157,7 +198,7 @@ const MemberProfile = () => {
                                 {canEdit && (
                                     <button className="btn-text" onClick={() => setIsEditing(true)}>{t('profile.editProfile')}</button>
                                 )}
-                                {user && user.role === 'admin' && (
+                                {isAdmin && (
                                     <button
                                         className={`btn-sm ${member.status === 'active' ? 'btn-danger-light' : 'btn-success-light'}`}
                                         onClick={handleToggleStatus}
@@ -167,7 +208,7 @@ const MemberProfile = () => {
                                 )}
                             </div>
                         </div>
-                        <p className="profile-meta">{member.email} • {member.role}</p>
+                        <p className="profile-meta">{member.email} • {memberRole}</p>
                         <p className="profile-joined">{t('profile.memberSince')} {new Date(member.joinDate).getFullYear()}</p>
                         <div className="profile-meta-row">
                             {member.dateBirth && <p className="profile-meta">🎂 {new Date(member.dateBirth).toLocaleDateString()}</p>}

@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
 const AdminGlobalBalance = () => {
-    const { isAdmin } = useAuth();
+    const { isAdmin, loading } = useAuth();
     const { t } = useLanguage();
     const [transactions, setTransactions] = useState([]);
     const [filteredTransactions, setFilteredTransactions] = useState([]);
@@ -12,29 +12,57 @@ const AdminGlobalBalance = () => {
     const [selectedMonth, setSelectedMonth] = useState('');
     const [newExpense, setNewExpense] = useState({ description: '', amount: '', date: '' });
 
+    if (loading) {
+        return <div className="container" style={{ paddingTop: '2rem' }}>{t('common.loading')}...</div>;
+    }
+
+    if (!isAdmin) {
+        return (
+            <div className="container" style={{ paddingTop: '2rem' }}>
+                <div className="card error-card">
+                    <h1>{t('admin.accessDenied')}</h1>
+                    <p>{t('admin.accessDeniedMsg')}</p>
+                    <Link to="/" className="btn btn-primary" style={{ marginTop: '1rem', display: 'inline-block' }}>{t('admin.goHome')}</Link>
+                </div>
+                <style>{`
+                    .error-card { text-align: center; border-color: var(--danger); padding: 2rem; }
+                `}</style>
+            </div>
+        );
+    }
+
     useEffect(() => {
+        if (!isAdmin) return;
         loadTransactions();
-    }, []);
+    }, [isAdmin]);
 
     useEffect(() => {
         filterTransactions();
     }, [selectedMonth, transactions]);
 
-    const loadTransactions = () => {
-        const contributions = mockService.getAllContributions().map(c => ({
-            ...c,
-            type: 'income',
-            // Try to find member name
-            memberName: mockService.getMemberById(c.memberId)?.name || 'Unknown Member'
-        }));
+    const loadTransactions = async () => {
+        try {
+            const contributionsRaw = await mockService.getAllContributions();
+            const contributions = await Promise.all(contributionsRaw.map(async (c) => {
+                const member = await mockService.getMemberById(c.memberId);
+                return {
+                    ...c,
+                    type: 'income',
+                    memberName: member?.name || 'Unknown Member'
+                };
+            }));
 
-        const expenses = mockService.getExpenses().map(e => ({
-            ...e,
-            type: 'expense'
-        }));
+            const expensesRaw = await mockService.getExpenses();
+            const expenses = expensesRaw.map(e => ({
+                ...e,
+                type: 'expense'
+            }));
 
-        const all = [...contributions, ...expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
-        setTransactions(all);
+            const all = [...contributions, ...expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
+            setTransactions(all);
+        } catch (err) {
+            console.error('Error loading transactions:', err);
+        }
     };
 
     const filterTransactions = () => {
@@ -53,14 +81,21 @@ const AdminGlobalBalance = () => {
         e.preventDefault();
         if (!newExpense.description || !newExpense.amount || !newExpense.date) return;
 
-        mockService.addExpense({
-            description: newExpense.description,
-            amount: Number(newExpense.amount),
-            date: newExpense.date
-        });
+        const addExpenseAsync = async () => {
+            try {
+                await mockService.addExpense({
+                    description: newExpense.description,
+                    amount: Number(newExpense.amount),
+                    date: newExpense.date
+                });
 
-        setNewExpense({ description: '', amount: '', date: '' });
-        loadTransactions();
+                setNewExpense({ description: '', amount: '', date: '' });
+                loadTransactions();
+            } catch (err) {
+                console.error('Error adding expense:', err);
+            }
+        };
+        addExpenseAsync();
     };
 
     if (!isAdmin) return <div className="container">Access Denied</div>;

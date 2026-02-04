@@ -16,25 +16,40 @@ const Events = () => {
     const [showPastEvents, setShowPastEvents] = useState(false);
 
     useEffect(() => {
-        const fetchedEvents = mockService.getEvents();
-        // Sort oldest first (chronological)
-        const sortedEvents = [...fetchedEvents].sort((a, b) => new Date(a.date) - new Date(b.date));
-        setEvents(sortedEvents);
-        setMembers(mockService.getMembers());
+        const fetchEventsAndMembers = async () => {
+            try {
+                const fetchedEvents = await mockService.getEvents();
+                // Sort oldest first (chronological)
+                const sortedEvents = [...fetchedEvents].sort((a, b) => new Date(a.date) - new Date(b.date));
+                setEvents(sortedEvents);
+                const fetchedMembers = await mockService.getMembers();
+                setMembers(fetchedMembers);
+            } catch (err) {
+                console.error('Error fetching events/members:', err);
+            }
+        };
+        fetchEventsAndMembers();
     }, []);
 
     const handleCreateEvent = (e) => {
         e.preventDefault();
-        if (editingEventId) {
-            const updated = mockService.updateEvent(editingEventId, newEvent);
-            setEvents(events.map(ev => ev.id === editingEventId ? updated : ev));
-        } else {
-            const created = mockService.createEvent(newEvent);
-            setEvents([created, ...events]);
-        }
-        setShowCreateForm(false);
-        setEditingEventId(null);
-        setNewEvent({ title: '', date: '', location: '', description: '', eventType: 'soft trail' });
+        const createOrUpdateEventAsync = async () => {
+            try {
+                if (editingEventId) {
+                    const updated = await mockService.updateEvent(editingEventId, newEvent);
+                    setEvents(events.map(ev => ev.id === editingEventId ? updated : ev));
+                } else {
+                    const created = await mockService.createEvent(newEvent);
+                    setEvents([created, ...events]);
+                }
+                setShowCreateForm(false);
+                setEditingEventId(null);
+                setNewEvent({ title: '', date: '', location: '', description: '', eventType: 'soft trail' });
+            } catch (err) {
+                console.error('Error creating/updating event:', err);
+            }
+        };
+        createOrUpdateEventAsync();
     };
 
     const handleStartEdit = (event) => {
@@ -65,25 +80,32 @@ const Events = () => {
             return;
         }
 
-        if (attending) {
-            // Leave Event
-            if (confirm("Are you sure you want to leave this event?")) {
-                const updatedEvent = mockService.leaveEvent(eventId, user.id);
-                if (updatedEvent) {
-                    setEvents(events.map(e => e.id === eventId ? updatedEvent : e));
+        const toggleEventAsync = async () => {
+            try {
+                if (attending) {
+                    // Leave Event
+                    if (confirm("Are you sure you want to leave this event?")) {
+                        const updatedEvent = await mockService.leaveEvent(eventId, user.id);
+                        if (updatedEvent) {
+                            setEvents(events.map(e => e.id === eventId ? updatedEvent : e));
+                        }
+                    }
+                } else {
+                    // Join Event
+                    if (user.status === 'inactive') {
+                        alert(t('events.inactiveWarning'));
+                        return;
+                    }
+                    const updatedEvent = await mockService.joinEvent(eventId, user.id);
+                    if (updatedEvent) {
+                        setEvents(events.map(e => e.id === eventId ? updatedEvent : e));
+                    }
                 }
+            } catch (err) {
+                console.error('Error toggling event attendance:', err);
             }
-        } else {
-            // Join Event
-            if (user.status === 'inactive') {
-                alert(t('events.inactiveWarning'));
-                return;
-            }
-            const updatedEvent = mockService.joinEvent(eventId, user.id);
-            if (updatedEvent) {
-                setEvents(events.map(e => e.id === eventId ? updatedEvent : e));
-            }
-        }
+        };
+        toggleEventAsync();
     };
 
     const isAttending = (event) => {

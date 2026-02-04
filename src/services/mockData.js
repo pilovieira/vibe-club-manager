@@ -1,241 +1,213 @@
+import { supabase } from '../supabaseClient';
 
-const STORAGE_KEY = 'car_club_data';
-
-const initialData = {
-    members: [
-        {
-            id: '1',
-            username: 'admin',
-            name: 'Club Admin',
-            email: 'admin@offroadmga.com',
-            role: 'admin',
-            status: 'active',
-            gender: 'male',
-            avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Admin'
-        },
-        {
-            id: '2',
-            username: 'jdoe',
-            name: 'John Doe',
-            email: 'john@example.com',
-            role: 'member',
-            status: 'active',
-            gender: 'male',
-            avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=John'
-        }
-    ],
-    cars: [
-        {
-            id: 'c1',
-            memberId: '2',
-            make: 'Ford',
-            model: 'Mustang',
-            year: '1969',
-            description: 'Classic muscle car, fully restored.',
-            photoUrl: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?auto=format&fit=crop&q=80&w=800'
-        }
-    ],
-    events: [
-        {
-            id: 'e1',
-            title: 'Summer Meetup',
-            date: '2024-07-20',
-            description: 'Annual summer gathering at the beach.',
-            location: 'Santa Monica Pier',
-            attendees: ['2'],
-            eventType: 'members meetup'
-        }
-    ],
-    contributions: [
-        {
-            id: 'ct1',
-            memberId: '2',
-            date: '2024-07-15',
-            amount: 50
-        },
-        {
-            id: 'ct2',
-            memberId: '2',
-            date: '2024-06-10',
-            amount: 50
-        }
-    ],
-    expenses: [
-        {
-            id: 'ex1',
-            date: '2024-07-22',
-            description: 'Event Snacks',
-            amount: 120
-        }
-    ]
-};
-
-// Initialize data if not exists
-const loadData = () => {
-    const data = localStorage.getItem(STORAGE_KEY);
-    if (!data) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(initialData));
-        return initialData;
-    }
-    return JSON.parse(data);
-};
-
-const saveData = (data) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-};
-
+// We keep the export name as mockService for compatibility with existing components
+// but it now talks to real Supabase tables.
 export const mockService = {
-    getMembers: () => loadData().members,
-    getMemberById: (id) => loadData().members.find(m => m.id === id),
+    // Members
+    getMembers: async () => {
+        const { data, error } = await supabase
+            .from('members')
+            .select('*')
+            .order('name');
+        if (error) throw error;
 
-    createMember: (member) => {
-        const data = loadData();
-        if (data.members.some(m => m.username === member.username)) {
-            throw new Error('Username already exists');
-        }
-        const newMember = {
+        return data.map(member => ({
             ...member,
-            id: Date.now().toString(),
-            status: member.status || 'active',
-            role: member.role || 'member'
+            joinDate: member.join_date,
+            dateBirth: member.date_birth,
+            avatar: member.avatar || 'https://via.placeholder.com/150?text=Member'
+        }));
+    },
+
+    getMemberById: async (id) => {
+        const { data, error } = await supabase
+            .from('members')
+            .select('*')
+            .eq('id', id)
+            .single();
+        if (error) throw error;
+        if (!data) return null;
+
+        return {
+            ...data,
+            joinDate: data.join_date,
+            dateBirth: data.date_birth,
+            avatar: data.avatar || 'https://via.placeholder.com/150?text=Member'
         };
-        data.members.push(newMember);
-        saveData(data);
-        return newMember;
     },
 
-    updateMember: (id, updatedMember) => {
-        const data = loadData();
-        const index = data.members.findIndex(m => m.id === id);
-        if (index !== -1) {
-            if (updatedMember.username && data.members.some(m => m.username === updatedMember.username && m.id !== id)) {
-                throw new Error('Username already exists');
-            }
-            data.members[index] = { ...data.members[index], ...updatedMember };
-            saveData(data);
-            return data.members[index];
+    createMember: async (member) => {
+        const memberToInsert = {
+            ...member,
+            join_date: member.joinDate || new Date().toISOString(),
+            date_birth: member.dateBirth,
+            role: member.role || 'member',
+            status: member.status || 'active'
+        };
+        // Remove camelCase fields that don't exist in DB
+        delete memberToInsert.joinDate;
+        delete memberToInsert.dateBirth;
+
+        const { data, error } = await supabase
+            .from('members')
+            .insert([memberToInsert])
+            .select()
+            .single();
+        if (error) throw error;
+
+        return {
+            ...data,
+            joinDate: data.join_date,
+            dateBirth: data.date_birth,
+            avatar: data.avatar || 'https://via.placeholder.com/150?text=Member'
+        };
+    },
+
+    updateMember: async (id, updatedMember) => {
+        const memberToUpdate = { ...updatedMember };
+        if (updatedMember.joinDate) {
+            memberToUpdate.join_date = updatedMember.joinDate;
+            delete memberToUpdate.joinDate;
         }
-        return null;
-    },
-
-    updateMemberStatus: (memberId, status) => {
-        const data = loadData();
-        const member = data.members.find(m => m.id === memberId);
-        if (member) {
-            member.status = status;
-            saveData(data);
+        if (updatedMember.dateBirth) {
+            memberToUpdate.date_birth = updatedMember.dateBirth;
+            delete memberToUpdate.dateBirth;
         }
-        return member;
+
+        const { data, error } = await supabase
+            .from('members')
+            .update(memberToUpdate)
+            .eq('id', id)
+            .select()
+            .single();
+        if (error) throw error;
+
+        return {
+            ...data,
+            joinDate: data.join_date,
+            dateBirth: data.date_birth,
+            avatar: data.avatar || 'https://via.placeholder.com/150?text=Member'
+        };
     },
 
-    getCars: (memberId) => {
-        const data = loadData();
-        return memberId ? data.cars.filter(c => c.memberId === memberId) : data.cars;
+    updateMemberStatus: async (memberId, status) => {
+        const { data, error } = await supabase
+            .from('members')
+            .update({ status })
+            .eq('id', memberId)
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
     },
 
-    addCar: (car) => {
-        const data = loadData();
-        const newCar = { ...car, id: Date.now().toString() };
-        data.cars.push(newCar);
-        saveData(data);
-        return newCar;
+    // Cars
+    getCars: async (memberId) => {
+        let query = supabase.from('cars').select('*');
+        if (memberId) query = query.eq('member_id', memberId);
+        const { data, error } = await query;
+        if (error) throw error;
+        return data;
     },
 
-    updateCar: (updatedCar) => {
-        const data = loadData();
-        const index = data.cars.findIndex(c => c.id === updatedCar.id);
-        if (index !== -1) {
-            data.cars[index] = { ...data.cars[index], ...updatedCar };
-            saveData(data);
-            return data.cars[index];
-        }
-        return null;
+    addCar: async (car) => {
+        const { data, error } = await supabase
+            .from('cars')
+            .insert([car])
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
     },
 
-    deleteCar: (carId) => {
-        const data = loadData();
-        data.cars = data.cars.filter(c => c.id !== carId);
-        saveData(data);
+    updateCar: async (updatedCar) => {
+        const { data, error } = await supabase
+            .from('cars')
+            .update(updatedCar)
+            .eq('id', updatedCar.id)
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
     },
 
-    getEvents: () => loadData().events,
-
-    createEvent: (event) => {
-        const data = loadData();
-        const newEvent = { ...event, id: Date.now().toString(), attendees: [] };
-        data.events.push(newEvent);
-        saveData(data);
-        return newEvent;
+    deleteCar: async (carId) => {
+        const { error } = await supabase
+            .from('cars')
+            .delete()
+            .eq('id', carId);
+        if (error) throw error;
     },
 
-    updateEvent: (eventId, updatedEvent) => {
-        const data = loadData();
-        const index = data.events.findIndex(e => e.id === eventId);
-        if (index !== -1) {
-            data.events[index] = { ...data.events[index], ...updatedEvent };
-            saveData(data);
-            return data.events[index];
-        }
-        return null;
+    // Events
+    getEvents: async () => {
+        const { data, error } = await supabase
+            .from('events')
+            .select(`
+                *,
+                event_attendees(member_id)
+            `)
+            .order('date', { ascending: true });
+        if (error) throw error;
+
+        // Transform Supabase structure to match frontend expectations
+        return data.map(event => ({
+            ...event,
+            attendees: event.event_attendees.map(a => a.member_id)
+        }));
     },
 
-    joinEvent: (eventId, memberId) => {
-        const data = loadData();
-        const member = data.members.find(m => m.id === memberId);
-        if (!member || member.status === 'inactive') return null;
-
-        const event = data.events.find(e => e.id === eventId);
-        if (event && !event.attendees.includes(memberId)) {
-            event.attendees.push(memberId);
-            saveData(data);
-        }
-        return event;
+    createEvent: async (event) => {
+        const { data, error } = await supabase
+            .from('events')
+            .insert([event])
+            .select()
+            .single();
+        if (error) throw error;
+        return { ...data, attendees: [] };
     },
 
-    leaveEvent: (eventId, memberId) => {
-        const data = loadData();
-        const event = data.events.find(e => e.id === eventId);
-        if (event && event.attendees.includes(memberId)) {
-            event.attendees = event.attendees.filter(id => id !== memberId);
-            saveData(data);
-        }
-        return event;
+    updateEvent: async (eventId, updatedEvent) => {
+        const { data, error } = await supabase
+            .from('events')
+            .update(updatedEvent)
+            .eq('id', eventId)
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
     },
 
-    getAllContributions: () => loadData().contributions,
+    joinEvent: async (eventId, memberId) => {
+        const { error } = await supabase
+            .from('event_attendees')
+            .insert([{ event_id: eventId, member_id: memberId }]);
+        if (error) throw error;
 
-    getMemberContributions: (memberId) => {
-        const data = loadData();
-        return data.contributions.filter(c => c.memberId === memberId);
+        // Refetch event or return updated state locally
+        return this.getEvents().then(events => events.find(e => e.id === eventId));
     },
 
-    addContribution: (contribution) => {
-        const data = loadData();
-        const newContribution = { ...contribution, id: Date.now().toString() };
-        data.contributions.push(newContribution);
-        saveData(data);
-        return newContribution;
+    leaveEvent: async (eventId, memberId) => {
+        const { error } = await supabase
+            .from('event_attendees')
+            .delete()
+            .match({ event_id: eventId, member_id: memberId });
+        if (error) throw error;
+
+        return this.getEvents().then(events => events.find(e => e.id === eventId));
     },
 
-    removeContribution: (contributionId) => {
-        const data = loadData();
-        data.contributions = data.contributions.filter(c => c.id !== contributionId);
-        saveData(data);
+    // Contributions & Expenses (To be implemented later if needed)
+    getAllContributions: async () => {
+        const { data, error } = await supabase.from('contributions').select('*');
+        if (error) throw error;
+        return data;
     },
 
-    getExpenses: () => loadData().expenses || [],
-
-    addExpense: (expense) => {
-        const data = loadData();
-        if (!data.expenses) data.expenses = [];
-        const newExpense = { ...expense, id: Date.now().toString() };
-        data.expenses.push(newExpense);
-        saveData(data);
-        return newExpense;
-    },
-
-    resetData: () => {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(initialData));
-        return initialData;
+    getExpenses: async () => {
+        const { data, error } = await supabase.from('expenses').select('*');
+        if (error) throw error;
+        return data;
     }
 };

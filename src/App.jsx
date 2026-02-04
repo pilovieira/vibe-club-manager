@@ -11,28 +11,28 @@ import AdminGlobalBalance from './pages/AdminGlobalBalance';
 import Events from './pages/Events';
 import AboutUs from './pages/AboutUs';
 import Contact from './pages/Contact';
+import Login from './pages/Login';
 // import Admin from './pages/Admin';
 
 function App() {
   return (
     <Router>
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
 
-            <Route path="members" element={<Members />} />
-            <Route path="members/:id" element={<MemberProfile />} />
-            <Route path="admin" element={<AdminDashboard />} />
-            <Route path="admin/member-contributions" element={<AdminMemberContributions />} />
-            <Route path="admin/summary" element={<AdminMonthlySummary />} />
-            <Route path="admin/global-balance" element={<AdminGlobalBalance />} />
-            <Route path="events" element={<Events />} />
-            <Route path="about" element={<AboutUs />} />
-            <Route path="contact" element={<Contact />} />
-          </Route>
-        </Routes>
-      </AuthProvider>
+          <Route path="members" element={<Members />} />
+          <Route path="members/:id" element={<MemberProfile />} />
+          <Route path="admin" element={<AdminDashboard />} />
+          <Route path="admin/member-contributions" element={<AdminMemberContributions />} />
+          <Route path="admin/summary" element={<AdminMonthlySummary />} />
+          <Route path="admin/global-balance" element={<AdminGlobalBalance />} />
+          <Route path="events" element={<Events />} />
+          <Route path="about" element={<AboutUs />} />
+          <Route path="contact" element={<Contact />} />
+          <Route path="login" element={<Login />} />
+        </Route>
+      </Routes>
     </Router>
   );
 }

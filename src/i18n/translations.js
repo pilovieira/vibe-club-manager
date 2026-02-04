@@ -6,8 +6,7 @@ export const translations = {
         'nav.events': 'Events',
         'nav.admin': 'Admin',
         'nav.logout': 'Logout',
-        'nav.loginAdmin': 'Login Admin',
-        'nav.loginMember': 'Login Member',
+        'nav.login': 'Login',
         'nav.logo': 'Offroad Maringá',
 
         // Home Page
@@ -38,6 +37,7 @@ export const translations = {
         'members.inactive': 'Inactive',
         'members.createMember': 'Create Member',
         'members.joined': 'Joined',
+        'members.noMembersFound': 'No members found.',
 
         // Member Profile
         'profile.editProfile': 'Edit Profile',
@@ -195,6 +195,21 @@ export const translations = {
 
         // Errors
         'error.usernameExists': 'Username already exists. Please choose another.',
+
+        // Login
+        'login.title': 'Member Login',
+        'login.password': 'Password',
+        'login.button': 'Login',
+        'login.loggingIn': 'Logging in...',
+        'login.error': 'Invalid username or password.',
+        'login.noAccount': "Don't have an account?",
+        'login.signUp': 'Sign Up',
+        'login.haveAccount': 'Already have an account?',
+        'login.register': 'Create Account',
+        'login.fullName': 'Full Name',
+        'login.email': 'Email',
+        'login.registering': 'Creating account...',
+        'login.success': 'Account created! Please check your email to confirm.',
     },
     pt: {
         // Navbar
@@ -203,8 +218,7 @@ export const translations = {
         'nav.events': 'Eventos',
         'nav.admin': 'Admin',
         'nav.logout': 'Sair',
-        'nav.loginAdmin': 'Login Admin',
-        'nav.loginMember': 'Login Membro',
+        'nav.login': 'Entrar',
         'nav.logo': 'Offroad Maringá',
 
         // Home Page
@@ -235,6 +249,7 @@ export const translations = {
         'members.inactive': 'Inativo',
         'members.createMember': 'Criar Membro',
         'members.joined': 'Entrou em',
+        'members.noMembersFound': 'Nenhum membro encontrado.',
 
         // Member Profile
         'profile.editProfile': 'Editar Perfil',
@@ -392,5 +407,20 @@ export const translations = {
 
         // Erros
         'error.usernameExists': 'Nome de usuário já existe. Por favor, escolha outro.',
+
+        // Login
+        'login.title': 'Login de Membro',
+        'login.password': 'Senha',
+        'login.button': 'Entrar',
+        'login.loggingIn': 'Entrando...',
+        'login.error': 'Usuário ou senha inválidos.',
+        'login.noAccount': 'Não tem uma conta?',
+        'login.signUp': 'Cadastre-se',
+        'login.haveAccount': 'Já tem uma conta?',
+        'login.register': 'Criar Conta',
+        'login.fullName': 'Nome Completo',
+        'login.email': 'Email',
+        'login.registering': 'Criando conta...',
+        'login.success': 'Conta criada! Por favor, verifique seu email para confirmar.',
     }
 };

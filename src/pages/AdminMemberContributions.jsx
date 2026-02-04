@@ -5,7 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { Link } from 'react-router-dom';
 
 const AdminMemberContributions = () => {
-    const { isAdmin } = useAuth();
+    const { isAdmin, loading } = useAuth();
     const { t } = useLanguage();
     const [members, setMembers] = useState([]);
     const [selectedMemberId, setSelectedMemberId] = useState('');
@@ -15,30 +15,74 @@ const AdminMemberContributions = () => {
     const [showAddForm, setShowAddForm] = useState(false);
     const [newContribution, setNewContribution] = useState({ date: '', amount: 50 });
 
+    if (loading) {
+        return <div className="container" style={{ paddingTop: '2rem' }}>{t('common.loading')}...</div>;
+    }
+
+    if (!isAdmin) {
+        return (
+            <div className="container" style={{ paddingTop: '2rem' }}>
+                <div className="card error-card">
+                    <h1>{t('admin.accessDenied')}</h1>
+                    <p>{t('admin.accessDeniedMsg')}</p>
+                    <Link to="/" className="btn btn-primary" style={{ marginTop: '1rem', display: 'inline-block' }}>{t('admin.goHome')}</Link>
+                </div>
+                <style>{`
+                    .error-card { text-align: center; border-color: var(--danger); padding: 2rem; }
+                `}</style>
+            </div>
+        );
+    }
+
     useEffect(() => {
-        setMembers(mockService.getMembers());
+        if (!isAdmin) return;
+        const fetchMembers = async () => {
+            try {
+                const data = await mockService.getMembers();
+                setMembers(data);
+            } catch (err) {
+                console.error('Error fetching members:', err);
+            }
+        };
+        fetchMembers();
     }, []);
 
     useEffect(() => {
-        if (selectedMemberId) {
-            setContributions(mockService.getMemberContributions(selectedMemberId));
-        } else {
-            setContributions([]);
-        }
+        const fetchContributions = async () => {
+            if (selectedMemberId) {
+                try {
+                    const data = await mockService.getMemberContributions(selectedMemberId);
+                    setContributions(data);
+                } catch (err) {
+                    console.error('Error fetching contributions:', err);
+                    setContributions([]);
+                }
+            } else {
+                setContributions([]);
+            }
+        };
+        fetchContributions();
     }, [selectedMemberId]);
 
     const handleCreateContribution = (e) => {
         e.preventDefault();
         if (!selectedMemberId) return;
 
-        const added = mockService.addContribution({
-            memberId: selectedMemberId,
-            ...newContribution
-        });
+        const addContributionAsync = async () => {
+            try {
+                const added = await mockService.addContribution({
+                    member_id: selectedMemberId, // snake_case as per schema
+                    ...newContribution
+                });
 
-        setContributions([...contributions, added]);
-        setShowAddForm(false);
-        setNewContribution({ date: '', amount: 50 });
+                setContributions([...contributions, added]);
+                setShowAddForm(false);
+                setNewContribution({ date: '', amount: 50 });
+            } catch (err) {
+                console.error('Error adding contribution:', err);
+            }
+        };
+        addContributionAsync();
     };
 
     const selectedMember = members.find(m => m.id === selectedMemberId);
