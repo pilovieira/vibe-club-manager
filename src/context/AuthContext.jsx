@@ -9,8 +9,10 @@ export const AuthProvider = ({ children }) => {
 
     const refreshProfile = useCallback(async (sessionUser) => {
         if (!sessionUser) return null;
+        console.log('AuthContext: refreshProfile() for', sessionUser.id);
         try {
             const profile = await authService.getProfile(sessionUser.id);
+            console.log('AuthContext: profile fetched:', profile);
             return { ...sessionUser, profile };
         } catch (err) {
             console.error('AuthContext: Profile sync error', err);
@@ -22,15 +24,31 @@ export const AuthProvider = ({ children }) => {
         let isMounted = true;
 
         const initialize = async () => {
+            console.log('AuthContext: initialize() started');
+
+            // Safety timeout to prevent permanent loading state
+            const timeoutId = setTimeout(() => {
+                if (isMounted && loading) {
+                    console.warn('AuthContext: Initialization timeout reached, forcing loading=false');
+                    setLoading(false);
+                }
+            }, 5000);
+
             try {
                 const session = await authService.getSession();
+                console.log('AuthContext: session fetched:', !!session);
                 if (session?.user && isMounted) {
                     const fullUser = await refreshProfile(session.user);
                     if (isMounted) setUser(fullUser);
                 }
             } catch (err) {
                 console.error('AuthContext: Init error', err);
+                if (err.name === 'AbortError') {
+                    console.warn('AuthContext: AbortError detected during initialization');
+                }
             } finally {
+                console.log('AuthContext: initialization finished, loading=false');
+                clearTimeout(timeoutId);
                 if (isMounted) setLoading(false);
             }
         };
@@ -39,33 +57,32 @@ export const AuthProvider = ({ children }) => {
             console.log('AuthContext: Auth event received:', event);
             if (!isMounted) return;
 
-            if (session?.user) {
-                // Set basic user immediately so Navbar/UI can react
-                if (isMounted) {
+            try {
+                if (session?.user) {
+                    // Set basic user immediately so Navbar/UI can react
                     setUser(prev => ({
                         ...session.user,
                         profile: prev?.id === session.user.id ? prev.profile : null
                     }));
-                }
 
-                // If it's a login or initial session, fetch full profile
-                if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
-                    const fullUser = await refreshProfile(session.user);
-                    if (isMounted) {
-                        setUser(fullUser);
-                        setLoading(false);
+                    // If it's a login or initial session, fetch full profile
+                    if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+                        const fullUser = await refreshProfile(session.user);
+                        if (isMounted) {
+                            setUser(fullUser);
+                            setLoading(false);
+                        }
+                    } else if (event === 'USER_UPDATED' || event === 'TOKEN_REFRESHED') {
+                        setUser(prev => ({ ...session.user, profile: prev?.profile }));
                     }
-                } else if (event === 'USER_UPDATED' || event === 'TOKEN_REFRESHED') {
-                    // Just update state with new session info
-                    setUser(prev => ({ ...session.user, profile: prev?.profile }));
-                }
-            } else {
-                // SIGNED_OUT or session expired
-                console.log('AuthContext: Clearing user state due to event:', event);
-                if (isMounted) {
+                } else {
+                    console.log('AuthContext: Clearing user state due to event:', event);
                     setUser(null);
                     setLoading(false);
                 }
+            } catch (err) {
+                console.error('AuthContext: Error in onAuthStateChange handler', err);
+                if (isMounted) setLoading(false);
             }
         });
 
@@ -106,9 +123,16 @@ export const AuthProvider = ({ children }) => {
         login,
         signUp,
         logout,
-        isAdmin: user?.profile?.role === 'admin' || user?.email === 'admin@offroadmga.com',
+        isAdmin: !!user?.profile?.role && user.profile.role.toLowerCase() === 'admin',
         loading
     };
+
+    console.log('AuthContext: context value updated:', {
+        userId: user?.id,
+        profileRole: user?.profile?.role,
+        isAdmin: value.isAdmin,
+        loading
+    });
 
     return (
         <AuthContext.Provider value={value}>

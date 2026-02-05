@@ -8,8 +8,10 @@ import { useState } from 'react';
 // ensuring we use the variables defined in index.css
 
 const Navbar = () => {
+  console.log('Navbar: rendering...');
   const { user, login, logout, isAdmin } = useAuth();
   const { language, setLanguage, t } = useLanguage();
+  console.log('Navbar: context data:', { hasUser: !!user, language, isAdmin });
   const navigate = useNavigate();
   const [showLangMenu, setShowLangMenu] = useState(false);
 
@@ -57,7 +59,7 @@ const Navbar = () => {
 
         <div className="nav-links">
           <Link to="/" className="nav-link">{t('nav.home')}</Link>
-          <Link to="/members" className="nav-link">{t('nav.members')}</Link>
+          {isAdmin && <Link to="/members" className="nav-link">{t('nav.members')}</Link>}
           <Link to="/events" className="nav-link">{t('nav.events')}</Link>
           <Link to="/about" className="nav-link">{t('nav.about')}</Link>
           <Link to="/contact" className="nav-link">{t('nav.contact')}</Link>

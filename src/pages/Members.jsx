@@ -14,11 +14,13 @@ const Members = () => {
         if (loading) return; // Wait for auth to initialize
 
         const fetchMembers = async () => {
+            console.log('Members: fetchMembers() started');
             try {
                 const data = await mockService.getMembers();
+                console.log('Members: data received, count:', data?.length);
                 setMembers(data || []);
             } catch (err) {
-                console.error('Error fetching members:', err);
+                console.error('Members: Error fetching members:', err);
             }
         };
         fetchMembers();
