@@ -8,6 +8,7 @@ const Events = () => {
     const { t } = useLanguage();
     const [events, setEvents] = useState([]);
     const [members, setMembers] = useState([]);
+    const [dataLoading, setDataLoading] = useState(true);
 
     // Create Event State
     const [showCreateForm, setShowCreateForm] = useState(false);
@@ -17,6 +18,7 @@ const Events = () => {
 
     useEffect(() => {
         const fetchEventsAndMembers = async () => {
+            setDataLoading(true);
             try {
                 const fetchedEvents = await mockService.getEvents();
                 // Sort oldest first (chronological)
@@ -26,6 +28,8 @@ const Events = () => {
                 setMembers(fetchedMembers);
             } catch (err) {
                 console.error('Error fetching events/members:', err);
+            } finally {
+                setDataLoading(false);
             }
         };
         fetchEventsAndMembers();
@@ -187,70 +191,77 @@ const Events = () => {
             )}
 
             <div className="events-list">
-                {filteredEvents.map(event => (
-                    <div key={event.id} className={`event-card card event-type-${(event.eventType || '').replace(/\s+/g, '-')}`}>
-                        <div className="event-date">
-                            <span className="month">{new Date(event.date + 'T00:00:00').toLocaleString('default', { month: 'short' })}</span>
-                            <span className="day">{new Date(event.date + 'T00:00:00').getDate()}</span>
-                            <span className="year">{new Date(event.date + 'T00:00:00').getFullYear()}</span>
-                        </div>
-                        <div className="event-details">
-                            <div className="event-header-row">
-                                <h2>{event.title}</h2>
-                                <span className={`type-badge ${(event.eventType || 'soft trail').replace(/\s+/g, '-')}`}>
-                                    {t(`events.type.${(event.eventType || 'soft-trail').replace(/\s+/g, '-')}`)}
-                                </span>
+                {dataLoading ? (
+                    <div className="loader-container">
+                        <div className="loader"></div>
+                        <p className="loading-text">{t('common.loading') || 'Loading events...'}</p>
+                    </div>
+                ) : (
+                    filteredEvents.map(event => (
+                        <div key={event.id} className={`event-card card event-type-${(event.eventType || '').replace(/\s+/g, '-')}`}>
+                            <div className="event-date">
+                                <span className="month">{new Date(event.date + 'T00:00:00').toLocaleString('default', { month: 'short' })}</span>
+                                <span className="day">{new Date(event.date + 'T00:00:00').getDate()}</span>
+                                <span className="year">{new Date(event.date + 'T00:00:00').getFullYear()}</span>
                             </div>
-                            <p className="event-meta">📍 {event.location}</p>
-                            <p className="event-desc">{event.description}</p>
+                            <div className="event-details">
+                                <div className="event-header-row">
+                                    <h2>{event.title}</h2>
+                                    <span className={`type-badge ${(event.eventType || 'soft trail').replace(/\s+/g, '-')}`}>
+                                        {t(`events.type.${(event.eventType || 'soft-trail').replace(/\s+/g, '-')}`)}
+                                    </span>
+                                </div>
+                                <p className="event-meta">📍 {event.location}</p>
+                                <p className="event-desc">{event.description}</p>
 
-                            <div className="attendees-section">
-                                <span className="attendees-label">{t('events.attendees')} ({event.attendees.length}):</span>
-                                <div className="attendee-list">
-                                    {event.attendees.length === 0 && <span className="text-secondary small">Be the first to join!</span>}
-                                    {getAttendeeDetails(event.attendees).map(member => (
-                                        <div key={member.id} className="attendee-chip">
-                                            <img
-                                                src={member.avatar}
-                                                alt={member.name}
-                                                className="attendee-avatar"
-                                            />
-                                            <span className="attendee-name">{member.name}</span>
-                                        </div>
-                                    ))}
+                                <div className="attendees-section">
+                                    <span className="attendees-label">{t('events.attendees')} ({event.attendees.length}):</span>
+                                    <div className="attendee-list">
+                                        {event.attendees.length === 0 && <span className="text-secondary small">Be the first to join!</span>}
+                                        {getAttendeeDetails(event.attendees).map(member => (
+                                            <div key={member.id} className="attendee-chip">
+                                                <img
+                                                    src={member.avatar}
+                                                    alt={member.name}
+                                                    className="attendee-avatar"
+                                                />
+                                                <span className="attendee-name">{member.name}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="event-action">
+                                <div className="action-stack">
+                                    {user ? (
+                                        <button
+                                            className={`btn ${isAttending(event) ? 'btn-danger-outline' : 'btn-primary'}`}
+                                            onClick={() => handleToggleEvent(event.id)}
+                                            disabled={(!isAttending(event) && (user.status === 'inactive' || new Date(event.date + 'T23:59:59') < new Date()))}
+                                        >
+                                            {isAttending(event)
+                                                ? t('events.leave')
+                                                : (new Date(event.date + 'T23:59:59') < new Date()
+                                                    ? t('events.ended')
+                                                    : (user.status === 'inactive' ? t('events.inactiveWarning') : t('events.join')))}
+                                        </button>
+                                    ) : (
+                                        <span className="text-secondary">Login to Join</span>
+                                    )}
+
+                                    {isAdmin && new Date(event.date + 'T23:59:59') >= new Date() && (
+                                        <button
+                                            className="btn-edit-small"
+                                            onClick={() => handleStartEdit(event)}
+                                        >
+                                            ✏️ {t('events.editButton')}
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         </div>
-                        <div className="event-action">
-                            <div className="action-stack">
-                                {user ? (
-                                    <button
-                                        className={`btn ${isAttending(event) ? 'btn-danger-outline' : 'btn-primary'}`}
-                                        onClick={() => handleToggleEvent(event.id)}
-                                        disabled={(!isAttending(event) && (user.status === 'inactive' || new Date(event.date + 'T23:59:59') < new Date()))}
-                                    >
-                                        {isAttending(event)
-                                            ? t('events.leave')
-                                            : (new Date(event.date + 'T23:59:59') < new Date()
-                                                ? t('events.ended')
-                                                : (user.status === 'inactive' ? t('events.inactiveWarning') : t('events.join')))}
-                                    </button>
-                                ) : (
-                                    <span className="text-secondary">Login to Join</span>
-                                )}
-
-                                {isAdmin && new Date(event.date + 'T23:59:59') >= new Date() && (
-                                    <button
-                                        className="btn-edit-small"
-                                        onClick={() => handleStartEdit(event)}
-                                    >
-                                        ✏️ {t('events.editButton')}
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                ))}
+                    ))
+                )}
             </div>
 
             <style>{`

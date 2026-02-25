@@ -7,18 +7,22 @@ import { useLanguage } from '../context/LanguageContext';
 const Members = () => {
     const { t } = useLanguage();
     const [members, setMembers] = useState([]);
+    const [dataLoading, setDataLoading] = useState(true);
     const { user, isAdmin, loading } = useAuth();
     const navigate = useNavigate();
 
 
     const fetchMembers = async () => {
         console.log('Members: fetchMembers() started');
+        setDataLoading(true);
         try {
             const data = await mockService.getMembers();
             console.log('Members: data received, count:', data?.length);
             setMembers(data || []);
         } catch (err) {
             console.error('Members: Error fetching members:', err);
+        } finally {
+            setDataLoading(false);
         }
     };
 
@@ -35,39 +39,46 @@ const Members = () => {
 
 
             <div className="members-grid">
-                {members.length === 0 ? (
-                    <div className="no-members">
-                        <p>{t('members.noMembersFound') || 'No members found.'}</p>
+                {dataLoading ? (
+                    <div className="loader-container">
+                        <div className="loader"></div>
+                        <p className="loading-text">{t('common.loading') || 'Loading members...'}</p>
                     </div>
                 ) : (
-                    members.map(member => {
-                        return (
-                            <div key={member.id} className="member-card-wrapper">
-                                <Link to={`/members/${member.id}`} className={`member-card ${member.status}`}>
-                                    <div className="status-badge-container">
-                                        <span className={`status-dot ${member.status}`}></span>
-                                    </div>
-                                    <img src={member.avatar} alt={member.name} className="member-avatar" />
-                                    <div className="member-info">
-                                        <h3 className="member-name">{member.name}</h3>
-                                        <p className="member-role">{member.role} • {t('members.joined')} {member.joinDate ? new Date(member.joinDate).getFullYear() : 'N/A'}</p>
-                                        {(isAdmin || (user && user.id === member.id)) && (
-                                            <button
-                                                className="btn-edit-sm"
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    navigate(`/members/${member.id}`, { state: { edit: true } });
-                                                }}
-                                            >
-                                                {t('common.edit')}
-                                            </button>
-                                        )}
-                                    </div>
-                                </Link>
-                            </div>
-                        );
-                    })
+                    members.length === 0 ? (
+                        <div className="no-members">
+                            <p>{t('members.noMembersFound') || 'No members found.'}</p>
+                        </div>
+                    ) : (
+                        members.map(member => {
+                            return (
+                                <div key={member.id} className="member-card-wrapper">
+                                    <Link to={`/members/${member.id}`} className={`member-card ${member.status}`}>
+                                        <div className="status-badge-container">
+                                            <span className={`status-dot ${member.status}`}></span>
+                                        </div>
+                                        <img src={member.avatar} alt={member.name} className="member-avatar" />
+                                        <div className="member-info">
+                                            <h3 className="member-name">{member.name}</h3>
+                                            <p className="member-role">{member.role} • {t('members.joined')} {member.joinDate ? new Date(member.joinDate).getFullYear() : 'N/A'}</p>
+                                            {(isAdmin || (user && user.id === member.id)) && (
+                                                <button
+                                                    className="btn-edit-sm"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        navigate(`/members/${member.id}`, { state: { edit: true } });
+                                                    }}
+                                                >
+                                                    {t('common.edit')}
+                                                </button>
+                                            )}
+                                        </div>
+                                    </Link>
+                                </div>
+                            );
+                        })
+                    )
                 )}
             </div>
 

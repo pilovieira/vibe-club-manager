@@ -129,3 +129,41 @@ select.input-field option {
   color: var(--text-primary);
   padding: 0.5rem;
 }
+
+/* Loading Spinner */
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl) 0;
+  width: 100%;
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid var(--glass-border);
+  border-bottom-color: var(--primary);
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  margin-top: var(--spacing-md);
+  color: var(--text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
