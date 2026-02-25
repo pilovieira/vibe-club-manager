@@ -85,7 +85,7 @@ const AdminDashboard = () => {
         .dashboard-card:hover {
             transform: translateY(-5px);
             border-color: var(--primary);
-            background: rgba(30, 41, 59, 0.9);
+            background: rgba(28, 25, 22, 0.9);
         }
         .icon {
             font-size: 3rem;

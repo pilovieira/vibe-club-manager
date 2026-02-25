@@ -311,20 +311,20 @@ const Events = () => {
         }
         
         .event-card.event-type-club-official-meetup {
-            background: linear-gradient(135deg, rgba(30, 64, 175, 0.4), var(--bg-card));
-            border-left: 4px solid #3b82f6;
+            background: linear-gradient(135deg, rgba(166, 123, 91, 0.3), var(--bg-card));
+            border-left: 4px solid var(--primary);
         }
         .event-card.event-type-hard-trail {
-            background: linear-gradient(135deg, rgba(154, 52, 18, 0.4), var(--bg-card));
-            border-left: 4px solid #f97316;
+            background: linear-gradient(135deg, rgba(101, 67, 33, 0.4), var(--bg-card));
+            border-left: 4px solid #654321;
         }
         .event-card.event-type-soft-trail {
-            background: linear-gradient(135deg, rgba(161, 98, 7, 0.4), var(--bg-card));
-            border-left: 4px solid #eab308;
+            background: linear-gradient(135deg, rgba(196, 164, 132, 0.3), var(--bg-card));
+            border-left: 4px solid var(--accent);
         }
         .event-card.event-type-members-meetup {
-            background: linear-gradient(135deg, rgba(21, 128, 61, 0.4), var(--bg-card));
-            border-left: 4px solid #22c55e;
+            background: linear-gradient(135deg, rgba(77, 124, 15, 0.3), var(--bg-card));
+            border-left: 4px solid var(--success);
         }
 
         .event-date {

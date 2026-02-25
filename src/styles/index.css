@@ -1,27 +1,22 @@
 :root {
   /* Colors */
-  --bg-dark: #0f172a;
-  /* Slate 900 */
-  --bg-card: #1e293b;
-  /* Slate 800 */
-  --text-primary: #f8fafc;
-  /* Slate 50 */
-  --text-secondary: #94a3b8;
-  /* Slate 400 */
-  --primary: #3b82f6;
-  /* Blue 500 */
-  --primary-hover: #2563eb;
-  /* Blue 600 */
-  --accent: #f59e0b;
-  /* Amber 500 */
-  --danger: #ef4444;
-  /* Red 500 */
-  --success: #22c55e;
-  /* Green 500 */
+  /* Colors - Mud Theme */
+  --bg-dark: #12100e;
+  --bg-card: #1c1916;
+  --text-primary: #e6e4e1;
+  --text-secondary: #9c9288;
+  --primary: #a67b5b;
+  /* Earthy mud brown */
+  --primary-hover: #8b6245;
+  --accent: #c4a484;
+  /* Sand/Tan */
+  --danger: #b91c1c;
+  --success: #4d7c0f;
+  /* Forest Green */
 
   /* Glassmorphism */
-  --glass-bg: rgba(30, 41, 59, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(28, 25, 22, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
 
   /* Spacing */
   --spacing-sm: 0.5rem;
