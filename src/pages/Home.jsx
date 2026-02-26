@@ -44,7 +44,7 @@ const Home = () => {
           align-items: center;
           justify-content: center;
           text-align: center;
-          background: radial-gradient(circle at center, rgba(166, 123, 91, 0.1) 0%, transparent 70%);
+          background: radial-gradient(circle at center, var(--primary-glow) 0%, transparent 70%);
           position: relative;
         }
         .hero-title {
@@ -57,7 +57,7 @@ const Home = () => {
         .text-gradient {
           color: var(--primary);
           font-weight: 900;
-          text-shadow: 0 0 20px rgba(166, 123, 91, 0.5);
+          text-shadow: 0 0 20px var(--primary-shadow);
         }
         .hero-subtitle {
           font-size: 1.25rem;
@@ -111,7 +111,7 @@ const Home = () => {
             border-radius: 50%;
             border: 4px solid var(--accent);
             margin-bottom: 2rem;
-            box-shadow: 0 0 20px rgba(166, 123, 91, 0.3);
+            box-shadow: 0 0 20px var(--primary-semi);
             animation: float 6s ease-in-out infinite;
         }
         @keyframes float {

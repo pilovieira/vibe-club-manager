@@ -172,7 +172,7 @@ const Members = () => {
             margin-top: 0.5rem;
             padding: 0.25rem 0.75rem;
             font-size: 0.75rem;
-            background: rgba(166, 123, 91, 0.1);
+            background: var(--primary-glow);
             color: var(--primary);
             border: 1px solid var(--primary);
             border-radius: 0.25rem;

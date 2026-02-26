@@ -3,10 +3,12 @@ import { mockService } from '../services/mockData';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 
 const AdminProperties = () => {
     const { t } = useLanguage();
     const { isAdmin, loading: authLoading } = useAuth();
+    const { applyTheme } = useTheme();
     const navigate = useNavigate();
     const [properties, setProperties] = useState({});
     const [loading, setLoading] = useState(true);
@@ -48,6 +50,9 @@ const AdminProperties = () => {
         try {
             await mockService.updateProperty(key, value);
             setProperties(prev => ({ ...prev, [key]: value }));
+            if (key === 'app_theme') {
+                applyTheme(value);
+            }
             setSuccess(t('common.success') || 'Settings updated successfully!');
         } catch (err) {
             console.error('Error updating property:', err);
@@ -91,6 +96,40 @@ const AdminProperties = () => {
                                 <button
                                     className="btn btn-primary"
                                     onClick={() => handleUpdate('monthly_contribution_value', properties.monthly_contribution_value)}
+                                    disabled={saving}
+                                >
+                                    {saving ? t('common.saving') : t('common.save')}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="setting-item">
+                        <div className="setting-info">
+                            <h3>{t('settings.appTheme') || 'App Theme'}</h3>
+                            <p>{t('settings.appThemeDesc') || 'Choose the visual style for the entire application.'}</p>
+                        </div>
+                        <div className="setting-action">
+                            <div className="input-group">
+                                <select
+                                    className="input-field"
+                                    value={properties.app_theme || 'mud'}
+                                    onChange={(e) => setProperties({ ...properties, app_theme: e.target.value })}
+                                    style={{ width: '150px' }}
+                                >
+                                    <option value="mud">Mud (Brown)</option>
+                                    <option value="day">Day (Light)</option>
+                                    <option value="night">Night (Dark)</option>
+                                    <option value="forest">Forest (Green)</option>
+                                    <option value="sky">Sky (Blue)</option>
+                                    <option value="desert">Desert (Sand)</option>
+                                </select>
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={() => {
+                                        handleUpdate('app_theme', properties.app_theme);
+                                        // The ThemeContext will handle immediate application if we integrate it
+                                    }}
                                     disabled={saving}
                                 >
                                     {saving ? t('common.saving') : t('common.save')}

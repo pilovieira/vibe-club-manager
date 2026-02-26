@@ -144,6 +144,8 @@ export const translations = {
         // Settings Page
         'settings.monthlyContribution': 'Monthly Contribution Value',
         'settings.monthlyContributionDesc': 'Standard amount charged to members each month.',
+        'settings.appTheme': 'App Theme',
+        'settings.appThemeDesc': 'Choose the visual style for the entire application.',
 
         // Footer
         'footer.rights': 'All rights reserved.',
@@ -422,5 +424,7 @@ export const translations = {
         // Settings Page
         'settings.monthlyContribution': 'Valor da Mensalidade',
         'settings.monthlyContributionDesc': 'Valor padrão cobrado dos membros todos os meses.',
+        'settings.appTheme': 'Tema do Aplicativo',
+        'settings.appThemeDesc': 'Escolha o estilo visual de todo o aplicativo.',
     }
 };

@@ -1,23 +1,4 @@
 :root {
-  /* Colors */
-  /* Colors - Mud Theme */
-  --bg-dark: #12100e;
-  --bg-card: #1c1916;
-  --text-primary: #e6e4e1;
-  --text-secondary: #9c9288;
-  --primary: #a67b5b;
-  /* Earthy mud brown */
-  --primary-hover: #8b6245;
-  --accent: #c4a484;
-  /* Sand/Tan */
-  --danger: #b91c1c;
-  --success: #4d7c0f;
-  /* Forest Green */
-
-  /* Glassmorphism */
-  --glass-bg: rgba(28, 25, 22, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.08);
-
   /* Spacing */
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
@@ -30,6 +11,120 @@
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  /* Default Theme (Mud) */
+  --bg-dark: #12100e;
+  --bg-card: #1c1916;
+  --text-primary: #e6e4e1;
+  --text-secondary: #9c9288;
+  --primary: #a67b5b;
+  --primary-glow: rgba(166, 123, 91, 0.15);
+  --primary-semi: rgba(166, 123, 91, 0.3);
+  --primary-shadow: rgba(166, 123, 91, 0.5);
+  --primary-hover: #8b6245;
+  --accent: #c4a484;
+  --danger: #b91c1c;
+  --success: #4d7c0f;
+  --glass-bg: rgba(28, 25, 22, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+body.theme-day {
+  --bg-dark: #e5e7eb;
+  /* Light gray */
+  --bg-card: #f9fafb;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --primary: #4b5563;
+  /* Main color as light gray (darker gray for contrast) */
+  --primary-glow: rgba(75, 85, 99, 0.15);
+  --primary-semi: rgba(75, 85, 99, 0.3);
+  --primary-shadow: rgba(75, 85, 99, 0.5);
+  --primary-hover: #374151;
+  --accent: #9ca3af;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --success: #059669;
+}
+
+body.theme-night {
+  --bg-dark: #000000;
+  /* Almost black */
+  --bg-card: #0a0a0a;
+  --text-primary: #ffffff;
+  --text-secondary: #a3a3a3;
+  --primary: #262626;
+  /* Almost black as main color */
+  --primary-glow: rgba(38, 38, 38, 0.15);
+  --primary-semi: rgba(38, 38, 38, 0.3);
+  --primary-shadow: rgba(38, 38, 38, 0.5);
+  --primary-hover: #404040;
+  --accent: #525252;
+  --glass-bg: rgba(10, 10, 10, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+body.theme-forest {
+  --bg-dark: #022c22;
+  --bg-card: #064e3b;
+  --text-primary: #f0fdf4;
+  --text-secondary: #86efac;
+  --primary: #059669;
+  /* Dark green */
+  --primary-glow: rgba(5, 150, 105, 0.15);
+  --primary-semi: rgba(5, 150, 105, 0.3);
+  --primary-shadow: rgba(5, 150, 105, 0.5);
+  --primary-hover: #047857;
+  --accent: #10b981;
+  --glass-bg: rgba(2, 44, 34, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+body.theme-sky {
+  --bg-dark: #0c4a6e;
+  --bg-card: #075985;
+  --text-primary: #f0f9ff;
+  --text-secondary: #bae6fd;
+  --primary: #0ea5e9;
+  /* Sky blue */
+  --primary-glow: rgba(14, 165, 233, 0.15);
+  --primary-semi: rgba(14, 165, 233, 0.3);
+  --primary-shadow: rgba(14, 165, 233, 0.5);
+  --primary-hover: #0284c7;
+  --accent: #38bdf8;
+  --glass-bg: rgba(12, 74, 110, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+body.theme-desert {
+  --bg-dark: #451a03;
+  --bg-card: #78350f;
+  --text-primary: #fff7ed;
+  --text-secondary: #ffedd5;
+  --primary: #d97706;
+  /* Sand/Desert color */
+  --primary-glow: rgba(217, 119, 6, 0.15);
+  --primary-semi: rgba(217, 119, 6, 0.3);
+  --primary-shadow: rgba(217, 119, 6, 0.5);
+  --primary-hover: #b45309;
+  --accent: #f59e0b;
+  --glass-bg: rgba(69, 26, 3, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+body.theme-mud {
+  --bg-dark: #12100e;
+  --bg-card: #1c1916;
+  --text-primary: #e6e4e1;
+  --text-secondary: #9c9288;
+  --primary: #a67b5b;
+  --primary-glow: rgba(166, 123, 91, 0.15);
+  --primary-semi: rgba(166, 123, 91, 0.3);
+  --primary-shadow: rgba(166, 123, 91, 0.5);
+  --primary-hover: #8b6245;
+  --accent: #c4a484;
+  --glass-bg: rgba(28, 25, 22, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
 * {

@@ -322,19 +322,19 @@ const Events = () => {
         }
         
         .event-card.event-type-club-official-meetup {
-            background: linear-gradient(135deg, rgba(166, 123, 91, 0.3), var(--bg-card));
+            background: linear-gradient(135deg, var(--primary-semi), var(--bg-card));
             border-left: 4px solid var(--primary);
         }
         .event-card.event-type-hard-trail {
-            background: linear-gradient(135deg, rgba(101, 67, 33, 0.4), var(--bg-card));
-            border-left: 4px solid #654321;
+            background: linear-gradient(135deg, var(--primary-shadow), var(--bg-card));
+            border-left: 4px solid var(--primary-hover);
         }
         .event-card.event-type-soft-trail {
-            background: linear-gradient(135deg, rgba(196, 164, 132, 0.3), var(--bg-card));
+            background: linear-gradient(135deg, var(--primary-glow), var(--bg-card));
             border-left: 4px solid var(--accent);
         }
         .event-card.event-type-members-meetup {
-            background: linear-gradient(135deg, rgba(77, 124, 15, 0.3), var(--bg-card));
+            background: linear-gradient(135deg, var(--primary-glow), var(--bg-card));
             border-left: 4px solid var(--success);
         }
 

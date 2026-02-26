@@ -178,7 +178,7 @@ const Navbar = () => {
           position: relative;
         }
         .lang-toggle {
-          background: rgba(166, 123, 91, 0.1);
+          background: var(--primary-glow);
           border: 1px solid var(--primary);
           color: var(--primary);
           padding: 0.5rem 0.8rem;
@@ -192,7 +192,7 @@ const Navbar = () => {
           min-width: 140px;
         }
         .lang-toggle:hover {
-          background: rgba(166, 123, 91, 0.2);
+          background: var(--primary-glow);
         }
         .lang-flag {
           font-size: 1.2rem;
@@ -231,10 +231,10 @@ const Navbar = () => {
           text-align: left;
         }
         .lang-option:hover {
-          background: rgba(166, 123, 91, 0.1);
+          background: var(--primary-glow);
         }
         .lang-option.active {
-          background: rgba(166, 123, 91, 0.2);
+          background: var(--primary-glow);
           color: var(--primary);
           font-weight: 600;
         }
@@ -287,9 +287,9 @@ const Navbar = () => {
           border: 1px solid rgba(239, 68, 68, 0.3);
         }
         .role-badge.member {
-          background: rgba(166, 123, 91, 0.15);
+          background: var(--primary-glow);
           color: var(--primary);
-          border: 1px solid rgba(166, 123, 91, 0.3);
+          border: 1px solid var(--primary-semi);
         }
         .user-actions-row {
           display: flex;
@@ -317,7 +317,7 @@ const Navbar = () => {
             border-radius: 0.375rem;
         }
         .btn-outline:hover {
-            background: rgba(166, 123, 91, 0.1);
+            background: var(--primary-glow);
         }
       `}</style>
     </nav>
