@@ -190,7 +190,7 @@ export const mockService = {
             await addDoc(collection(db, 'event_attendees'), { event_id: eventId, member_id: memberId });
         }
 
-        return this.getEvents().then(events => events.find(e => e.id === eventId));
+        return mockService.getEvents().then(events => events.find(e => e.id === eventId));
     },
 
     leaveEvent: async (eventId, memberId) => {
@@ -202,7 +202,7 @@ export const mockService = {
             await deleteDoc(doc(db, 'event_attendees', querySnapshot.docs[0].id));
         }
 
-        return this.getEvents().then(events => events.find(e => e.id === eventId));
+        return mockService.getEvents().then(events => events.find(e => e.id === eventId));
     },
 
     getAllContributions: async () => {

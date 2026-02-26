@@ -16,22 +16,23 @@ const Events = () => {
     const [newEvent, setNewEvent] = useState({ title: '', date: '', location: '', description: '', eventType: 'soft trail' });
     const [showPastEvents, setShowPastEvents] = useState(false);
 
+    const fetchEventsAndMembers = async () => {
+        setDataLoading(true);
+        try {
+            const fetchedEvents = await mockService.getEvents();
+            // Sort oldest first (chronological)
+            const sortedEvents = [...fetchedEvents].sort((a, b) => new Date(a.date) - new Date(b.date));
+            setEvents(sortedEvents);
+            const fetchedMembers = await mockService.getMembers();
+            setMembers(fetchedMembers);
+        } catch (err) {
+            console.error('Error fetching events/members:', err);
+        } finally {
+            setDataLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchEventsAndMembers = async () => {
-            setDataLoading(true);
-            try {
-                const fetchedEvents = await mockService.getEvents();
-                // Sort oldest first (chronological)
-                const sortedEvents = [...fetchedEvents].sort((a, b) => new Date(a.date) - new Date(b.date));
-                setEvents(sortedEvents);
-                const fetchedMembers = await mockService.getMembers();
-                setMembers(fetchedMembers);
-            } catch (err) {
-                console.error('Error fetching events/members:', err);
-            } finally {
-                setDataLoading(false);
-            }
-        };
         fetchEventsAndMembers();
     }, []);
 
@@ -89,10 +90,8 @@ const Events = () => {
                 if (attending) {
                     // Leave Event
                     if (confirm("Are you sure you want to leave this event?")) {
-                        const updatedEvent = await mockService.leaveEvent(eventId, user.id);
-                        if (updatedEvent) {
-                            setEvents(events.map(e => e.id === eventId ? updatedEvent : e));
-                        }
+                        await mockService.leaveEvent(eventId, user.id);
+                        await fetchEventsAndMembers(); // Refresh after action
                     }
                 } else {
                     // Join Event
@@ -100,10 +99,8 @@ const Events = () => {
                         alert(t('events.inactiveWarning'));
                         return;
                     }
-                    const updatedEvent = await mockService.joinEvent(eventId, user.id);
-                    if (updatedEvent) {
-                        setEvents(events.map(e => e.id === eventId ? updatedEvent : e));
-                    }
+                    await mockService.joinEvent(eventId, user.id);
+                    await fetchEventsAndMembers(); // Refresh after action
                 }
             } catch (err) {
                 console.error('Error toggling event attendance:', err);
