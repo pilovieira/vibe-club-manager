@@ -252,6 +252,28 @@ const Members = () => {
             opacity: 0.5;
             cursor: not-allowed;
         }
+
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .members-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 1rem;
+            }
+            .member-card {
+                padding: 1rem;
+            }
+            .member-avatar {
+                width: 60px;
+                height: 60px;
+            }
+            .member-name {
+                font-size: 1rem;
+            }
+        }
       `}</style>
         </div>
     );

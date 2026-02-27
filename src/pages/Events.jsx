@@ -461,14 +461,47 @@ const Events = () => {
         }
         
         @media (max-width: 768px) {
-            .event-card {
+            .page-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1.5rem;
+            }
+            .header-left {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 1rem;
+                gap: 0.75rem;
+            }
+            .event-card {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+            .event-date {
+                flex-direction: row;
+                justify-content: center;
+                gap: 0.5rem;
+                width: 100%;
+                min-width: unset;
             }
             .event-action {
                 width: 100%;
-                text-align: right;
+                margin-top: 1rem;
+            }
+            .action-stack {
+                width: 100%;
+                align-items: stretch;
+            }
+            .btn {
+                width: 100%;
+            }
+            .event-header-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
             }
         }
         

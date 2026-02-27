@@ -527,6 +527,59 @@ const MemberProfile = () => {
                 justify-content: center;
             }
             
+            /* Tablet & Mobile Responsiveness */
+            @media (max-width: 992px) {
+                .profile-content-top {
+                    flex-direction: column;
+                    align-items: center;
+                    text-align: center;
+                }
+                
+                .avatar-section {
+                    margin-bottom: 2rem;
+                }
+                
+                .profile-title-group {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+                
+                .profile-name-lg {
+                    font-size: 2.25rem;
+                }
+            }
+            
+            @media (max-width: 768px) {
+                .profile-page {
+                    padding: 0;
+                }
+                
+                .profile-card {
+                    border-radius: 0;
+                    border-left: none;
+                    border-right: none;
+                    padding: 1.5rem;
+                }
+                
+                .profile-info-list {
+                    grid-template-columns: 1fr;
+                    gap: 0.75rem;
+                }
+                
+                .profile-footer-actions {
+                    flex-direction: column;
+                }
+                
+                .profile-footer-actions .btn-premium {
+                    width: 100%;
+                }
+                
+                .profile-info-list li {
+                    justify-content: center;
+                }
+            }
+            
             .upload-avatar-btn-large {
                 background: var(--accent);
                 color: white;
@@ -753,29 +806,6 @@ const MemberProfile = () => {
             
             .spinner { animation: spin 1s linear infinite; }
             .spinner-large { animation: spin 1s linear infinite; font-size: 2rem; margin-bottom: 0.5rem; }
-            
-            @media (max-width: 768px) {
-                .profile-content-top {
-                    flex-direction: column;
-                    align-items: center;
-                    padding: 2rem;
-                    text-align: center;
-                }
-                .profile-info-list {
-                    grid-template-columns: 1fr;
-                }
-                .profile-footer-actions {
-                    flex-direction: column;
-                    padding: 1.5rem;
-                }
-                .btn-premium {
-                    width: 100%;
-                    justify-content: center;
-                }
-                .profile-info-list li {
-                    justify-content: center;
-                }
-            }
 
             /* Modal Styles */
             .modal-overlay {

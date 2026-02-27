@@ -157,6 +157,13 @@ button {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--spacing-md);
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 1.25rem;
+  }
 }
 
 .btn {
@@ -184,10 +191,18 @@ button {
 }
 
 .page-title {
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: 2.25rem;
+  font-weight: 800;
   margin-bottom: var(--spacing-lg);
   color: var(--text-primary);
+  letter-spacing: -0.025em;
+}
+
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 1.75rem;
+    margin-bottom: var(--spacing-md);
+  }
 }
 
 /* Form Fields */
@@ -281,4 +296,65 @@ select.input-field option {
   color: var(--text-secondary);
   font-weight: 500;
   letter-spacing: 0.05em;
+}
+
+/* Responsive Utilities */
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-only {
+    display: block;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+}
+
+.flex-responsive {
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-md);
+}
+
+@media (max-width: 768px) {
+  .flex-responsive {
+    flex-direction: column;
+  }
+}
+
+.grid-responsive {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-md);
+}
+
+@media (max-width: 640px) {
+  .grid-responsive {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Form Responsiveness */
+@media (max-width: 768px) {
+  .input-group-responsive {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .input-group-responsive .btn {
+    width: 100%;
+  }
+}
+
+/* Card Responsiveness */
+@media (max-width: 640px) {
+  .card {
+    padding: var(--spacing-md);
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
 }
