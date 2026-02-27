@@ -1,7 +1,11 @@
 import { useLanguage } from '../context/LanguageContext';
+import { useSettings } from '../context/SettingsContext';
 
 const Contact = () => {
     const { t } = useLanguage();
+    const { settings } = useSettings();
+
+    const instagramHandle = settings.contact_instagram?.split('/').filter(Boolean).pop() || 'offroadmaringa';
 
     return (
         <div className="container contact-page">
@@ -19,7 +23,9 @@ const Contact = () => {
                             <div className="contact-icon">📞</div>
                             <div className="contact-text">
                                 <h3>{t('contact.phone')}</h3>
-                                <a href="tel:+554433334444">(44) 3333-4444</a>
+                                <a href={`tel:${settings.contact_phone?.replace(/[^\d+]/g, '')}`}>
+                                    {settings.contact_phone}
+                                </a>
                             </div>
                         </div>
 
@@ -27,7 +33,7 @@ const Contact = () => {
                             <div className="contact-icon">✉️</div>
                             <div className="contact-text">
                                 <h3>{t('contact.email')}</h3>
-                                <a href="mailto:contato@offroadmaringa.com.br">contato@offroadmaringa.com.br</a>
+                                <a href={`mailto:${settings.contact_email}`}>{settings.contact_email}</a>
                             </div>
                         </div>
 
@@ -36,12 +42,12 @@ const Contact = () => {
                             <div className="contact-text">
                                 <h3>{t('contact.social')}</h3>
                                 <a
-                                    href="https://www.instagram.com/offroadmaringa/"
+                                    href={settings.contact_instagram}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="instagram-link"
                                 >
-                                    @offroadmaringa
+                                    @{instagramHandle}
                                 </a>
                             </div>
                         </div>
@@ -49,7 +55,7 @@ const Contact = () => {
 
                     <div className="contact-cta">
                         <a
-                            href="https://www.instagram.com/offroadmaringa/"
+                            href={settings.contact_instagram}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="btn btn-primary"

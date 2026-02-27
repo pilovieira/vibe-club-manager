@@ -34,6 +34,9 @@ const AdminProperties = () => {
                 if (!props.app_title) {
                     props.app_title = 'Offroad Maringá';
                 }
+                if (!props.contact_phone) props.contact_phone = '(44) 3333-4444';
+                if (!props.contact_email) props.contact_email = 'contato@offroadmaringa.com.br';
+                if (!props.contact_instagram) props.contact_instagram = 'https://www.instagram.com/offroadmaringa/';
                 setProperties(props);
             } catch (err) {
                 console.error('Error fetching properties:', err);
@@ -135,6 +138,81 @@ const AdminProperties = () => {
                                 <button
                                     className="btn btn-primary"
                                     onClick={() => handleUpdate('monthly_contribution_value', properties.monthly_contribution_value)}
+                                    disabled={saving}
+                                >
+                                    {saving ? t('common.saving') : t('common.save')}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="setting-item">
+                        <div className="setting-info">
+                            <h3>{t('settings.contactPhone') || 'Contact Phone'}</h3>
+                            <p>{t('settings.contactPhoneDesc') || 'Phone number displayed on the contact page.'}</p>
+                        </div>
+                        <div className="setting-action">
+                            <div className="input-group">
+                                <input
+                                    type="text"
+                                    className="input-field"
+                                    value={properties.contact_phone || ''}
+                                    onChange={(e) => setProperties({ ...properties, contact_phone: e.target.value })}
+                                    style={{ width: '250px', textAlign: 'left' }}
+                                />
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={() => handleUpdate('contact_phone', properties.contact_phone)}
+                                    disabled={saving}
+                                >
+                                    {saving ? t('common.saving') : t('common.save')}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="setting-item">
+                        <div className="setting-info">
+                            <h3>{t('settings.contactEmail') || 'Contact Email'}</h3>
+                            <p>{t('settings.contactEmailDesc') || 'Email address displayed on the contact page.'}</p>
+                        </div>
+                        <div className="setting-action">
+                            <div className="input-group">
+                                <input
+                                    type="email"
+                                    className="input-field"
+                                    value={properties.contact_email || ''}
+                                    onChange={(e) => setProperties({ ...properties, contact_email: e.target.value })}
+                                    style={{ width: '250px', textAlign: 'left' }}
+                                />
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={() => handleUpdate('contact_email', properties.contact_email)}
+                                    disabled={saving}
+                                >
+                                    {saving ? t('common.saving') : t('common.save')}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="setting-item">
+                        <div className="setting-info">
+                            <h3>{t('settings.contactInstagram') || 'Instagram Link'}</h3>
+                            <p>{t('settings.contactInstagramDesc') || 'Full URL to the Instagram profile.'}</p>
+                        </div>
+                        <div className="setting-action">
+                            <div className="input-group">
+                                <input
+                                    type="text"
+                                    className="input-field"
+                                    value={properties.contact_instagram || ''}
+                                    onChange={(e) => setProperties({ ...properties, contact_instagram: e.target.value })}
+                                    style={{ width: '250px', textAlign: 'left' }}
+                                />
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={() => handleUpdate('contact_instagram', properties.contact_instagram)}
                                     disabled={saving}
                                 >
                                     {saving ? t('common.saving') : t('common.save')}

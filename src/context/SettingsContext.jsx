@@ -15,7 +15,10 @@ export const SettingsProvider = ({ children }) => {
     const [settings, setSettings] = useState({
         app_title: 'Offroad Maringá',
         monthly_contribution_value: 50,
-        app_theme: 'mud'
+        app_theme: 'mud',
+        contact_phone: '(44) 3333-4444',
+        contact_email: 'contato@offroadmaringa.com.br',
+        contact_instagram: 'https://www.instagram.com/offroadmaringa/'
     });
     const [loading, setLoading] = useState(true);
 

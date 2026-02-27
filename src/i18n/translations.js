@@ -181,6 +181,12 @@ export const translations = {
         'settings.appThemeDesc': 'Choose the visual style for the entire application.',
         'settings.appTitle': 'App Title',
         'settings.appTitleDesc': 'The name displayed in the navbar and various parts of the application.',
+        'settings.contactPhone': 'Contact Phone',
+        'settings.contactPhoneDesc': 'Phone number displayed on the contact page.',
+        'settings.contactEmail': 'Contact Email',
+        'settings.contactEmailDesc': 'Email address displayed on the contact page.',
+        'settings.contactInstagram': 'Instagram Link',
+        'settings.contactInstagramDesc': 'Full URL to the Instagram profile.',
 
         // Footer
         'footer.rights': 'All rights reserved.',
@@ -472,5 +478,11 @@ export const translations = {
         'settings.appThemeDesc': 'Escolha o estilo visual de todo o aplicativo.',
         'settings.appTitle': 'Título do App',
         'settings.appTitleDesc': 'O nome exibido na barra de navegação e em várias partes do aplicativo.',
+        'settings.contactPhone': 'Telefone de Contato',
+        'settings.contactPhoneDesc': 'Número de telefone exibido na página de contato.',
+        'settings.contactEmail': 'E-mail de Contato',
+        'settings.contactEmailDesc': 'Endereço de e-mail exibido na página de contato.',
+        'settings.contactInstagram': 'Link do Instagram',
+        'settings.contactInstagramDesc': 'URL completa para o perfil do Instagram.',
     }
 };
