@@ -13,6 +13,7 @@ import AdminGlobalBalance from './pages/AdminGlobalBalance';
 import AdminProperties from './pages/AdminProperties';
 import AdminLogBook from './pages/AdminLogBook';
 import Events from './pages/Events';
+import EventGallery from './pages/EventGallery';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -29,6 +30,7 @@ function App() {
             <Route path="members" element={<Members />} />
             <Route path="members/:id" element={<MemberProfile />} />
             <Route path="events" element={<Events />} />
+            <Route path="events/:eventId/gallery" element={<EventGallery />} />
           </Route>
 
           {/* Admin Routes */}

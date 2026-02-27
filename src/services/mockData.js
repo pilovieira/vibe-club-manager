@@ -270,6 +270,28 @@ export const mockService = {
         const docRef = await addDoc(collection(db, 'logs'), logToInsert);
         const created = await getDoc(docRef);
         return { ...created.data(), id: docRef.id };
+    },
+
+    // Event Photos
+    getEventPhotos: async (eventId) => {
+        const q = query(collection(db, 'event_photos'), where('event_id', '==', eventId), orderBy('timestamp', 'desc'));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+    },
+
+    addEventPhoto: async (photoData) => {
+        const docRef = await addDoc(collection(db, 'event_photos'), {
+            ...photoData,
+            timestamp: new Date().toISOString()
+        });
+        const created = await getDoc(docRef);
+        return { ...created.data(), id: docRef.id };
+    },
+
+    deleteEventPhoto: async (photoId) => {
+        const docRef = doc(db, 'event_photos', photoId);
+        await deleteDoc(docRef);
+        return { id: photoId };
     }
 };
 

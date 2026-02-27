@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { mockService } from '../services/mockData';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { FaImages } from 'react-icons/fa';
 
 const Events = () => {
+    const navigate = useNavigate();
     const { user, isAdmin } = useAuth();
     const { t, language } = useLanguage();
     const [events, setEvents] = useState([]);
@@ -279,6 +282,15 @@ const Events = () => {
                                         </button>
                                     ) : (
                                         <span className="text-secondary">Login to Join</span>
+                                    )}
+
+                                    {user && (
+                                        <button
+                                            className="btn btn-secondary btn-gallery"
+                                            onClick={() => navigate(`/events/${event.id}/gallery`)}
+                                        >
+                                            <FaImages /> {t('events.gallery')}
+                                        </button>
                                     )}
 
                                     {isAdmin && (

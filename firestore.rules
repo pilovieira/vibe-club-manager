@@ -56,9 +56,17 @@ service cloud.firestore {
     
     match /event_attendees/{id} {
       allow read: if isAuth();
-      allow create, delete: if isAuth() && (request.resource.data.member_id == request.auth.uid || isAdmin());
+      allow create: if isAuth() && (request.resource.data.member_id == request.auth.uid || isAdmin());
+      allow delete: if isAuth() && (resource.data.member_id == request.auth.uid || isAdmin());
     }
-    
+
+    match /event_photos/{photoId} {
+      allow read: if isAuth();
+      allow create: if isAuth() && request.resource.data.uploaded_by_id == request.auth.uid;
+      allow delete: if isAuth() && (resource.data.uploaded_by_id == request.auth.uid || isAdmin());
+      allow update: if false;
+    }
+
     match /contributions/{id} {
       allow read: if isAuth() && (resource.data.member_id == request.auth.uid || isAdmin());
       allow write: if isAdmin();

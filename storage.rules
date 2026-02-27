@@ -7,6 +7,12 @@ service firebase.storage {
       return request.auth != null;
     }
 
+    // Helper: Check if user is an admin by reading their firestore document
+    function isAdmin() {
+      return isAuthenticated() && 
+             firestore.get(/databases/(default)/documents/members/$(request.auth.uid)).data.role == 'admin';
+    }
+
     // Helper: Check if user is the owner of the resource
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
@@ -21,6 +27,22 @@ service firebase.storage {
       allow write: if isOwner(userId)
                     && request.resource.size < 2 * 1024 * 1024
                     && request.resource.contentType.matches('image/.*');
+    }
+
+    // Event Gallery Photos
+    match /events/{eventId}/photos/{fileName} {
+      // Photos are visible to all authenticated users
+      allow read: if isAuthenticated();
+      
+      // All authenticated users can upload photos (max 10MB)
+      allow create: if isAuthenticated()
+                    && request.resource.size < 10 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+
+      // Only the uploader or an admin can delete the photo
+      // Note: resource.metadata contains the customMetadata we set during upload
+      allow delete: if isAuthenticated() 
+                    && (resource.metadata.uploadedById == request.auth.uid || isAdmin());
     }
     
     // Default: Deny all other access

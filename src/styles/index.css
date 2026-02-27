@@ -182,6 +182,17 @@ button {
   background-color: var(--primary-hover);
 }
 
+.btn-secondary {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  border: 1px solid var(--glass-border);
+}
+
+.btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
 .card {
   background-color: var(--bg-card);
   border-radius: 0.5rem;
@@ -292,6 +303,32 @@ select.input-field option {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.spinner {
+  animation: rotation 1s linear infinite;
+}
+
+.spinner-large {
+  font-size: 3rem;
+  color: var(--primary);
+  animation: rotation 1s linear infinite;
 }
 
 .loading-text {
