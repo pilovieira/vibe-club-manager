@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 const AdminMonthlySummary = () => {
     const { user, isAdmin, loading } = useAuth();
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const [members, setMembers] = useState([]);
     const [contributions, setContributions] = useState([]);
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM format
@@ -31,7 +31,7 @@ const AdminMonthlySummary = () => {
 
     const [displayYear, displayMonth] = selectedDate.split('-');
     const dateObj = new Date(parseInt(displayYear), parseInt(displayMonth) - 1);
-    const monthName = dateObj.toLocaleString('default', { month: 'long' });
+    const monthName = dateObj.toLocaleString(language === 'en' ? 'en-US' : 'pt-BR', { month: 'long' });
 
     if (loading) {
         return <div className="container" style={{ paddingTop: '2rem' }}>{t('common.loading')}...</div>;

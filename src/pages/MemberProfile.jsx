@@ -3,10 +3,11 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { mockService } from '../services/mockData';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { formatDate } from '../utils/dateUtils';
 
 const MemberProfile = () => {
     const { id } = useParams();
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const navigate = useNavigate();
     const location = useLocation();
     const [member, setMember] = useState(null);
@@ -155,7 +156,7 @@ const MemberProfile = () => {
                         <p className="profile-meta">{member.email} • {memberRole}</p>
                         <p className="profile-joined">{t('profile.memberSince')} {new Date(member.joinDate).getFullYear()}</p>
                         <div className="profile-meta-row">
-                            {member.dateBirth && <p className="profile-meta">🎂 {new Date(member.dateBirth).toLocaleDateString()}</p>}
+                            {member.dateBirth && <p className="profile-meta">🎂 {formatDate(member.dateBirth, language)}</p>}
                             <p className="profile-meta">👤 {member.gender === 'female' ? t('gender.female') : t('gender.male')}</p>
                         </div>
                         {member.description && <p className="profile-bio">{member.description}</p>}

@@ -4,10 +4,11 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { Link } from 'react-router-dom';
 import { FaTrash } from 'react-icons/fa';
+import { formatDate } from '../utils/dateUtils';
 
 const AdminMemberContributions = () => {
     const { user, isAdmin, loading } = useAuth();
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const [members, setMembers] = useState([]);
     const [selectedMemberId, setSelectedMemberId] = useState('');
     const [contributions, setContributions] = useState([]);
@@ -184,7 +185,7 @@ const AdminMemberContributions = () => {
                                 <tbody>
                                     {contributions.map(c => (
                                         <tr key={c.id}>
-                                            <td>{new Date(c.date).toLocaleDateString()}</td>
+                                            <td>{formatDate(c.date, language)}</td>
                                             <td>${c.amount}</td>
                                             <td><span className="badge-paid">{t('monthly.paid')}</span></td>
                                             {isAdmin && (

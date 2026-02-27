@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { mockService } from '../services/mockData';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { formatDateTime } from '../utils/dateUtils';
 
 const AdminLogBook = () => {
     const { isAdmin, loading } = useAuth();
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const [logs, setLogs] = useState([]);
     const [dataLoading, setDataLoading] = useState(true);
 
@@ -60,7 +61,7 @@ const AdminLogBook = () => {
                             logs.map(log => (
                                 <tr key={log.id}>
                                     <td className="log-date">
-                                        {new Date(log.timestamp).toLocaleString()}
+                                        {formatDateTime(log.timestamp, language)}
                                     </td>
                                     <td className="log-user">
                                         <span className="user-badge">{log.userName}</span>

@@ -3,10 +3,11 @@ import { mockService } from '../services/mockData';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { FaTrash } from 'react-icons/fa';
+import { formatDate } from '../utils/dateUtils';
 
 const AdminGlobalBalance = () => {
     const { user, isAdmin, loading } = useAuth();
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const [transactions, setTransactions] = useState([]);
     const [filteredTransactions, setFilteredTransactions] = useState([]);
     const [totalBalance, setTotalBalance] = useState(0);
@@ -145,7 +146,7 @@ const AdminGlobalBalance = () => {
                         {filteredTransactions.map(item => (
                             <div key={item.id} className={`transaction-card ${item.type}`}>
                                 <div className="transaction-info">
-                                    <span className="transaction-date">{new Date(item.date).toLocaleDateString()}</span>
+                                    <span className="transaction-date">{formatDate(item.date, language)}</span>
                                     <div className="transaction-details">
                                         <span className="transaction-desc">
                                             {item.type === 'income' ? `Contribution: ${item.memberName}` : item.description}

@@ -5,7 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 
 const Events = () => {
     const { user, isAdmin } = useAuth();
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const [events, setEvents] = useState([]);
     const [members, setMembers] = useState([]);
     const [dataLoading, setDataLoading] = useState(true);
@@ -218,8 +218,17 @@ const Events = () => {
                     filteredEvents.map(event => (
                         <div key={event.id} className={`event-card card event-type-${(event.eventType || '').replace(/\s+/g, '-')}`}>
                             <div className="event-date">
-                                <span className="month">{new Date(event.date + 'T00:00:00').toLocaleString('default', { month: 'short' })}</span>
-                                <span className="day">{new Date(event.date + 'T00:00:00').getDate()}</span>
+                                {language === 'en' ? (
+                                    <>
+                                        <span className="month">{new Date(event.date + 'T00:00:00').toLocaleString('en-US', { month: 'short' })}</span>
+                                        <span className="day">{new Date(event.date + 'T00:00:00').getDate()}</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span className="day">{new Date(event.date + 'T00:00:00').getDate()}</span>
+                                        <span className="month">{new Date(event.date + 'T00:00:00').toLocaleString('pt-BR', { month: 'short' })}</span>
+                                    </>
+                                )}
                                 <span className="year">{new Date(event.date + 'T00:00:00').getFullYear()}</span>
                             </div>
                             <div className="event-details">
