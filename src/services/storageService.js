@@ -1,108 +1,36 @@
-
-const STORAGE_KEYS = {
-    MEMBERS: 'vibe_members',
-    EVENTS: 'vibe_events',
-    EVENT_ATTENDEES: 'vibe_event_attendees',
-    CONTRIBUTIONS: 'vibe_contributions',
-    EXPENSES: 'vibe_expenses',
-    AUTH_USER: 'vibe_auth_user'
-};
-
-const getFromStorage = (key, defaultValue = []) => {
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : defaultValue;
-};
-
-const saveToStorage = (key, data) => {
-    localStorage.setItem(key, JSON.stringify(data));
-};
-
-// Initial data if storage is empty
-const initializeStorage = () => {
-    if (!localStorage.getItem(STORAGE_KEYS.MEMBERS)) {
-        saveToStorage(STORAGE_KEYS.MEMBERS, [
-            {
-                id: '1',
-                email: 'admin@vibe.com',
-                username: 'admin',
-                name: 'Administrator',
-                role: 'admin',
-                status: 'active',
-                join_date: new Date().toISOString(),
-                avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin'
-            },
-            {
-                id: '2',
-                email: 'member@vibe.com',
-                username: 'member1',
-                name: 'John Doe',
-                role: 'member',
-                status: 'active',
-                join_date: new Date().toISOString(),
-                avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=member1'
-            }
-        ]);
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.EVENTS)) {
-        saveToStorage(STORAGE_KEYS.EVENTS, [
-            {
-                id: '1',
-                title: 'Summer Car Meet',
-                description: 'Annual car meet at the beach',
-                date: new Date(Date.now() + 86400000 * 7).toISOString(),
-                location: 'Beach Parking',
-                event_type: 'meetup'
-            }
-        ]);
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.EVENT_ATTENDEES)) {
-        saveToStorage(STORAGE_KEYS.EVENT_ATTENDEES, []);
-    }
-};
-
-initializeStorage();
+import { storage } from '../firebase/config';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 export const storageService = {
-    // Auth
-    getAuthUser: () => getFromStorage(STORAGE_KEYS.AUTH_USER, null),
-    setAuthUser: (user) => saveToStorage(STORAGE_KEYS.AUTH_USER, user),
-    clearAuthUser: () => localStorage.removeItem(STORAGE_KEYS.AUTH_USER),
+    /**
+     * Uploads an avatar image for a specific user
+     * @param {string} userId - ID of the user
+     * @param {File} file - Image file to upload
+     * @returns {Promise<string>} - Download URL of the uploaded image
+     */
+    uploadAvatar: async (userId, file) => {
+        if (!file) throw new Error('No file provided');
 
-    // Members
-    getMembers: () => getFromStorage(STORAGE_KEYS.MEMBERS),
-    saveMembers: (members) => saveToStorage(STORAGE_KEYS.MEMBERS, members),
-
-    // Events
-    getEvents: () => getFromStorage(STORAGE_KEYS.EVENTS),
-    saveEvents: (events) => saveToStorage(STORAGE_KEYS.EVENTS, events),
-
-    // Attendees
-    getAttendees: () => getFromStorage(STORAGE_KEYS.EVENT_ATTENDEES),
-    saveAttendees: (attendees) => saveToStorage(STORAGE_KEYS.EVENT_ATTENDEES, attendees),
-
-    getItems: (key) => getFromStorage(key),
-
-    // Generic CRUD helpers
-    addItem: (key, item) => {
-        const items = getFromStorage(key);
-        const newItem = { ...item, id: item.id || crypto.randomUUID() };
-        items.push(newItem);
-        saveToStorage(key, items);
-        return newItem;
-    },
-    updateItem: (key, id, updates) => {
-        const items = getFromStorage(key);
-        const index = items.findIndex(i => i.id === id);
-        if (index !== -1) {
-            items[index] = { ...items[index], ...updates };
-            saveToStorage(key, items);
-            return items[index];
+        // Check file type
+        if (!file.type.startsWith('image/')) {
+            throw new Error('Only image files are allowed');
         }
-        return null;
-    },
-    deleteItem: (key, id) => {
-        const items = getFromStorage(key);
-        const filtered = items.filter(i => i.id !== id);
-        saveToStorage(key, filtered);
+
+        // Check file size (max 2MB)
+        const maxSize = 2 * 1024 * 1024;
+        if (file.size > maxSize) {
+            throw new Error('File size should be less than 2MB');
+        }
+
+        const storageRef = ref(storage, `avatars/${userId}/${Date.now()}_${file.name}`);
+
+        try {
+            const snapshot = await uploadBytes(storageRef, file);
+            const downloadURL = await getDownloadURL(snapshot.ref);
+            return downloadURL;
+        } catch (error) {
+            console.error('Error uploading avatar:', error);
+            throw new Error('Failed to upload image. Please try again.');
+        }
     }
 };

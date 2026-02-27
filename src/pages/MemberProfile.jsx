@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { authService } from '../services/authService';
 import { mockService } from '../services/mockData';
+import { storageService } from '../services/storageService';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { formatDate } from '../utils/dateUtils';
+import { FaCamera, FaSpinner, FaLock, FaUserEdit } from 'react-icons/fa';
 
 const MemberProfile = () => {
     const { id } = useParams();
@@ -33,6 +35,11 @@ const MemberProfile = () => {
     const [passwordError, setPasswordError] = useState('');
     const [passwordSuccess, setPasswordSuccess] = useState('');
     const [isSavingPassword, setIsSavingPassword] = useState(false);
+
+    // Avatar Upload State
+    const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+    const [uploadError, setUploadError] = useState('');
+    const [uploadSuccess, setUploadSuccess] = useState('');
 
     useEffect(() => {
         if (loading) return;
@@ -166,6 +173,43 @@ const MemberProfile = () => {
         }
     };
 
+    const handleAvatarUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setUploadError('');
+        setUploadSuccess('');
+        setIsUploadingAvatar(true);
+
+        try {
+            const downloadURL = await storageService.uploadAvatar(member.id, file);
+
+            // Update profile with new avatar URL
+            const updated = await mockService.updateMember(member.id, {
+                ...member,
+                avatar: downloadURL
+            });
+
+            setMember(updated);
+            setEditData(prev => ({ ...prev, avatar: downloadURL }));
+            setUploadSuccess(t('profile.uploadSuccess'));
+
+            // Log operation
+            await mockService.createLog({
+                userId: user.id || user.uid,
+                userName: user.name || user.displayName || user.email,
+                description: `Updated profile picture for ${member.name}`
+            });
+
+            setTimeout(() => setUploadSuccess(''), 3000);
+        } catch (err) {
+            setUploadError(err.message);
+            setTimeout(() => setUploadError(''), 5000);
+        } finally {
+            setIsUploadingAvatar(false);
+        }
+    };
+
     if (!member) return <div className="container">Loading...</div>;
 
     const isOwnProfile = user && user.id === member.id;
@@ -177,7 +221,34 @@ const MemberProfile = () => {
         <div className="container profile-page">
             {!isEditing ? (
                 <div className="profile-header card">
-                    <img src={member.avatar} alt={member.name} className="profile-avatar-lg" />
+                    <div className="avatar-container">
+                        <img src={member.avatar} alt={member.name} className="profile-avatar-lg" />
+
+                        {isOwnProfile && (
+                            <div className="avatar-actions">
+                                <label className="upload-avatar-btn" title={t('profile.uploadAvatar')}>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleAvatarUpload}
+                                        style={{ display: 'none' }}
+                                        disabled={isUploadingAvatar}
+                                    />
+                                    {isUploadingAvatar ? <FaSpinner className="spinner" /> : <FaCamera />}
+                                </label>
+                            </div>
+                        )}
+
+                        {isUploadingAvatar && (
+                            <div className="upload-loader-overlay">
+                                <FaSpinner className="spinner-large" />
+                                <span>{t('profile.uploading')}</span>
+                            </div>
+                        )}
+
+                        {uploadSuccess && <div className="avatar-success-toast">{uploadSuccess}</div>}
+                        {uploadError && <div className="avatar-error-toast">{uploadError}</div>}
+                    </div>
                     <div className="profile-info">
                         <div className="profile-title-row">
                             <h1 className="profile-name">
@@ -187,10 +258,14 @@ const MemberProfile = () => {
                             <p className="profile-username">@{member.username}</p>
                             <div className="profile-actions">
                                 {isOwnProfile && (
-                                    <button className="btn-text" onClick={() => setIsChangingPassword(true)}>{t('profile.changePassword')}</button>
+                                    <button className="btn-text" onClick={() => setIsChangingPassword(true)}>
+                                        <FaLock /> {t('profile.changePassword')}
+                                    </button>
                                 )}
                                 {canEdit && (
-                                    <button className="btn-text" onClick={() => setIsEditing(true)}>{t('profile.editProfile')}</button>
+                                    <button className="btn-text" onClick={() => setIsEditing(true)}>
+                                        <FaUserEdit /> {t('profile.editProfile')}
+                                    </button>
                                 )}
                                 {isAdmin && (
                                     <button
@@ -244,15 +319,7 @@ const MemberProfile = () => {
                                 type="email"
                             />
                         </div>
-                        <div className="form-group full-width">
-                            <label>{t('profile.iconUrl')}</label>
-                            <input
-                                className="input-field"
-                                value={editData.avatar}
-                                onChange={e => setEditData({ ...editData, avatar: e.target.value })}
-                                placeholder="http://..."
-                            />
-                        </div>
+
                         <div className="form-group">
                             <label>{t('profile.dateBirth')}</label>
                             <input
@@ -380,13 +447,111 @@ const MemberProfile = () => {
                 flex-direction: column;
                 gap: 1.5rem;
             }
-            .profile-avatar-lg {
-                width: 120px;
-                height: 120px;
                 border-radius: 50%;
                 border: 4px solid var(--accent);
                 object-fit: cover;
+                transition: transform 0.3s ease;
+                background: var(--glass-bg);
             }
+            .avatar-container {
+                position: relative;
+                width: 140px;
+                height: 140px;
+            }
+            .profile-avatar-lg {
+                width: 140px;
+                height: 140px;
+            }
+            
+            .avatar-actions {
+                position: absolute;
+                bottom: 5px;
+                right: 5px;
+                z-index: 5;
+            }
+            
+            .upload-avatar-btn {
+                background: var(--accent);
+                color: white;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                transition: all 0.2s ease;
+                border: 2px solid var(--card-bg);
+            }
+            
+            .upload-avatar-btn:hover {
+                transform: scale(1.1);
+                background: var(--primary);
+            }
+            
+            .upload-loader-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.6);
+                border-radius: 50%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 0.75rem;
+                z-index: 4;
+            }
+            
+            .spinner {
+                animation: spin 1s linear infinite;
+            }
+            
+            .spinner-large {
+                font-size: 1.5rem;
+                margin-bottom: 5px;
+                animation: spin 1s linear infinite;
+            }
+            
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            
+            .avatar-success-toast {
+                position: absolute;
+                top: -20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--success);
+                color: white;
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                white-space: nowrap;
+                z-index: 10;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            }
+            
+            .avatar-error-toast {
+                position: absolute;
+                top: -20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--danger);
+                color: white;
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                white-space: nowrap;
+                z-index: 10;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            }
+
             .profile-info {
                 flex: 1;
             }
