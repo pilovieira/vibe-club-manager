@@ -1,15 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useSettings } from '../context/SettingsContext';
 import { useState } from 'react';
-// import styles from './Navbar.module.css';
-
-// We'll use inline styles or a simple CSS file for now to speed up, 
-// ensuring we use the variables defined in index.css
 
 const Navbar = () => {
   const { user, login, logout, isAdmin } = useAuth();
   const { language, setLanguage, t } = useLanguage();
+  const { settings } = useSettings();
   const navigate = useNavigate();
   const [showLangMenu, setShowLangMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -50,8 +48,8 @@ const Navbar = () => {
     <nav className={`navbar ${showMobileMenu ? 'mobile-menu-open' : ''}`}>
       <div className="container nav-container">
         <Link to="/" className="nav-logo" onClick={handleNavClick}>
-          <img src="/logo.jpg" alt={t('nav.logo')} className="logo-img" />
-          <span className="logo-text desktop-only">{t('nav.logo')}</span>
+          <img src="/logo.jpg" alt={settings.app_title} className="logo-img" />
+          <span className="logo-text desktop-only">{settings.app_title}</span>
         </Link>
 
         {/* Hamburger Menu Icon */}

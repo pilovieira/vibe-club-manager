@@ -179,6 +179,8 @@ export const translations = {
         'settings.monthlyContributionDesc': 'Standard amount charged to members each month.',
         'settings.appTheme': 'App Theme',
         'settings.appThemeDesc': 'Choose the visual style for the entire application.',
+        'settings.appTitle': 'App Title',
+        'settings.appTitleDesc': 'The name displayed in the navbar and various parts of the application.',
 
         // Footer
         'footer.rights': 'All rights reserved.',
@@ -468,5 +470,7 @@ export const translations = {
         'settings.monthlyContributionDesc': 'Valor padrão cobrado dos membros todos os meses.',
         'settings.appTheme': 'Tema do Aplicativo',
         'settings.appThemeDesc': 'Escolha o estilo visual de todo o aplicativo.',
+        'settings.appTitle': 'Título do App',
+        'settings.appTitleDesc': 'O nome exibido na barra de navegação e em várias partes do aplicativo.',
     }
 };

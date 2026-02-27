@@ -4,11 +4,13 @@ import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { useSettings } from '../context/SettingsContext';
 
 const AdminProperties = () => {
     const { t } = useLanguage();
     const { user, isAdmin, loading: authLoading } = useAuth();
     const { applyTheme } = useTheme();
+    const { updateSetting } = useSettings();
     const navigate = useNavigate();
     const [properties, setProperties] = useState({});
     const [loading, setLoading] = useState(true);
@@ -28,6 +30,9 @@ const AdminProperties = () => {
                 // Ensure default values if not present in Firestore
                 if (!props.monthly_contribution_value) {
                     props.monthly_contribution_value = 50;
+                }
+                if (!props.app_title) {
+                    props.app_title = 'Offroad Maringá';
                 }
                 setProperties(props);
             } catch (err) {
@@ -51,6 +56,7 @@ const AdminProperties = () => {
             const oldValue = properties[key];
             await mockService.updateProperty(key, value);
             setProperties(prev => ({ ...prev, [key]: value }));
+            updateSetting(key, value);
             if (key === 'app_theme') {
                 applyTheme(value);
             }
@@ -85,6 +91,31 @@ const AdminProperties = () => {
 
             <div className="card settings-card">
                 <div className="settings-list">
+                    <div className="setting-item">
+                        <div className="setting-info">
+                            <h3>{t('settings.appTitle') || 'App Title'}</h3>
+                            <p>{t('settings.appTitleDesc') || 'The name displayed in the navbar and various parts of the application.'}</p>
+                        </div>
+                        <div className="setting-action">
+                            <div className="input-group">
+                                <input
+                                    type="text"
+                                    className="input-field"
+                                    value={properties.app_title || ''}
+                                    onChange={(e) => setProperties({ ...properties, app_title: e.target.value })}
+                                    style={{ width: '250px', textAlign: 'left' }}
+                                />
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={() => handleUpdate('app_title', properties.app_title)}
+                                    disabled={saving}
+                                >
+                                    {saving ? t('common.saving') : t('common.save')}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="setting-item">
                         <div className="setting-info">
                             <h3>{t('settings.monthlyContribution') || 'Monthly Contribution Value'}</h3>

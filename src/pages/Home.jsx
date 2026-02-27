@@ -1,14 +1,21 @@
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { useSettings } from '../context/SettingsContext';
 
 const Home = () => {
   const { t } = useLanguage();
+  const { settings } = useSettings();
+
+  const titleParts = settings.app_title.split(' ');
+  const firstPart = titleParts[0];
+  const secondPart = titleParts.slice(1).join(' ');
+
   return (
     <div className="home-page">
       <section className="hero">
         <div className="container hero-content">
           <img src="/logo.jpg" alt="Logo" className="hero-logo" />
-          <h1 className="hero-title">{t('home.title')} <span className="text-gradient">{t('home.titleHighlight')}</span>.</h1>
+          <h1 className="hero-title">{firstPart} <span className="text-gradient">{secondPart}</span>.</h1>
           <p className="hero-subtitle">
             {t('home.subtitle')}
           </p>

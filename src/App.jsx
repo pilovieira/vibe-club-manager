@@ -18,7 +18,16 @@ import Contact from './pages/Contact';
 import Login from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 
+import { useSettings } from './context/SettingsContext';
+import { useEffect } from 'react';
+
 function App() {
+  const { settings } = useSettings();
+
+  useEffect(() => {
+    document.title = settings.app_title;
+  }, [settings.app_title]);
+
   return (
     <Router>
       <Routes>
