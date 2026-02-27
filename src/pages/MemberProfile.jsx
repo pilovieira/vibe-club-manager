@@ -6,7 +6,7 @@ import { storageService } from '../services/storageService';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { formatDate } from '../utils/dateUtils';
-import { FaCamera, FaSpinner, FaLock, FaUserEdit } from 'react-icons/fa';
+import { FaCamera, FaSpinner, FaLock, FaUserEdit, FaEnvelope, FaUser, FaCalendarAlt, FaVenusMars, FaIdCard } from 'react-icons/fa';
 
 const MemberProfile = () => {
     const { id } = useParams();
@@ -220,70 +220,109 @@ const MemberProfile = () => {
     return (
         <div className="container profile-page">
             {!isEditing ? (
-                <div className="profile-header card">
-                    <div className="avatar-container">
-                        <img src={member.avatar} alt={member.name} className="profile-avatar-lg" />
+                <div className="profile-card card animate-fade-in">
+                    <div className="profile-content-top">
+                        <div className="avatar-section">
+                            <div className="avatar-container">
+                                <img src={member.avatar} alt={member.name} className="profile-avatar-lg" />
 
-                        {isOwnProfile && (
-                            <div className="avatar-actions">
-                                <label className="upload-avatar-btn" title={t('profile.uploadAvatar')}>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleAvatarUpload}
-                                        style={{ display: 'none' }}
-                                        disabled={isUploadingAvatar}
-                                    />
-                                    {isUploadingAvatar ? <FaSpinner className="spinner" /> : <FaCamera />}
-                                </label>
-                            </div>
-                        )}
-
-                        {isUploadingAvatar && (
-                            <div className="upload-loader-overlay">
-                                <FaSpinner className="spinner-large" />
-                                <span>{t('profile.uploading')}</span>
-                            </div>
-                        )}
-
-                        {uploadSuccess && <div className="avatar-success-toast">{uploadSuccess}</div>}
-                        {uploadError && <div className="avatar-error-toast">{uploadError}</div>}
-                    </div>
-                    <div className="profile-info">
-                        <div className="profile-title-row">
-                            <h1 className="profile-name">
-                                {member.name}
-                                <span className={`status-badge ${member.status}`}>{member.status}</span>
-                            </h1>
-                            <p className="profile-username">@{member.username}</p>
-                            <div className="profile-actions">
                                 {isOwnProfile && (
-                                    <button className="btn-text" onClick={() => setIsChangingPassword(true)}>
-                                        <FaLock /> {t('profile.changePassword')}
-                                    </button>
+                                    <div className="avatar-actions">
+                                        <label className="upload-avatar-btn-large" title={t('profile.uploadAvatar')}>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleAvatarUpload}
+                                                style={{ display: 'none' }}
+                                                disabled={isUploadingAvatar}
+                                            />
+                                            {isUploadingAvatar ? <FaSpinner className="spinner" /> : <FaCamera />}
+                                            <span className="btn-label">{t('profile.changeAvatar')}</span>
+                                        </label>
+                                    </div>
                                 )}
-                                {canEdit && (
-                                    <button className="btn-text" onClick={() => setIsEditing(true)}>
-                                        <FaUserEdit /> {t('profile.editProfile')}
-                                    </button>
+
+                                {isUploadingAvatar && (
+                                    <div className="upload-loader-overlay">
+                                        <FaSpinner className="spinner-large" />
+                                        <span>{t('profile.uploading')}</span>
+                                    </div>
                                 )}
-                                {isAdmin && (
-                                    <button
-                                        className={`btn-sm ${member.status === 'active' ? 'btn-danger-light' : 'btn-success-light'}`}
-                                        onClick={handleToggleStatus}
-                                    >
-                                        {member.status === 'active' ? t('profile.setInactive') : t('profile.setActive')}
-                                    </button>
-                                )}
+
+                                {uploadSuccess && <div className="avatar-success-toast">{uploadSuccess}</div>}
+                                {uploadError && <div className="avatar-error-toast">{uploadError}</div>}
+                            </div>
+                            <div className="profile-status-section">
+                                <span className={`status-badge-premium ${member.status}`}>
+                                    <span className="status-dot-inner"></span>
+                                    {member.status}
+                                </span>
                             </div>
                         </div>
-                        <p className="profile-meta">{member.email} • {memberRole}</p>
-                        <p className="profile-joined">{t('profile.memberSince')} {new Date(member.joinDate).getFullYear()}</p>
-                        <div className="profile-meta-row">
-                            {member.dateBirth && <p className="profile-meta">🎂 {formatDate(member.dateBirth, language)}</p>}
-                            <p className="profile-meta">👤 {member.gender === 'female' ? t('gender.female') : t('gender.male')}</p>
+
+                        <div className="profile-details-section">
+                            <div className="profile-title-group">
+                                <h1 className="profile-name-lg">{member.name}</h1>
+                                <p className="profile-username-tag">@{member.username}</p>
+                            </div>
+
+                            <ul className="profile-info-list">
+                                <li>
+                                    <span className="info-icon"><FaEnvelope /></span>
+                                    <span className="info-label">{t('profile.email')}:</span>
+                                    <span className="info-value">{member.email}</span>
+                                </li>
+                                <li>
+                                    <span className="info-icon"><FaIdCard /></span>
+                                    <span className="info-label">{t('member.role')}:</span>
+                                    <span className="info-value role-badge">{memberRole}</span>
+                                </li>
+                                <li>
+                                    <span className="info-icon"><FaCalendarAlt /></span>
+                                    <span className="info-label">{t('profile.memberSince')}:</span>
+                                    <span className="info-value">{new Date(member.joinDate).getFullYear()}</span>
+                                </li>
+                                <li>
+                                    <span className="info-icon"><FaVenusMars /></span>
+                                    <span className="info-label">{t('gender.label')}:</span>
+                                    <span className="info-value">{member.gender === 'female' ? t('gender.female') : t('gender.male')}</span>
+                                </li>
+                                {member.dateBirth && (
+                                    <li>
+                                        <span className="info-icon"><FaCalendarAlt /></span>
+                                        <span className="info-label">{t('profile.dateBirth')}:</span>
+                                        <span className="info-value">{formatDate(member.dateBirth, language)}</span>
+                                    </li>
+                                )}
+                            </ul>
+
+                            {member.description && (
+                                <div className="profile-bio-box">
+                                    <p className="bio-text">{member.description}</p>
+                                </div>
+                            )}
                         </div>
-                        {member.description && <p className="profile-bio">{member.description}</p>}
+                    </div>
+
+                    <div className="profile-footer-actions">
+                        {isOwnProfile && (
+                            <button className="btn-premium btn-password" onClick={() => setIsChangingPassword(true)}>
+                                <FaLock /> {t('profile.changePassword')}
+                            </button>
+                        )}
+                        {canEdit && (
+                            <button className="btn-premium btn-edit" onClick={() => setIsEditing(true)}>
+                                <FaUserEdit /> {t('profile.editProfile')}
+                            </button>
+                        )}
+                        {isAdmin && (
+                            <button
+                                className={`btn-premium ${member.status === 'active' ? 'btn-deactivate' : 'btn-activate'}`}
+                                onClick={handleToggleStatus}
+                            >
+                                {member.status === 'active' ? t('profile.setInactive') : t('profile.setActive')}
+                            </button>
+                        )}
                     </div>
                 </div>
             ) : (
@@ -434,60 +473,250 @@ const MemberProfile = () => {
 
             <style>{`
             .profile-page {
-                max-width: 800px;
+                max-width: 900px;
+                margin: 0 auto;
+                padding-top: 2rem;
             }
-            .profile-header {
-                display: flex;
-                align-items: flex-start;
-                gap: 2rem;
-                margin-bottom: 3rem;
+            .profile-card {
+                background: var(--card-bg);
+                border-radius: 1.5rem;
+                border: 1px solid var(--glass-border);
+                overflow: hidden;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
                 position: relative;
             }
-            .profile-header.edit-mode {
+            
+            .profile-content-top {
+                display: flex;
+                padding: 3rem;
+                gap: 3rem;
+            }
+            
+            .avatar-section {
+                display: flex;
                 flex-direction: column;
+                align-items: center;
                 gap: 1.5rem;
             }
-                border-radius: 50%;
-                border: 4px solid var(--accent);
-                object-fit: cover;
-                transition: transform 0.3s ease;
-                background: var(--glass-bg);
-            }
+            
             .avatar-container {
                 position: relative;
-                width: 140px;
-                height: 140px;
+                width: 180px;
+                height: 180px;
             }
+            
             .profile-avatar-lg {
-                width: 140px;
-                height: 140px;
+                width: 180px;
+                height: 180px;
+                border-radius: 50%;
+                border: 6px solid var(--accent);
+                object-fit: cover;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+                background: var(--glass-bg);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
             
             .avatar-actions {
                 position: absolute;
-                bottom: 5px;
-                right: 5px;
+                bottom: -15px;
+                left: 50%;
+                transform: translateX(-50%);
                 z-index: 5;
+                width: 100%;
+                display: flex;
+                justify-content: center;
             }
             
-            .upload-avatar-btn {
+            .upload-avatar-btn-large {
                 background: var(--accent);
                 color: white;
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
+                padding: 0.6rem 1rem;
+                border-radius: 2rem;
                 display: flex;
                 align-items: center;
-                justify-content: center;
+                gap: 0.5rem;
                 cursor: pointer;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
                 transition: all 0.2s ease;
                 border: 2px solid var(--card-bg);
+                font-size: 0.85rem;
+                font-weight: 600;
+                white-space: nowrap;
             }
             
-            .upload-avatar-btn:hover {
-                transform: scale(1.1);
+            .upload-avatar-btn-large:hover {
+                transform: translateY(-2px);
                 background: var(--primary);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            }
+            
+            .btn-label {
+                margin-left: 2px;
+            }
+            
+            .status-badge-premium {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.4rem 1rem;
+                border-radius: 2rem;
+                font-size: 0.85rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+            
+            .status-badge-premium.active {
+                background: rgba(16, 185, 129, 0.15);
+                color: #22c55e;
+                border: 1px solid rgba(16, 185, 129, 0.3);
+            }
+            
+            .status-badge-premium.inactive {
+                background: rgba(239, 68, 68, 0.15);
+                color: #ef4444;
+                border: 1px solid rgba(239, 68, 68, 0.3);
+            }
+            
+            .status-dot-inner {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: currentColor;
+                box-shadow: 0 0 8px currentColor;
+            }
+            
+            .profile-details-section {
+                flex: 1;
+            }
+            
+            .profile-title-group {
+                margin-bottom: 2rem;
+            }
+            
+            .profile-name-lg {
+                font-size: 2.75rem;
+                font-weight: 800;
+                color: var(--text-primary);
+                margin: 0;
+                line-height: 1.1;
+                letter-spacing: -0.02em;
+            }
+            
+            .profile-username-tag {
+                font-size: 1.25rem;
+                color: var(--accent);
+                font-weight: 600;
+                margin-top: 0.5rem;
+            }
+            
+            .profile-info-list {
+                list-style: none;
+                padding: 0;
+                margin: 0 0 2rem 0;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1.25rem;
+            }
+            
+            .profile-info-list li {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                font-size: 1rem;
+            }
+            
+            .info-icon {
+                color: var(--accent);
+                width: 20px;
+                display: flex;
+                justify-content: center;
+                font-size: 1rem;
+            }
+            
+            .info-label {
+                color: var(--text-secondary);
+                font-weight: 500;
+                margin-right: 4px;
+            }
+            
+            .info-value {
+                color: var(--text-primary);
+                font-weight: 600;
+            }
+            
+            .role-badge {
+                text-transform: capitalize;
+                background: rgba(255, 255, 255, 0.05);
+                padding: 0.2rem 0.6rem;
+                border-radius: 0.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .profile-bio-box {
+                background: rgba(255, 255, 255, 0.03);
+                border-radius: 1rem;
+                padding: 1.5rem;
+                border: 1px solid var(--glass-border);
+            }
+            
+            .bio-text {
+                margin: 0;
+                color: var(--text-primary);
+                line-height: 1.6;
+                font-style: italic;
+                font-size: 1.05rem;
+            }
+            
+            .profile-footer-actions {
+                display: flex;
+                justify-content: center;
+                gap: 1.5rem;
+                padding: 2rem 3rem;
+                background: rgba(0, 0, 0, 0.2);
+                border-top: 1px solid var(--glass-border);
+            }
+            
+            .btn-premium {
+                padding: 0.75rem 1.75rem;
+                border-radius: 1rem;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                gap: 0.6rem;
+                cursor: pointer;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                font-size: 0.95rem;
+                border: 1px solid transparent;
+            }
+            
+            .btn-password {
+                background: rgba(255, 255, 255, 0.05);
+                color: var(--text-primary);
+                border-color: var(--glass-border);
+            }
+            
+            .btn-edit {
+                background: var(--primary);
+                color: white;
+            }
+            
+            .btn-deactivate {
+                background: rgba(239, 68, 68, 0.1);
+                color: #ef4444;
+                border-color: rgba(239, 68, 68, 0.2);
+            }
+            
+            .btn-activate {
+                background: rgba(16, 185, 129, 0.1);
+                color: #22c55e;
+                border-color: rgba(16, 185, 129, 0.2);
+            }
+            
+            .btn-premium:hover {
+                transform: translateY(-3px);
+                filter: brightness(1.2);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
             }
             
             .upload-loader-overlay {
@@ -503,160 +732,49 @@ const MemberProfile = () => {
                 align-items: center;
                 justify-content: center;
                 color: white;
-                font-size: 0.75rem;
-                z-index: 4;
+                font-size: 0.9rem;
+                z-index: 10;
+                backdrop-filter: blur(2px);
             }
             
-            .spinner {
-                animation: spin 1s linear infinite;
+            .animate-fade-in {
+                animation: fadeIn 0.5s ease-out forwards;
             }
             
-            .spinner-large {
-                font-size: 1.5rem;
-                margin-bottom: 5px;
-                animation: spin 1s linear infinite;
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
             }
             
             @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
             }
             
-            .avatar-success-toast {
-                position: absolute;
-                top: -20px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: var(--success);
-                color: white;
-                padding: 4px 12px;
-                border-radius: 20px;
-                font-size: 0.75rem;
-                white-space: nowrap;
-                z-index: 10;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            }
+            .spinner { animation: spin 1s linear infinite; }
+            .spinner-large { animation: spin 1s linear infinite; font-size: 2rem; margin-bottom: 0.5rem; }
             
-            .avatar-error-toast {
-                position: absolute;
-                top: -20px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: var(--danger);
-                color: white;
-                padding: 4px 12px;
-                border-radius: 20px;
-                font-size: 0.75rem;
-                white-space: nowrap;
-                z-index: 10;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            }
-
-            .profile-info {
-                flex: 1;
-            }
-            .profile-name {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin: 0;
-            font-size: 2.25rem;
-        }
-        .profile-username {
-            color: var(--accent);
-            font-weight: 600;
-            margin: 0.25rem 0 0.75rem 0;
-            font-size: 1.1rem;
-        }
-        .profile-badges {
-                font-size: 2rem;
-                margin: 0;
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-            }
-            .status-badge {
-                font-size: 0.8rem;
-                padding: 0.2rem 0.6rem;
-                border-radius: 9999px;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-                font-weight: 700;
-            }
-            .status-badge.active {
-                background: rgba(16, 185, 129, 0.2);
-                color: var(--success);
-                border: 1px solid rgba(16, 185, 129, 0.3);
-            }
-            .status-badge.inactive {
-                background: rgba(239, 68, 68, 0.2);
-                color: var(--danger);
-                border: 1px solid rgba(239, 68, 68, 0.3);
-            }
-            .profile-meta {
-                color: var(--text-secondary);
-                text-transform: capitalize;
-                margin-bottom: 0.25rem;
-            }
-            .profile-joined {
-                color: var(--text-secondary);
-                font-size: 0.85rem;
-                margin-bottom: 1rem;
-            }
-            .profile-bio {
-                margin-top: 1rem;
-                padding-top: 1rem;
-                border-top: 1px solid var(--glass-border);
-                font-style: italic;
-                color: var(--text-primary);
-            }
-            .profile-meta-row {
-                display: flex;
-                gap: 1.5rem;
-                margin-bottom: 0.5rem;
-            }
-            
-            .edit-form-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 1rem;
-                width: 100%;
-            }
-            .form-group {
-                display: flex;
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-            .form-group.full-width {
-                grid-column: span 2;
-            }
-            .profile-actions {
-                display: flex;
-                gap: 1rem;
-                align-items: center;
-            }
-            .btn-sm {
-                padding: 0.25rem 0.5rem;
-                font-size: 0.75rem;
-                border-radius: 0.25rem;
-                cursor: pointer;
-                border: 1px solid transparent;
-            }
-            .btn-danger-light {
-                background: rgba(239, 68, 68, 0.1);
-                color: var(--danger);
-                border-color: rgba(239, 68, 68, 0.2);
-            }
-            .btn-danger-light:hover {
-                background: rgba(239, 68, 68, 0.2);
-            }
-            .btn-success-light {
-                background: rgba(16, 185, 129, 0.1);
-                color: var(--success);
-                border-color: rgba(16, 185, 129, 0.2);
-            }
-            .btn-success-light:hover {
-                background: rgba(16, 185, 129, 0.2);
+            @media (max-width: 768px) {
+                .profile-content-top {
+                    flex-direction: column;
+                    align-items: center;
+                    padding: 2rem;
+                    text-align: center;
+                }
+                .profile-info-list {
+                    grid-template-columns: 1fr;
+                }
+                .profile-footer-actions {
+                    flex-direction: column;
+                    padding: 1.5rem;
+                }
+                .btn-premium {
+                    width: 100%;
+                    justify-content: center;
+                }
+                .profile-info-list li {
+                    justify-content: center;
+                }
             }
 
             /* Modal Styles */

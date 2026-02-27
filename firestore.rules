@@ -1,0 +1,81 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+  
+  	function isAuth() {
+    	return request.auth != null;
+    }
+    
+    // Helper function to check if the user is an admin
+    function isAdmin() {
+      return isAuth() && 
+             get(/databases/$(database)/documents/members/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    match /members/{memberId} {
+      allow read: if isAuth();
+      
+     // Create Rule:
+      allow create: if isAuth() && (
+        // 1. Admins can create any user with any role
+        isAdmin() || 
+        (
+          // 2. A user can create their own profile...
+          request.auth.uid == memberId && 
+          // ...BUT only if they assign themselves the 'member' role
+          request.resource.data.role == 'member'
+        )
+      );
+      
+      // Update Logic:
+      allow update: if isAuth() && (
+        // 1. Admins can update anything
+        isAdmin() || 
+        (
+          // 2. Normal users can update their own profile...
+          request.auth.uid == memberId && 
+          // ...BUT only if they aren't changing the 'role' field
+          !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role'])
+        )
+      );
+    }
+    
+    // Properties / Settings
+    match /properties/{propertyId} {
+      // Allow any logged-in member to see settings (like contribution value)
+      allow read;
+      // Only admins can change club settings
+      allow write: if isAdmin();
+    }
+    
+    // Events & Core data
+    match /events/{eventId} {
+      allow read: if isAuth();
+      allow write: if isAdmin();
+    }
+    
+    match /event_attendees/{id} {
+      allow read: if isAuth();
+      allow create, delete: if isAuth() && (request.resource.data.member_id == request.auth.uid || isAdmin());
+    }
+    
+    match /contributions/{id} {
+      allow read: if isAuth() && (resource.data.member_id == request.auth.uid || isAdmin());
+      allow write: if isAdmin();
+    }
+    
+    match /expenses/{id} {
+      allow read, write: if isAdmin();
+    }
+    
+    // LogBook collection
+    match /logs/{logId} {
+      // Admins can read all logs
+      allow read: if isAdmin();
+      // Any authenticated user can create a log (e.g., when joining/leaving events)
+      allow create: if isAuth();
+      // Logs should be immutable
+      allow update, delete: if false;
+    }
+  }
+}
