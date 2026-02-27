@@ -11,6 +11,7 @@ import AdminMemberContributions from './pages/AdminMemberContributions';
 import AdminMonthlySummary from './pages/AdminMonthlySummary';
 import AdminGlobalBalance from './pages/AdminGlobalBalance';
 import AdminProperties from './pages/AdminProperties';
+import AdminLogBook from './pages/AdminLogBook';
 import Events from './pages/Events';
 import AboutUs from './pages/AboutUs';
 import Contact from './pages/Contact';
@@ -39,6 +40,7 @@ function App() {
             <Route path="admin/summary" element={<AdminMonthlySummary />} />
             <Route path="admin/global-balance" element={<AdminGlobalBalance />} />
             <Route path="admin/properties" element={<AdminProperties />} />
+            <Route path="admin/logbook" element={<AdminLogBook />} />
           </Route>
 
 

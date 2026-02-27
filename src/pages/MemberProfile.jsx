@@ -70,6 +70,13 @@ const MemberProfile = () => {
 
                 setMember(updated);
                 setIsEditing(false);
+
+                // Log operation
+                await mockService.createLog({
+                    userId: user.id || user.uid,
+                    userName: user.name || user.displayName || user.email,
+                    description: `Updated profile for member: ${member.name} (@${member.username})`
+                });
             };
             fetchUpdate();
         } catch (err) {
@@ -95,6 +102,13 @@ const MemberProfile = () => {
                     const updated = await mockService.updateMemberStatus(member.id, newStatus);
                     setMember({ ...member, status: newStatus });
                     setEditData({ ...editData, status: newStatus });
+
+                    // Log operation
+                    await mockService.createLog({
+                        userId: user.id || user.uid,
+                        userName: user.name || user.displayName || user.email,
+                        description: `${newStatus === 'active' ? 'Activated' : 'Deactivated'} member: ${member.name}`
+                    });
                 } catch (err) {
                     console.error('Error updating status:', err);
                     alert(t(err.message) || err.message);

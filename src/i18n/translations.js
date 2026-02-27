@@ -95,6 +95,8 @@ export const translations = {
         'admin.manageMembersDesc': 'View member list and profile details.',
         'admin.createUser': 'Create User',
         'admin.createUserDesc': 'Register new members or administrators.',
+        'admin.logBook': 'Log Book',
+        'admin.logBookDesc': 'View a detailed history of all operations performed in the system.',
         'admin.properties': 'Settings',
         'admin.propertiesDesc': 'Manage club-wide properties and values.',
         'admin.accessDenied': 'Access Denied',
@@ -141,6 +143,10 @@ export const translations = {
         'balance.newExpense': 'New Expense',
         'balance.save': 'Save',
         'balance.cancel': 'Cancel',
+        'log.date': 'Date',
+        'log.user': 'User',
+        'log.description': 'Description',
+        'log.title': 'Operation Logs',
 
         // Settings Page
         'settings.monthlyContribution': 'Monthly Contribution Value',
@@ -310,6 +316,8 @@ export const translations = {
         'admin.manageMembersDesc': 'Visualize a lista de membros e detalhes do perfil.',
         'admin.createUser': 'Criar Usuário',
         'admin.createUserDesc': 'Cadastrar novos membros ou administradores.',
+        'admin.logBook': 'Livro de Registros',
+        'admin.logBookDesc': 'Visualize um histórico detalhado de todas as operações realizadas no sistema.',
         'admin.properties': 'Propriedades',
         'admin.propertiesDesc': 'Gerenciar propriedades e valores do clube.',
         'admin.accessDenied': 'Acesso Negado',
@@ -356,6 +364,10 @@ export const translations = {
         'balance.newExpense': 'Nova Despesa',
         'balance.save': 'Salvar',
         'balance.cancel': 'Cancelar',
+        'log.date': 'Data',
+        'log.user': 'Usuário',
+        'log.description': 'Descrição',
+        'log.title': 'Logs de Operação',
 
         // Footer
         'footer.rights': 'Todos os direitos reservados.',

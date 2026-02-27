@@ -5,7 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { FaTrash } from 'react-icons/fa';
 
 const AdminGlobalBalance = () => {
-    const { isAdmin, loading } = useAuth();
+    const { user, isAdmin, loading } = useAuth();
     const { t } = useLanguage();
     const [transactions, setTransactions] = useState([]);
     const [filteredTransactions, setFilteredTransactions] = useState([]);
@@ -77,6 +77,13 @@ const AdminGlobalBalance = () => {
 
                 setNewExpense({ description: '', amount: '', date: '' });
                 loadTransactions();
+
+                // Log operation
+                await mockService.createLog({
+                    userId: user.id || user.uid,
+                    userName: user.name || user.displayName || user.email,
+                    description: `Recorded expense: ${newExpense.description} of $${newExpense.amount}`
+                });
             } catch (err) {
                 console.error('Error adding expense:', err);
             }
@@ -94,6 +101,13 @@ const AdminGlobalBalance = () => {
                 await mockService.deleteExpense(item.id);
             }
             loadTransactions();
+
+            // Log operation
+            await mockService.createLog({
+                userId: user.id || user.uid,
+                userName: user.name || user.displayName || user.email,
+                description: `Deleted ${item.type}: ${item.type === 'income' ? 'Contribution from ' + item.memberName : item.description} of $${item.amount}`
+            });
         } catch (err) {
             console.error('Error deleting transaction:', err);
         }

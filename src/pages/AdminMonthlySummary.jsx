@@ -5,7 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { Link } from 'react-router-dom';
 
 const AdminMonthlySummary = () => {
-    const { isAdmin, loading } = useAuth();
+    const { user, isAdmin, loading } = useAuth();
     const { t } = useLanguage();
     const [members, setMembers] = useState([]);
     const [contributions, setContributions] = useState([]);
@@ -83,6 +83,13 @@ const AdminMonthlySummary = () => {
                                             await mockService.deleteContribution(contribution.id);
                                             const updatedContributions = await mockService.getAllContributions();
                                             setContributions(updatedContributions);
+
+                                            // Log operation
+                                            await mockService.createLog({
+                                                userId: user.id || user.uid,
+                                                userName: user.name || user.displayName || user.email,
+                                                description: `Unmarked ${member.name} as paid for ${monthName} ${displayYear}`
+                                            });
                                         } catch (err) {
                                             console.error('Error removing payment:', err);
                                         }
@@ -100,6 +107,13 @@ const AdminMonthlySummary = () => {
                                             });
                                             const updatedContributions = await mockService.getAllContributions();
                                             setContributions(updatedContributions);
+
+                                            // Log operation
+                                            await mockService.createLog({
+                                                userId: user.id || user.uid,
+                                                userName: user.name || user.displayName || user.email,
+                                                description: `Marked ${member.name} as paid for ${monthName} ${displayYear}`
+                                            });
                                         } catch (err) {
                                             console.error('Error adding payment:', err);
                                         }

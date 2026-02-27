@@ -250,6 +250,26 @@ export const mockService = {
         const docRef = doc(db, 'expenses', id);
         await deleteDoc(docRef);
         return { id };
+    },
+
+    // Logs
+    getLogs: async () => {
+        const q = query(collection(db, 'logs'), orderBy('timestamp', 'desc'));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+    },
+
+    createLog: async (log) => {
+        const logToInsert = {
+            ...log,
+            timestamp: new Date().toISOString(),
+            userId: log.userId,
+            userName: log.userName,
+            description: log.description
+        };
+        const docRef = await addDoc(collection(db, 'logs'), logToInsert);
+        const created = await getDoc(docRef);
+        return { ...created.data(), id: docRef.id };
     }
 };
 

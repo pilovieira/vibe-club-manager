@@ -50,6 +50,13 @@ const Events = () => {
                 setShowCreateForm(false);
                 setEditingEventId(null);
                 setNewEvent({ title: '', date: '', location: '', description: '', eventType: 'soft trail' });
+
+                // Log operation
+                await mockService.createLog({
+                    userId: user.id || user.uid,
+                    userName: user.name || user.displayName || user.email,
+                    description: `${editingEventId ? 'Updated' : 'Created'} event: ${newEvent.title}`
+                });
             } catch (err) {
                 console.error('Error creating/updating event:', err);
             }
@@ -92,6 +99,13 @@ const Events = () => {
                     if (confirm("Are you sure you want to leave this event?")) {
                         await mockService.leaveEvent(eventId, user.id);
                         await fetchEventsAndMembers(); // Refresh after action
+
+                        // Log operation
+                        await mockService.createLog({
+                            userId: user.id || user.uid,
+                            userName: user.name || user.displayName || user.email,
+                            description: `Left event: ${event.title}`
+                        });
                     }
                 } else {
                     // Join Event
@@ -101,6 +115,13 @@ const Events = () => {
                     }
                     await mockService.joinEvent(eventId, user.id);
                     await fetchEventsAndMembers(); // Refresh after action
+
+                    // Log operation
+                    await mockService.createLog({
+                        userId: user.id || user.uid,
+                        userName: user.name || user.displayName || user.email,
+                        description: `Joined event: ${event.title}`
+                    });
                 }
             } catch (err) {
                 console.error('Error toggling event attendance:', err);

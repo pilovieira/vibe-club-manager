@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
+import { mockService } from '../services/mockData';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 
 const AdminCreateMember = () => {
     const { t } = useLanguage();
+    const { user } = useAuth();
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -29,6 +32,13 @@ const AdminCreateMember = () => {
             setFormData({
                 email: '',
                 password: '',
+            });
+
+            // Log operation
+            await mockService.createLog({
+                userId: user.id || user.uid,
+                userName: user.name || user.displayName || user.email,
+                description: `Created new user: ${formData.email}`
             });
 
             // Optional: redirect after some time

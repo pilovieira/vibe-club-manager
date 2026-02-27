@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { FaTrash } from 'react-icons/fa';
 
 const AdminMemberContributions = () => {
-    const { isAdmin, loading } = useAuth();
+    const { user, isAdmin, loading } = useAuth();
     const { t } = useLanguage();
     const [members, setMembers] = useState([]);
     const [selectedMemberId, setSelectedMemberId] = useState('');
@@ -68,6 +68,13 @@ const AdminMemberContributions = () => {
                 setContributions([...contributions, added]);
                 setShowAddForm(false);
                 setNewContribution({ date: '', amount: monthlyContribution });
+
+                // Log operation
+                await mockService.createLog({
+                    userId: user.id || user.uid,
+                    userName: user.name || user.displayName || user.email,
+                    description: `Recorded contribution of $${added.amount} for member ${selectedMember.name} on date ${added.date}`
+                });
             } catch (err) {
                 console.error('Error adding contribution:', err);
             }
@@ -79,8 +86,16 @@ const AdminMemberContributions = () => {
         if (!window.confirm(t('contributions.confirmDelete'))) return;
 
         try {
+            const contributionToDelete = contributions.find(c => c.id === id);
             await mockService.deleteContribution(id);
             setContributions(contributions.filter(c => c.id !== id));
+
+            // Log operation
+            await mockService.createLog({
+                userId: user.id || user.uid,
+                userName: user.name || user.displayName || user.email,
+                description: `Removed contribution of $${contributionToDelete.amount} for member ${selectedMember.name} dated ${contributionToDelete.date}`
+            });
         } catch (err) {
             console.error('Error deleting contribution:', err);
         }

@@ -7,7 +7,7 @@ import { useTheme } from '../context/ThemeContext';
 
 const AdminProperties = () => {
     const { t } = useLanguage();
-    const { isAdmin, loading: authLoading } = useAuth();
+    const { user, isAdmin, loading: authLoading } = useAuth();
     const { applyTheme } = useTheme();
     const navigate = useNavigate();
     const [properties, setProperties] = useState({});
@@ -48,12 +48,20 @@ const AdminProperties = () => {
         setError('');
         setSuccess('');
         try {
+            const oldValue = properties[key];
             await mockService.updateProperty(key, value);
             setProperties(prev => ({ ...prev, [key]: value }));
             if (key === 'app_theme') {
                 applyTheme(value);
             }
             setSuccess(t('common.success') || 'Settings updated successfully!');
+
+            // Log operation
+            await mockService.createLog({
+                userId: user.id || user.uid,
+                userName: user.name || user.displayName || user.email,
+                description: `Changed property [${key}] from "${oldValue}" to "${value}"`
+            });
         } catch (err) {
             console.error('Error updating property:', err);
             setError('Failed to save setting');
