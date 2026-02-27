@@ -3,6 +3,7 @@ import { mockService } from '../services/mockData';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { Link } from 'react-router-dom';
+import { FaTrash } from 'react-icons/fa';
 
 const AdminMemberContributions = () => {
     const { isAdmin, loading } = useAuth();
@@ -72,6 +73,17 @@ const AdminMemberContributions = () => {
             }
         };
         addContributionAsync();
+    };
+
+    const handleDeleteContribution = async (id) => {
+        if (!window.confirm(t('contributions.confirmDelete'))) return;
+
+        try {
+            await mockService.deleteContribution(id);
+            setContributions(contributions.filter(c => c.id !== id));
+        } catch (err) {
+            console.error('Error deleting contribution:', err);
+        }
     };
 
     const selectedMember = members.find(m => m.id === selectedMemberId);
@@ -151,6 +163,7 @@ const AdminMemberContributions = () => {
                                         <th>{t('contributions.date')}</th>
                                         <th>{t('contributions.amount')}</th>
                                         <th>{t('monthly.status')}</th>
+                                        {isAdmin && <th>{t('contributions.actions')}</th>}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -159,6 +172,17 @@ const AdminMemberContributions = () => {
                                             <td>{new Date(c.date).toLocaleDateString()}</td>
                                             <td>${c.amount}</td>
                                             <td><span className="badge-paid">{t('monthly.paid')}</span></td>
+                                            {isAdmin && (
+                                                <td>
+                                                    <button
+                                                        className="btn-delete-icon"
+                                                        onClick={() => handleDeleteContribution(c.id)}
+                                                        title={t('common.delete')}
+                                                    >
+                                                        <FaTrash />
+                                                    </button>
+                                                </td>
+                                            )}
                                         </tr>
                                     ))}
                                 </tbody>
@@ -227,6 +251,22 @@ const AdminMemberContributions = () => {
         .add-form {
             margin-bottom: 2rem;
             border-color: var(--primary);
+        }
+        .btn-delete-icon {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .btn-delete-icon:hover {
+            background: rgba(239, 68, 68, 0.1);
+            transform: scale(1.1);
         }
       `}</style>
         </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { mockService } from '../services/mockData';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { FaTrash } from 'react-icons/fa';
 
 const AdminGlobalBalance = () => {
     const { isAdmin, loading } = useAuth();
@@ -83,6 +84,21 @@ const AdminGlobalBalance = () => {
         addExpenseAsync();
     };
 
+    const handleDeleteTransaction = async (item) => {
+        if (!window.confirm(t('contributions.confirmDelete'))) return;
+
+        try {
+            if (item.type === 'income') {
+                await mockService.deleteContribution(item.id);
+            } else {
+                await mockService.deleteExpense(item.id);
+            }
+            loadTransactions();
+        } catch (err) {
+            console.error('Error deleting transaction:', err);
+        }
+    };
+
 
     return (
         <div className="container global-balance-page">
@@ -125,6 +141,15 @@ const AdminGlobalBalance = () => {
                                 <span className="transaction-amount">
                                     {item.type === 'income' ? '+' : '-'}${Number(item.amount).toFixed(2)}
                                 </span>
+                                {isAdmin && (
+                                    <button
+                                        className="btn-delete-icon"
+                                        onClick={() => handleDeleteTransaction(item)}
+                                        title={t('common.delete')}
+                                    >
+                                        <FaTrash />
+                                    </button>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -326,8 +351,25 @@ const AdminGlobalBalance = () => {
                     background: var(--danger);
                     color: white;
                 }
+                .btn-delete-icon {
+                    background: none;
+                    border: none;
+                    color: var(--danger);
+                    cursor: pointer;
+                    padding: 0.5rem;
+                    margin-left: 1rem;
+                    border-radius: 0.25rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.2s;
+                }
+                .btn-delete-icon:hover {
+                    background: rgba(239, 68, 68, 0.1);
+                    transform: scale(1.1);
+                }
             `}</style>
-        </div>
+        </div >
     );
 };
 

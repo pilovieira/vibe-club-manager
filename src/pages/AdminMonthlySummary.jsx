@@ -74,32 +74,47 @@ const AdminMonthlySummary = () => {
                         const isPaid = !!contribution;
 
                         const handleTogglePayment = () => {
-                            if (!isAdmin) return; // Must be administrator to edit
-                            if (isPaid) return;
-                            if (confirm(`Mark ${member.name} as PAID for ${monthName}?`)) {
-                                const addPaymentAsync = async () => {
-                                    try {
-                                        await mockService.addContribution({
-                                            member_id: member.id,
-                                            date: `${selectedDate}-01`,
-                                            amount: monthlyContribution
-                                        });
-                                        const updatedContributions = await mockService.getAllContributions();
-                                        setContributions(updatedContributions);
-                                    } catch (err) {
-                                        console.error('Error adding payment:', err);
-                                    }
-                                };
-                                addPaymentAsync();
+                            if (!isAdmin) return;
+
+                            if (isPaid) {
+                                if (window.confirm(t('contributions.confirmDelete'))) {
+                                    const removePaymentAsync = async () => {
+                                        try {
+                                            await mockService.deleteContribution(contribution.id);
+                                            const updatedContributions = await mockService.getAllContributions();
+                                            setContributions(updatedContributions);
+                                        } catch (err) {
+                                            console.error('Error removing payment:', err);
+                                        }
+                                    };
+                                    removePaymentAsync();
+                                }
+                            } else {
+                                if (window.confirm(`Mark ${member.name} as PAID for ${monthName}?`)) {
+                                    const addPaymentAsync = async () => {
+                                        try {
+                                            await mockService.addContribution({
+                                                member_id: member.id,
+                                                date: `${selectedDate}-01`,
+                                                amount: monthlyContribution
+                                            });
+                                            const updatedContributions = await mockService.getAllContributions();
+                                            setContributions(updatedContributions);
+                                        } catch (err) {
+                                            console.error('Error adding payment:', err);
+                                        }
+                                    };
+                                    addPaymentAsync();
+                                }
                             }
                         };
 
                         return (
                             <div
                                 key={member.id}
-                                className={`status-card ${isPaid ? 'paid' : 'unpaid'} ${!isPaid ? 'clickable' : ''}`}
+                                className={`status-card ${isPaid ? 'paid' : 'unpaid'} ${isAdmin ? 'clickable' : ''}`}
                                 onClick={handleTogglePayment}
-                                title={isPaid ? "Paid" : "Click to mark Paid"}
+                                title={isAdmin ? (isPaid ? t('common.delete') : t('contributions.recordPayment')) : (isPaid ? t('monthly.paid') : t('monthly.pending'))}
                             >
                                 <div className="member-info">
                                     <img src={member.avatar} alt="avatar" className="mini-avatar" />
@@ -107,9 +122,9 @@ const AdminMonthlySummary = () => {
                                 </div>
                                 <div className="status-indicator">
                                     {isPaid ? (
-                                        <div className="icon-check">✓ PAID</div>
+                                        <div className="icon-check">✓ {t('monthly.paid')}</div>
                                     ) : (
-                                        <div className="icon-cross">✕ UNPAID</div>
+                                        <div className="icon-cross">✕ {t('monthly.pending')}</div>
                                     )}
                                 </div>
                             </div>

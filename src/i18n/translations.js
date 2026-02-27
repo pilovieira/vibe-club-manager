@@ -115,6 +115,7 @@ export const translations = {
         'contributions.newPayment': 'New Payment',
         'contributions.save': 'Save',
         'contributions.cancel': 'Cancel',
+        'contributions.confirmDelete': 'Are you sure you want to remove this payment?',
         'contributions.total': 'Total',
 
         // Admin Monthly Summary
@@ -329,6 +330,7 @@ export const translations = {
         'contributions.newPayment': 'Novo Pagamento',
         'contributions.save': 'Salvar',
         'contributions.cancel': 'Cancelar',
+        'contributions.confirmDelete': 'Tem certeza que deseja remover este pagamento?',
         'contributions.total': 'Total',
 
         // Admin Monthly Summary

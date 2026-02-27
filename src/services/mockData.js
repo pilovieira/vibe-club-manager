@@ -238,6 +238,18 @@ export const mockService = {
         const docRef = await addDoc(collection(db, 'expenses'), expense);
         const created = await getDoc(docRef);
         return { ...created.data(), id: docRef.id };
+    },
+
+    deleteContribution: async (id) => {
+        const docRef = doc(db, 'contributions', id);
+        await deleteDoc(docRef);
+        return { id };
+    },
+
+    deleteExpense: async (id) => {
+        const docRef = doc(db, 'expenses', id);
+        await deleteDoc(docRef);
+        return { id };
     }
 };
 
