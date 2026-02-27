@@ -223,9 +223,10 @@ button {
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
-/* Optimize date/month picker icons */
+/* Optimize date/month/datetime picker icons */
 input[type="date"]::-webkit-calendar-picker-indicator,
-input[type="month"]::-webkit-calendar-picker-indicator {
+input[type="month"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
   opacity: 0.7;
   cursor: pointer;
@@ -233,13 +234,15 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator:hover,
-input[type="month"]::-webkit-calendar-picker-indicator:hover {
+input[type="month"]::-webkit-calendar-picker-indicator:hover,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   opacity: 1;
 }
 
 /* In light theme (day), keep the icon dark */
 body.theme-day input[type="date"]::-webkit-calendar-picker-indicator,
-body.theme-day input[type="month"]::-webkit-calendar-picker-indicator {
+body.theme-day input[type="month"]::-webkit-calendar-picker-indicator,
+body.theme-day input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   filter: invert(0);
 }
 

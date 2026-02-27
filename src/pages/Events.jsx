@@ -140,8 +140,10 @@ const Events = () => {
 
     const filteredEvents = events.filter(event => {
         if (showPastEvents) return true;
-        const eventDate = new Date(event.date + 'T23:59:59'); // Include the full day
-        return eventDate >= new Date();
+        // If event.date has a T, it's already a full datetime string.
+        // Otherwise, add a late time to include the full day for simple dates.
+        const dateStr = event.date.includes('T') ? event.date : `${event.date}T23:59:59`;
+        return new Date(dateStr) >= new Date();
     });
 
     return (
@@ -176,7 +178,7 @@ const Events = () => {
                         <div className="form-row">
                             <div className="form-group">
                                 <label>{t('events.date')}</label>
-                                <input type="date" className="input-field" value={newEvent.date} onChange={e => setNewEvent({ ...newEvent, date: e.target.value })} required />
+                                <input type="datetime-local" className="input-field" value={newEvent.date} onChange={e => setNewEvent({ ...newEvent, date: e.target.value })} required />
                             </div>
                             <div className="form-group">
                                 <label>{t('events.location')}</label>
@@ -220,16 +222,19 @@ const Events = () => {
                             <div className="event-date">
                                 {language === 'en' ? (
                                     <>
-                                        <span className="month">{new Date(event.date + 'T00:00:00').toLocaleString('en-US', { month: 'short' })}</span>
-                                        <span className="day">{new Date(event.date + 'T00:00:00').getDate()}</span>
+                                        <span className="month">{new Date(event.date.includes('T') ? event.date : event.date + 'T00:00:00').toLocaleString('en-US', { month: 'short' })}</span>
+                                        <span className="day">{new Date(event.date.includes('T') ? event.date : event.date + 'T00:00:00').getDate()}</span>
                                     </>
                                 ) : (
                                     <>
-                                        <span className="day">{new Date(event.date + 'T00:00:00').getDate()}</span>
-                                        <span className="month">{new Date(event.date + 'T00:00:00').toLocaleString('pt-BR', { month: 'short' })}</span>
+                                        <span className="day">{new Date(event.date.includes('T') ? event.date : event.date + 'T00:00:00').getDate()}</span>
+                                        <span className="month">{new Date(event.date.includes('T') ? event.date : event.date + 'T00:00:00').toLocaleString('pt-BR', { month: 'short' })}</span>
                                     </>
                                 )}
-                                <span className="year">{new Date(event.date + 'T00:00:00').getFullYear()}</span>
+                                <span className="year">{new Date(event.date.includes('T') ? event.date : event.date + 'T00:00:00').getFullYear()}</span>
+                                {event.date.includes('T') && (
+                                    <span className="time">{new Date(event.date).toLocaleTimeString(language === 'en' ? 'en-US' : 'pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
+                                )}
                             </div>
                             <div className="event-details">
                                 <div className="event-header-row">
@@ -264,11 +269,11 @@ const Events = () => {
                                         <button
                                             className={`btn ${isAttending(event) ? 'btn-danger-outline' : 'btn-primary'}`}
                                             onClick={() => handleToggleEvent(event.id)}
-                                            disabled={(!isAttending(event) && (user.status === 'inactive' || new Date(event.date + 'T23:59:59') < new Date()))}
+                                            disabled={(!isAttending(event) && (user.status === 'inactive' || new Date(event.date.includes('T') ? event.date : event.date + 'T23:59:59') < new Date()))}
                                         >
                                             {isAttending(event)
                                                 ? t('events.leave')
-                                                : (new Date(event.date + 'T23:59:59') < new Date()
+                                                : (new Date(event.date.includes('T') ? event.date : event.date + 'T23:59:59') < new Date()
                                                     ? t('events.ended')
                                                     : (user.status === 'inactive' ? t('events.inactiveWarning') : t('events.join')))}
                                         </button>
@@ -276,7 +281,7 @@ const Events = () => {
                                         <span className="text-secondary">Login to Join</span>
                                     )}
 
-                                    {isAdmin && new Date(event.date + 'T23:59:59') >= new Date() && (
+                                    {isAdmin && (
                                         <button
                                             className="btn-edit-small"
                                             onClick={() => handleStartEdit(event)}
@@ -390,7 +395,17 @@ const Events = () => {
             font-size: 0.75rem;
             color: var(--text-secondary);
             opacity: 0.8;
-            margin-top: 0.25rem;
+            margin-top: 0.1rem;
+        }
+        .time {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--glass-border);
+            width: 100%;
+            text-align: center;
         }
         .event-details {
             flex: 1;
