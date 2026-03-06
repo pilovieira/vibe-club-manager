@@ -61,7 +61,11 @@ const AdminMonthlySummary = () => {
                 <h2 className="summary-title">Status for {monthName} {displayYear}</h2>
 
                 <div className="members-status-list">
-                    {members.map(member => {
+                    {members.filter(member => {
+                        if (!member.joinDate) return true;
+                        const joinYYYYMM = member.joinDate.slice(0, 7);
+                        return joinYYYYMM <= selectedDate;
+                    }).map(member => {
                         const contribution = contributions.find(c => {
                             const cMemberId = c.member_id || c.memberId;
                             if (cMemberId !== member.id) return false;
