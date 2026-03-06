@@ -84,17 +84,15 @@ const Events = () => {
         if (!user) return;
 
         const event = events.find(e => e.id === eventId);
-        const eventDate = new Date(event.date);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0); // Only compare dates, not time
+        const eventDate = parseSafeDate(event.date);
+        const isPast = eventDate < new Date();
 
-        const isPast = eventDate < today;
-        const attending = event.attendees.includes(user.id);
-
-        if (isPast && !attending) {
+        if (isPast) {
             alert(t('events.ended'));
             return;
         }
+
+        const attending = event.attendees.includes(user.id);
 
         const toggleEventAsync = async () => {
             try {
@@ -199,15 +197,15 @@ const Events = () => {
                 <div className="event-footer-actions">
                     {user ? (
                         <button
-                            className={`action-btn join-btn ${isAttending(event) ? 'attending' : ''}`}
+                            className={`action-btn join-btn ${isAttending(event) ? 'attending' : ''} ${parseSafeDate(event.date) < new Date() ? 'disabled' : ''}`}
                             onClick={() => handleToggleEvent(event.id)}
-                            disabled={(!isAttending(event) && (user.status === 'inactive' || parseSafeDate(event.date) < new Date()))}
+                            disabled={parseSafeDate(event.date) < new Date() || (user.status === 'inactive' && !isAttending(event))}
                         >
-                            {isAttending(event)
-                                ? t('events.leave')
-                                : (parseSafeDate(event.date) < new Date()
-                                    ? t('events.ended')
-                                    : (user.status === 'inactive' ? t('events.inactiveWarning') : t('events.join')))}
+                            {parseSafeDate(event.date) < new Date()
+                                ? t('events.ended')
+                                : isAttending(event)
+                                    ? t('events.leave')
+                                    : (user.status === 'inactive' ? t('events.inactiveWarning') : t('events.join'))}
                         </button>
                     ) : (
                         <button className="action-btn join-btn disabled" disabled>{t('common.login') || 'Login'}</button>
