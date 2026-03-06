@@ -28,7 +28,7 @@ const AdminCreateMember = () => {
         try {
             await authService.createUser(formData.email, formData.password);
 
-            setSuccess(t('members.memberCreated') || 'User created successfully!');
+            setSuccess(t('members.memberCreated'));
             setFormData({
                 email: '',
                 password: '',
@@ -53,7 +53,7 @@ const AdminCreateMember = () => {
     return (
         <div className="container create-member-page">
             <div className="card form-card">
-                <h1>{t('members.registerNew') || 'Create New User'}</h1>
+                <h1>{t('admin.createUser')}</h1>
 
                 {error && <div className="error-message">{error}</div>}
                 {success && <div className="success-message">{success}</div>}

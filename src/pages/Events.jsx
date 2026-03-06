@@ -99,7 +99,7 @@ const Events = () => {
             try {
                 if (attending) {
                     // Leave Event
-                    if (confirm("Are you sure you want to leave this event?")) {
+                    if (confirm(t('events.confirmLeave') || "Are you sure you want to leave this event?")) {
                         await mockService.leaveEvent(eventId, user.id);
                         await fetchEventsAndMembers(); // Refresh after action
 
@@ -178,7 +178,7 @@ const Events = () => {
                             <span className="attendees-label">{t('events.attendees')} ({event.attendees.length})</span>
                             <div className="attendee-list">
                                 {event.attendees.length === 0 ? (
-                                    <span className="no-attendees">{t('events.beFirst') || 'Be the first to join!'}</span>
+                                    <span className="no-attendees">{t('events.beFirst')}</span>
                                 ) : (
                                     getAttendeeDetails(event.attendees).map(member => (
                                         <div key={member.id} className="attendee-chip" title={member.name}>
@@ -209,7 +209,7 @@ const Events = () => {
                                     : (user.status === 'inactive' ? t('events.inactiveWarning') : t('events.join'))}
                         </button>
                     ) : (
-                        <button className="action-btn join-btn disabled" disabled>{t('common.login') || 'Login'}</button>
+                        <button className="action-btn join-btn disabled" disabled>{t('nav.login')}</button>
                     )}
 
                     {user && (
@@ -275,7 +275,7 @@ const Events = () => {
                         </div>
                         {(startDate || endDate) && (
                             <button className="btn btn-outline btn-clear" onClick={() => { setStartDate(''); setEndDate(''); }}>
-                                {t('common.clear') || 'Clear'}
+                                {t('common.clear')}
                             </button>
                         )}
                     </div>
@@ -334,7 +334,7 @@ const Events = () => {
                 {dataLoading ? (
                     <div className="loader-container">
                         <div className="loader"></div>
-                        <p className="loading-text">{t('common.loading') || 'Loading events...'}</p>
+                        <p className="loading-text">{t('common.loading')}</p>
                     </div>
                 ) : (
                     <>
@@ -344,7 +344,7 @@ const Events = () => {
                             <div className="events-list">
                                 {upcomingEvents.length === 0 ? (
                                     <div className="no-events-hint">
-                                        <p>{t('events.noUpcoming') || 'No upcoming events planned.'}</p>
+                                        <p>{t('events.noUpcoming')}</p>
                                     </div>
                                 ) : (
                                     upcomingEvents.map(event => renderEventCard(event))
@@ -358,7 +358,7 @@ const Events = () => {
                             <div className="events-list">
                                 {pastEvents.length === 0 ? (
                                     <div className="no-events-hint">
-                                        <p>{t('events.noPast') || 'No past events found.'}</p>
+                                        <p>{t('events.noPast')}</p>
                                     </div>
                                 ) : (
                                     pastEvents.map(event => renderEventCard(event))

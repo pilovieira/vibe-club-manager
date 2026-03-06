@@ -32,7 +32,7 @@ const AdminProperties = () => {
         try {
             const downloadURL = await storageService.uploadAppLogo(file);
             await handleUpdate('app_logo', downloadURL);
-            setSuccess(t('settings.logoUploaded') || 'App logo uploaded successfully!');
+            setSuccess(t('settings.logoUploaded'));
         } catch (err) {
             console.error('Error uploading logo:', err);
             setError(err.message);
@@ -60,7 +60,7 @@ const AdminProperties = () => {
                 setProperties(props);
             } catch (err) {
                 console.error('Error fetching properties:', err);
-                setError('Failed to load settings');
+                setError(t('settings.loadError'));
             } finally {
                 setLoading(false);
             }
@@ -83,7 +83,7 @@ const AdminProperties = () => {
             if (key === 'app_theme') {
                 applyTheme(value);
             }
-            setSuccess(t('common.success') || 'Settings updated successfully!');
+            setSuccess(t('settings.updateSuccess'));
 
             // Log operation
             await mockService.createLog({
@@ -93,7 +93,7 @@ const AdminProperties = () => {
             });
         } catch (err) {
             console.error('Error updating property:', err);
-            setError('Failed to save setting');
+            setError(t('settings.saveError'));
         } finally {
             setSaving(false);
         }
@@ -106,7 +106,7 @@ const AdminProperties = () => {
     return (
         <div className="container admin-properties-page">
             <header className="page-header">
-                <h1 className="page-title">{t('admin.properties') || 'Club Management Settings'}</h1>
+                <h1 className="page-title">{t('admin.properties')}</h1>
             </header>
 
             {error && <div className="error-message mb-1">{error}</div>}
@@ -116,15 +116,15 @@ const AdminProperties = () => {
                 <div className="settings-list">
                     <div className="setting-item">
                         <div className="setting-info">
-                            <h3>{t('settings.appLogo') || 'App Logo'}</h3>
-                            <p>{t('settings.appLogoDesc') || 'Optional application logo image (max 2MB).'}</p>
+                            <h3>{t('settings.appLogo')}</h3>
+                            <p>{t('settings.appLogoDesc')}</p>
                         </div>
                         <div className="setting-action">
                             <div className="logo-upload-container">
                                 {properties.app_logo ? (
                                     <img src={properties.app_logo} alt="App Logo" className="logo-preview-admin" />
                                 ) : (
-                                    <div className="logo-placeholder-admin">No Logo</div>
+                                    <div className="logo-placeholder-admin">{t('settings.noLogo')}</div>
                                 )}
                                 <label className="btn btn-outline logo-upload-btn">
                                     <input
@@ -135,7 +135,7 @@ const AdminProperties = () => {
                                         disabled={isUploadingLogo || saving}
                                     />
                                     {isUploadingLogo ? <FaSpinner className="spinner" /> : <FaUpload />}
-                                    <span>{t('common.upload') || 'Upload'}</span>
+                                    <span>{t('common.upload')}</span>
                                 </label>
                             </div>
                         </div>
@@ -143,8 +143,8 @@ const AdminProperties = () => {
 
                     <div className="setting-item">
                         <div className="setting-info">
-                            <h3>{t('settings.appTitle') || 'App Title'}</h3>
-                            <p>{t('settings.appTitleDesc') || 'The name displayed in the navbar and various parts of the application.'}</p>
+                            <h3>{t('settings.appTitle')}</h3>
+                            <p>{t('settings.appTitleDesc')}</p>
                         </div>
                         <div className="setting-action">
                             <div className="input-group">
@@ -168,8 +168,8 @@ const AdminProperties = () => {
 
                     <div className="setting-item">
                         <div className="setting-info">
-                            <h3>{t('settings.homeDesc') || 'Home Page Description'}</h3>
-                            <p>{t('settings.homeDescDesc') || 'The text displayed on the home page hero section.'}</p>
+                            <h3>{t('settings.homeDesc')}</h3>
+                            <p>{t('settings.homeDescDesc')}</p>
                         </div>
                         <div className="setting-action" style={{ flex: 1, maxWidth: '500px' }}>
                             <div className="input-group" style={{ width: '100%' }}>
@@ -192,8 +192,8 @@ const AdminProperties = () => {
 
                     <div className="setting-item">
                         <div className="setting-info">
-                            <h3>{t('settings.monthlyContribution') || 'Monthly Contribution Value'}</h3>
-                            <p>{t('settings.monthlyContributionDesc') || 'Standard amount charged to members each month.'}</p>
+                            <h3>{t('settings.monthlyContribution')}</h3>
+                            <p>{t('settings.monthlyContributionDesc')}</p>
                         </div>
                         <div className="setting-action">
                             <div className="input-group">
@@ -219,8 +219,8 @@ const AdminProperties = () => {
 
                     <div className="setting-item">
                         <div className="setting-info">
-                            <h3>{t('settings.contactPhone') || 'Contact Phone'}</h3>
-                            <p>{t('settings.contactPhoneDesc') || 'Phone number displayed on the contact page.'}</p>
+                            <h3>{t('settings.contactPhone')}</h3>
+                            <p>{t('settings.contactPhoneDesc')}</p>
                         </div>
                         <div className="setting-action">
                             <div className="input-group">
@@ -244,8 +244,8 @@ const AdminProperties = () => {
 
                     <div className="setting-item">
                         <div className="setting-info">
-                            <h3>{t('settings.contactEmail') || 'Contact Email'}</h3>
-                            <p>{t('settings.contactEmailDesc') || 'Email address displayed on the contact page.'}</p>
+                            <h3>{t('settings.contactEmail')}</h3>
+                            <p>{t('settings.contactEmailDesc')}</p>
                         </div>
                         <div className="setting-action">
                             <div className="input-group">
@@ -269,8 +269,8 @@ const AdminProperties = () => {
 
                     <div className="setting-item">
                         <div className="setting-info">
-                            <h3>{t('settings.contactInstagram') || 'Instagram Link'}</h3>
-                            <p>{t('settings.contactInstagramDesc') || 'Full URL to the Instagram profile.'}</p>
+                            <h3>{t('settings.contactInstagram')}</h3>
+                            <p>{t('settings.contactInstagramDesc')}</p>
                         </div>
                         <div className="setting-action">
                             <div className="input-group">
@@ -294,8 +294,8 @@ const AdminProperties = () => {
 
                     <div className="setting-item">
                         <div className="setting-info">
-                            <h3>{t('settings.appTheme') || 'App Theme'}</h3>
-                            <p>{t('settings.appThemeDesc') || 'Choose the visual style for the entire application.'}</p>
+                            <h3>{t('settings.appTheme')}</h3>
+                            <p>{t('settings.appThemeDesc')}</p>
                         </div>
                         <div className="setting-action">
                             <div className="input-group">
@@ -305,12 +305,12 @@ const AdminProperties = () => {
                                     onChange={(e) => setProperties({ ...properties, app_theme: e.target.value })}
                                     style={{ width: '150px' }}
                                 >
-                                    <option value="mud">Mud (Brown)</option>
-                                    <option value="day">Day (Light)</option>
-                                    <option value="night">Night (Dark)</option>
-                                    <option value="forest">Forest (Green)</option>
-                                    <option value="sky">Sky (Blue)</option>
-                                    <option value="desert">Desert (Sand)</option>
+                                    <option value="mud">{t('settings.theme.mud')}</option>
+                                    <option value="day">{t('settings.theme.day')}</option>
+                                    <option value="night">{t('settings.theme.night')}</option>
+                                    <option value="forest">{t('settings.theme.forest')}</option>
+                                    <option value="sky">{t('settings.theme.sky')}</option>
+                                    <option value="desert">{t('settings.theme.desert')}</option>
                                 </select>
                                 <button
                                     className="btn btn-primary"

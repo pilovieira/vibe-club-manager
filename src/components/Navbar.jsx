@@ -22,7 +22,8 @@ const Navbar = () => {
 
   const languages = [
     { code: 'pt', name: 'Português', flag: '🇧🇷' },
-    { code: 'en', name: 'English', flag: '🇺🇸' }
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'es', name: 'Español', flag: '🇪🇸' }
   ];
 
   const currentLang = languages.find(l => l.code === language);
@@ -72,6 +73,7 @@ const Navbar = () => {
         <div className={`nav-content ${showMobileMenu ? 'show' : ''}`}>
           <div className="nav-links">
             <Link to="/" className="nav-link" onClick={handleNavClick}>{t('nav.home')}</Link>
+            <Link to="/about" className="nav-link" onClick={handleNavClick}>{t('nav.about')}</Link>
             <Link to="/members" className="nav-link" onClick={handleNavClick}>{t('nav.members')}</Link>
             <Link to="/events" className="nav-link" onClick={handleNavClick}>{t('nav.events')}</Link>
             <Link to="/contact" className="nav-link" onClick={handleNavClick}>{t('nav.contact')}</Link>

@@ -49,20 +49,20 @@ const AdminDashboard = () => {
 
                 <Link to="/admin/create-member" className="dashboard-card">
                     <div className="icon">👤</div>
-                    <h2>{t('admin.createUser') || 'Create User'}</h2>
-                    <p>{t('admin.createUserDesc') || 'Register new members or administrators.'}</p>
+                    <h2>{t('admin.createUser')}</h2>
+                    <p>{t('admin.createUserDesc')}</p>
                 </Link>
 
                 <Link to="/admin/properties" className="dashboard-card">
                     <div className="icon">⚙️</div>
-                    <h2>{t('admin.properties') || 'Settings'}</h2>
-                    <p>{t('admin.propertiesDesc') || 'Manage club-wide properties and values.'}</p>
+                    <h2>{t('admin.properties')}</h2>
+                    <p>{t('admin.propertiesDesc')}</p>
                 </Link>
 
                 <Link to="/admin/logbook" className="dashboard-card">
                     <div className="icon">📖</div>
-                    <h2>{t('admin.logBook') || 'Log Book'}</h2>
-                    <p>{t('admin.logBookDesc') || 'View history.'}</p>
+                    <h2>{t('admin.logBook')}</h2>
+                    <p>{t('admin.logBookDesc')}</p>
                 </Link>
 
             </div>

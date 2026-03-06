@@ -301,6 +301,22 @@ export const mockService = {
         const docRef = doc(db, 'event_photos', photoId);
         await deleteDoc(docRef);
         return { id: photoId };
+    },
+
+    // Page Content Management
+    getPageContent: async (pageId) => {
+        const docRef = doc(db, 'pages', pageId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            return { id: docSnap.id, ...docSnap.data() };
+        }
+        return { id: pageId, content: '' };
+    },
+
+    updatePageContent: async (pageId, content) => {
+        const docRef = doc(db, 'pages', pageId);
+        await setDoc(docRef, { content, updatedAt: new Date().toISOString() }, { merge: true });
+        return { id: pageId, content };
     }
 };
 

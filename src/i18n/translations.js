@@ -7,6 +7,8 @@ export const translations = {
         'nav.admin': 'Admin',
         'nav.logout': 'Logout',
         'nav.login': 'Login',
+        'nav.contact': 'Contact',
+        'nav.about': 'About Us',
         'nav.logo': 'App Title',
 
         // Home Page
@@ -158,6 +160,8 @@ export const translations = {
         'monthly.defaultDescription': 'Monthly payment',
         'monthly.pending': 'Pending',
         'monthly.totalCollected': 'Total Collected',
+        'monthly.statusFor': 'Status for',
+        'monthly.confirmMarkPaid': 'Mark {name} as PAID for {month}?',
 
         // Admin Global Balance
         'balance.title': 'Global Balance',
@@ -177,6 +181,31 @@ export const translations = {
         'balance.addTransaction': 'Add Transaction',
         'balance.recordExpense': 'Record Expense',
         'balance.recordRevenue': 'Record Revenue',
+        'balance.filterByMonth': 'Filter by Month:',
+        'balance.clear': 'Clear',
+        'balance.netBalance': 'Net Balance',
+        'balance.totalBalance': 'Total Balance',
+        'balance.history': 'History',
+        'balance.loginToRecord': 'Log in to record transactions',
+
+        // About Us
+        'about.title': 'About Us',
+        'about.edit': 'Edit',
+        'about.save': 'Save',
+        'about.hint': 'Admins can edit this content directly on this page!',
+        'about.placeholder': 'Enter content here...',
+        'about.saveSuccess': 'Content updated successfully!',
+        'about.saving': 'Saving...',
+
+        // Events extra
+        'events.beFirst': 'Be the first to join!',
+        'events.loginToJoin': 'Login to join events',
+        'events.confirmLeave': 'Are you sure you want to leave this event?',
+
+        // Login extra
+        'login.email': 'Email',
+
+        // Logs
         'log.date': 'Date',
         'log.user': 'User',
         'log.description': 'Description',
@@ -202,12 +231,23 @@ export const translations = {
         'settings.contactEmailDesc': 'Email address displayed on the contact page.',
         'settings.contactInstagram': 'Instagram Link',
         'settings.contactInstagramDesc': 'Full URL to the Instagram profile.',
+        'settings.noLogo': 'No Logo',
+        'settings.theme.mud': 'Mud (Brown)',
+        'settings.theme.day': 'Day (Light)',
+        'settings.theme.night': 'Night (Dark)',
+        'settings.theme.forest': 'Forest (Green)',
+        'settings.theme.sky': 'Sky (Blue)',
+        'settings.theme.desert': 'Desert (Sand)',
+        'settings.updateSuccess': 'Settings updated successfully!',
+        'settings.loadError': 'Failed to load settings',
+        'settings.saveError': 'Failed to save setting',
 
         // Footer
         'footer.rights': 'All rights reserved.',
 
         // Common
         'common.loading': 'Loading...',
+        'common.saving': 'Saving...',
         'common.success': 'Success',
         'common.save': 'Save',
         'common.cancel': 'Cancel',
@@ -215,11 +255,7 @@ export const translations = {
         'common.delete': 'Delete',
         'common.close': 'Close',
         'common.clear': 'Clear',
-
-        // Navbar - New Pages
-        'nav.contact': 'Contact',
-
-
+        'common.upload': 'Upload',
 
         // Contact Page
         'contact.title': 'Contact Us',
@@ -231,7 +267,7 @@ export const translations = {
         'contact.message': 'Have questions? Want to join our next expedition? Reach out to us!',
         'contact.noInfo': 'No contact information available at the moment.',
 
-        // Gender
+        // Gender & Roles
         'gender.label': 'Gender',
         'gender.male': 'Male',
         'gender.female': 'Female',
@@ -250,14 +286,6 @@ export const translations = {
         'login.loggingIn': 'Logging in...',
         'login.error': 'Invalid username or password.',
         'login.errorInactive': 'Inactive user, please contact admin',
-        'login.noAccount': "Don't have an account?",
-        'login.signUp': 'Sign Up',
-        'login.haveAccount': 'Already have an account?',
-        'login.register': 'Create Account',
-        'login.fullName': 'Full Name',
-        'login.email': 'Email',
-        'login.registering': 'Creating account...',
-        'login.success': 'Account created! Please check your email to confirm.',
     },
     pt: {
         // Navbar
@@ -267,6 +295,8 @@ export const translations = {
         'nav.admin': 'Admin',
         'nav.logout': 'Sair',
         'nav.login': 'Entrar',
+        'nav.contact': 'Contato',
+        'nav.about': 'Sobre Nós',
         'nav.logo': 'Título do App',
 
         // Home Page
@@ -385,7 +415,7 @@ export const translations = {
         'admin.createUserDesc': 'Cadastrar novos membros ou administradores.',
         'admin.logBook': 'Livro de Registros',
         'admin.logBookDesc': 'Visualize um histórico detalhado de todas as operações realizadas no sistema.',
-        'admin.properties': 'Propriedades',
+        'admin.properties': 'Configurações',
         'admin.propertiesDesc': 'Gerenciar propriedades e valores do clube.',
         'admin.accessDenied': 'Acesso Negado',
         'admin.accessDeniedMsg': 'Você não tem permissão para visualizar esta página.',
@@ -418,6 +448,8 @@ export const translations = {
         'monthly.defaultDescription': 'Mensalidade',
         'monthly.pending': 'Pendente',
         'monthly.totalCollected': 'Total Arrecadado',
+        'monthly.statusFor': 'Status para',
+        'monthly.confirmMarkPaid': 'Marcar {name} como PAGO para {month}?',
 
         // Admin Global Balance
         'balance.title': 'Balanço Global',
@@ -437,68 +469,37 @@ export const translations = {
         'balance.addTransaction': 'Adicionar Lançamento',
         'balance.recordExpense': 'Registrar Despesa',
         'balance.recordRevenue': 'Registrar Receita',
+        'balance.filterByMonth': 'Filtrar por Mês:',
+        'balance.clear': 'Limpar',
+        'balance.netBalance': 'Saldo Líquido',
+        'balance.totalBalance': 'Saldo Total',
+        'balance.history': 'Histórico',
+        'balance.loginToRecord': 'Entre para registrar lançamentos',
+
+        // About Us
+        'about.title': 'Sobre Nós',
+        'about.edit': 'Editar',
+        'about.save': 'Salvar',
+        'about.hint': 'Admins podem editar este conteúdo diretamente nesta página!',
+        'about.placeholder': 'Insira o conteúdo aqui...',
+        'about.saveSuccess': 'Conteúdo atualizado com sucesso!',
+        'about.saving': 'Salvando...',
+
+        // Events extra
+        'events.beFirst': 'Seja o primeiro a participar!',
+        'events.loginToJoin': 'Entre para participar dos eventos',
+        'events.confirmLeave': 'Tem certeza que deseja sair deste evento?',
+
+        // Login extra
+        'login.email': 'Email',
+
+        // Logs
         'log.date': 'Data',
         'log.user': 'Usuário',
         'log.description': 'Descrição',
         'log.startDate': 'Data Inicial',
         'log.endDate': 'Data Final',
         'log.title': 'Logs de Operação',
-
-        // Footer
-        'footer.rights': 'Todos os direitos reservados.',
-
-        // Common
-        'common.loading': 'Carregando...',
-        'common.save': 'Salvar',
-        'common.cancel': 'Cancelar',
-        'common.edit': 'Editar',
-        'common.delete': 'Excluir',
-        'common.close': 'Fechar',
-        'common.clear': 'Limpar',
-
-        // Navbar - New Pages
-        'nav.contact': 'Contato',
-
-
-
-        // Contact Page
-        'contact.title': 'Fale Conosco',
-        'contact.subtitle': 'Entre em Contato',
-        'contact.phone': 'Telefone',
-        'contact.email': 'Email',
-        'contact.social': 'Redes Sociais',
-        'contact.instagram': 'Siga-nos no Instagram',
-        'contact.message': 'Tem dúvidas? Quer participar da nossa próxima expedição? Entre em contato!',
-        'contact.noInfo': 'Nenhuma informação de contato disponível no momento.',
-
-        // Gender
-        'gender.label': 'Gênero',
-        'gender.male': 'Masculino',
-        'gender.female': 'Feminino',
-        'member.role': 'Função',
-        'role.admin': 'Administrador',
-        'role.member': 'Membro',
-
-        // Erros
-        'error.usernameExists': 'Nome de usuário já existe. Por favor, escolha outro.',
-        'error.adminInactivation': 'Administradores não podem ser inativados.',
-
-        // Login
-        'login.title': 'Login de Membro',
-        'login.password': 'Senha',
-        'login.button': 'Entrar',
-        'login.loggingIn': 'Entrando...',
-        'login.error': 'Usuário ou senha inválidos.',
-        'login.errorInactive': 'Usuário inativo, favor contatar o administrador',
-        'login.noAccount': 'Não tem uma conta?',
-        'login.signUp': 'Cadastre-se',
-        'login.haveAccount': 'Já tem uma conta?',
-        'login.register': 'Criar Conta',
-        'login.fullName': 'Nome Completo',
-        'login.email': 'Email',
-        'login.registering': 'Criando conta...',
-        'login.success': 'Conta criada! Por favor, verifique seu email para confirmar.',
-        'common.success': 'Sucesso',
 
         // Settings Page
         'settings.monthlyContribution': 'Valor da Mensalidade',
@@ -518,5 +519,348 @@ export const translations = {
         'settings.contactEmailDesc': 'Endereço de e-mail exibido na página de contato.',
         'settings.contactInstagram': 'Link do Instagram',
         'settings.contactInstagramDesc': 'URL completa para o perfil do Instagram.',
+        'settings.noLogo': 'Sem Logo',
+        'settings.theme.mud': 'Lama (Marrom)',
+        'settings.theme.day': 'Dia (Claro)',
+        'settings.theme.night': 'Noite (Escuro)',
+        'settings.theme.forest': 'Floresta (Verde)',
+        'settings.theme.sky': 'Céu (Azul)',
+        'settings.theme.desert': 'Deserto (Areia)',
+        'settings.updateSuccess': 'Configurações atualizadas com sucesso!',
+        'settings.loadError': 'Falha ao carregar configurações',
+        'settings.saveError': 'Falha ao salvar configuração',
+
+        // Footer
+        'footer.rights': 'Todos os direitos reservados.',
+
+        // Common
+        'common.loading': 'Carregando...',
+        'common.saving': 'Salvando...',
+        'common.success': 'Sucesso',
+        'common.save': 'Salvar',
+        'common.cancel': 'Cancelar',
+        'common.edit': 'Editar',
+        'common.delete': 'Excluir',
+        'common.close': 'Fechar',
+        'common.clear': 'Limpar',
+        'common.upload': 'Carregar',
+
+        // Contact Page
+        'contact.title': 'Fale Conosco',
+        'contact.subtitle': 'Entre em Contato',
+        'contact.phone': 'Telefone',
+        'contact.email': 'Email',
+        'contact.social': 'Redes Sociais',
+        'contact.instagram': 'Siga-nos no Instagram',
+        'contact.message': 'Tem dúvidas? Quer participar da nossa próxima expedição? Entre em contato!',
+        'contact.noInfo': 'Nenhuma informação de contato disponível no momento.',
+
+        // Gender & Roles
+        'gender.label': 'Gênero',
+        'gender.male': 'Masculino',
+        'gender.female': 'Feminino',
+        'member.role': 'Função',
+        'role.admin': 'Administrador',
+        'role.member': 'Membro',
+
+        // Erros
+        'error.usernameExists': 'Nome de usuário já existe. Por favor, escolha outro.',
+        'error.adminInactivation': 'Administradores não podem ser inativados.',
+
+        // Login
+        'login.title': 'Login de Membro',
+        'login.password': 'Senha',
+        'login.button': 'Entrar',
+        'login.loggingIn': 'Entrando...',
+        'login.error': 'Usuário ou senha inválidos.',
+        'login.errorInactive': 'Usuário inativo, favor contatar o administrador',
+    },
+    es: {
+        // Navbar
+        'nav.home': 'Inicio',
+        'nav.members': 'Miembros',
+        'nav.events': 'Eventos',
+        'nav.admin': 'Admin',
+        'nav.logout': 'Salir',
+        'nav.login': 'Entrar',
+        'nav.contact': 'Contacto',
+        'nav.about': 'Sobre Nosotros',
+        'nav.logo': 'Título del App',
+
+        // Home Page
+        'home.title': 'Off-Road',
+        'home.titleHighlight': 'Maringá',
+        'home.subtitle': 'Explora la escena todo terreno en Paraná. Desafiantes senderos, amistad genuina y verdadera adrenalina 4x4 en el corazón de Maringá.',
+        'home.exploreMembers': 'Explorar Miembros',
+        'home.upcomingEvents': 'Próximos Eventos',
+        'home.feature1.title': 'Bestias Offroad',
+        'home.feature1.desc': '4x4, Jeeps y camionetas modificadas listas para cualquier terreno.',
+        'home.feature2.title': 'Expediciones',
+        'home.feature2.desc': 'Únete a senderos organizados, campamentos y fiestas en el barro.',
+        'home.feature3.title': 'Comunidad',
+        'home.feature3.desc': 'Conéctate con entusiastas y comparte tu viaje.',
+
+        // Members Page
+        'members.title': 'Miembros del Club',
+        'members.addNew': 'Añadir Nuevo Miembro',
+        'members.cancel': 'Cancelar',
+        'members.registerNew': 'Registrar Nuevo Miembro',
+        'members.fullName': 'Nombre Completo',
+        'member.name': 'Nombre Completo',
+        'member.username': 'Nombre de Usuario',
+        'members.email': 'Dirección de Correo',
+        'members.status': 'Estado',
+        'members.active': 'Activo',
+        'members.inactive': 'Inactivo',
+        'members.createMember': 'Crear Miembro',
+        'members.memberCreated': '¡Miembro criado con éxito!',
+        'members.joined': 'Se unió en',
+        'members.noMembersFound': 'No se encontraron miembros.',
+
+        // Member Profile
+        'profile.editProfile': 'Editar Perfil',
+        'profile.setInactive': 'Definir como Inactivo',
+        'profile.setActive': 'Definir como Activo',
+        'profile.memberSince': 'Miembro desde',
+        'profile.name': 'Nombre Completo',
+        'profile.email': 'Correo electrónico',
+        'profile.dateBirth': 'Fecha de Nacimiento',
+        'profile.bio': 'Biografía',
+        'profile.saveChanges': 'Guardar Cambios',
+        'profile.cancel': 'Cancelar',
+        'profile.confirmDeactivate': '¿Estás seguro de que deseas desactivar a este miembro?',
+        'profile.confirmActivate': '¿Estás seguro de que deseas activar a este miembro?',
+        'profile.loading': 'Cargando...',
+        'profile.changePassword': 'Cambiar Contraseña',
+        'profile.currentPassword': 'Contraseña Actual',
+        'profile.newPassword': 'Nueva Contraseña',
+        'profile.confirmNewPassword': 'Confirmar Nueva Contraseña',
+        'profile.passwordMismatch': '¡Las contraseñas no coinciden!',
+        'profile.passwordChanged': '¡Contraseña cambiada con éxito!',
+        'profile.uploadAvatar': 'Subir Avatar',
+        'profile.changeAvatar': 'Cambiar Avatar',
+        'profile.uploading': 'Subiendo...',
+        'profile.uploadSuccess': '¡Foto de perfil actualizada!',
+        'profile.invalidFile': 'Solo se permiten archivos de imagen',
+        'profile.fileTooBig': 'El tamaño del archivo debe ser menor a 2MB',
+
+        // Events Page
+        'events.title': 'Eventos del Club',
+        'events.createNew': 'Crear Nuevo Evento',
+        'events.cancel': 'Cancelar',
+        'events.newEvent': 'Nuevo Evento',
+        'events.eventTitle': 'Título del Evento',
+        'events.date': 'Fecha y Hora',
+        'events.location': 'Ubicación',
+        'events.description': 'Descripción',
+        'events.createEvent': 'Crear Evento',
+        'events.attendees': 'Asistentes',
+        'events.join': 'Unirse al Evento',
+        'events.leave': 'Salir del Evento',
+        'events.inactiveWarning': 'Los miembros inactivos no pueden unirse a eventos',
+        'events.ended': 'Evento Finalizado',
+        'events.edit': 'Editar Evento',
+        'events.saveChanges': 'Guardar Cambios',
+        'events.editButton': 'Editar',
+        'events.type': 'Tipo de Evento',
+        'events.type.soft-trail': 'Sendero Ligero',
+        'events.type.hard-trail': 'Sendero Pesado',
+        'events.type.members-meetup': 'Encuentro de Miembros',
+        'events.type.club-official-meetup': 'Encuentro Oficial del Club',
+        'events.upcomingTitle': 'Próximos Eventos',
+        'events.pastTitle': 'Eventos Pasados',
+        'events.showPastEvents': 'Mostrar Eventos Pasados',
+        'events.gallery': 'Fotos',
+        'events.openGallery': 'Abrir Galería',
+        'events.uploadPhoto': 'Subir Foto',
+        'events.photoUploadedBy': 'Subido por',
+        'events.noUpcoming': 'No hay próximos eventos planeados.',
+        'events.noPast': 'No se encontraron eventos pasados.',
+        'events.noPhotos': 'Aún no hay fotos en esta galería.',
+        'events.uploadSuccess': '¡Foto subida con éxito!',
+        'events.uploadingPhotos': 'Subiendo fotos...',
+        'events.photosUploaded': '¡fotos subidas con éxito!',
+        'events.uploadError': 'Error al subir la foto.',
+        'events.deletePhoto': 'Eliminar Foto',
+        'events.confirmDeletePhoto': '¿Estás seguro de que deseas eliminar esta foto?',
+        'events.deleteSuccess': '¡Foto eliminada con éxito!',
+        'events.maxSize': 'Tamaño máx.',
+        'events.backToEvents': 'Volver a Eventos',
+
+        // Admin Dashboard
+        'admin.title': 'Panel de Administración',
+        'admin.monthlySummary': 'Resumen Mensual',
+        'admin.monthlySummaryDesc': 'Ver todos los estados de pago por mes.',
+        'admin.globalBalance': 'Balance Global',
+        'admin.globalBalanceDesc': 'Seguir ingresos y gastos totales.',
+        'admin.memberContributions': 'Contribuciones de Miembros',
+        'admin.memberContributionsDesc': 'Registrar nuevos pagos y ver historial individual.',
+        'admin.manageEvents': 'Gestionar Eventos',
+        'admin.manageEventsDesc': 'Crear y editar eventos del club.',
+        'admin.manageMembers': 'Gestionar Miembros',
+        'admin.manageMembersDesc': 'Ver lista de miembros y detalles de perfil.',
+        'admin.createUser': 'Crear Usuario',
+        'admin.createUserDesc': 'Registrar nuevos miembros o administradores.',
+        'admin.logBook': 'Libro de Registros',
+        'admin.logBookDesc': 'Ver un historial detallado de todas las operaciones realizadas en el sistema.',
+        'admin.properties': 'Configuraciones',
+        'admin.propertiesDesc': 'Gestionar propiedades y valores del club.',
+        'admin.accessDenied': 'Acceso Denegado',
+        'admin.accessDeniedMsg': 'No tienes permiso para ver esta página.',
+        'admin.goHome': 'Ir al Inicio',
+
+        // Admin Member Contributions
+        'contributions.title': 'Contribuciones de Miembros',
+        'contributions.selectMember': 'Seleccionar un Miembro',
+        'contributions.choose': 'Elegir...',
+        'contributions.recordPayment': 'Registrar Pago',
+        'contributions.paymentHistory': 'Historial de Pagos',
+        'contributions.date': 'Fecha',
+        'contributions.amount': 'Monto',
+        'contributions.description': 'Descripción',
+        'contributions.actions': 'Acciones',
+        'contributions.remove': 'Eliminar',
+        'contributions.noHistory': 'Aún no hay historial de pagos.',
+        'contributions.newPayment': 'Nuevo Pago',
+        'contributions.save': 'Guardar',
+        'contributions.cancel': 'Cancelar',
+        'contributions.confirmDelete': '¿Estás seguro de que deseas eliminar este pago?',
+        'contributions.total': 'Total',
+
+        // Admin Monthly Summary
+        'monthly.title': 'Resumen Mensual',
+        'monthly.month': 'Mes',
+        'monthly.member': 'Miembro',
+        'monthly.status': 'Estado',
+        'monthly.paid': 'Pagado',
+        'monthly.defaultDescription': 'Mensualidad',
+        'monthly.pending': 'Pendiente',
+        'monthly.totalCollected': 'Total Recaudado',
+        'monthly.statusFor': 'Estado para',
+        'monthly.confirmMarkPaid': '¿Marcar a {name} como PAGADO para {month}?',
+
+        // Admin Global Balance
+        'balance.title': 'Balance Global',
+        'balance.currentBalance': 'Saldo Actual',
+        'balance.addExpense': 'Añadir Gasto',
+        'balance.transactions': 'Transacciones',
+        'balance.date': 'Fecha',
+        'balance.description': 'Descripción',
+        'balance.amount': 'Monto',
+        'balance.type': 'Tipo',
+        'balance.contribution': 'Contribución de Miembro',
+        'balance.revenue': 'Ingreso',
+        'balance.expense': 'Gasto',
+        'balance.newExpense': 'Nuevo Gasto',
+        'balance.save': 'Guardar',
+        'balance.cancel': 'Cancelar',
+        'balance.addTransaction': 'Añadir Transacción',
+        'balance.recordExpense': 'Registrar Gasto',
+        'balance.recordRevenue': 'Registrar Ingreso',
+        'balance.filterByMonth': 'Filtrar por Mes:',
+        'balance.clear': 'Limpiar',
+        'balance.netBalance': 'Saldo Neto',
+        'balance.totalBalance': 'Saldo Total',
+        'balance.history': 'Historial',
+        'balance.loginToRecord': 'Inicie sesión para registrar transacciones',
+
+        // About Us
+        'about.title': 'Sobre Nosotros',
+        'about.edit': 'Editar',
+        'about.save': 'Guardar',
+        'about.hint': '¡Los administradores pueden editar este contenido directamente en esta página!',
+        'about.placeholder': 'Ingrese el contenido aquí...',
+        'about.saveSuccess': '¡Contenido actualizado con éxito!',
+        'about.saving': 'Guardando...',
+
+        // Events extra
+        'events.beFirst': '¡Sé el primero en unirte!',
+        'events.loginToJoin': 'Inicia sesión para unirte a los eventos',
+        'events.confirmLeave': '¿Estás seguro de que deseas salir de este evento?',
+
+        // Login extra
+        'login.email': 'Correo electrónico',
+
+        // Logs
+        'log.date': 'Fecha',
+        'log.user': 'Usuario',
+        'log.description': 'Descripción',
+        'log.startDate': 'Fecha Inicial',
+        'log.endDate': 'Fecha Final',
+        'log.title': 'Registros de Operación',
+
+        // Settings Page
+        'settings.monthlyContribution': 'Valor de la Mensualidad',
+        'settings.monthlyContributionDesc': 'Monto estándar cobrado a los miembros cada mes.',
+        'settings.appTheme': 'Tema de la Aplicación',
+        'settings.appThemeDesc': 'Elige el estilo visual para toda la aplicación.',
+        'settings.appTitle': 'Título del App',
+        'settings.appTitleDesc': 'El nombre mostrado en la barra de navegación y diversas partes de la aplicación.',
+        'settings.appLogo': 'Logo del App',
+        'settings.appLogoDesc': 'Sube un logo personalizado para mostrar en la barra de navegación.',
+        'settings.logoUploaded': '¡Logo del app actualizado con éxito!',
+        'settings.homeDesc': 'Descripción de Inicio',
+        'settings.homeDescDesc': 'Descripción mostrada en la sección principal de la página de inicio.',
+        'settings.contactPhone': 'Teléfono de Contacto',
+        'settings.contactPhoneDesc': 'Número de teléfono mostrado en la página de contacto.',
+        'settings.contactEmail': 'Correo de Contacto',
+        'settings.contactEmailDesc': 'Dirección de correo mostrada en la página de contacto.',
+        'settings.contactInstagram': 'Enlace de Instagram',
+        'settings.contactInstagramDesc': 'URL completa al perfil de Instagram.',
+        'settings.noLogo': 'Sin Logo',
+        'settings.theme.mud': 'Barro (Marrón)',
+        'settings.theme.day': 'Día (Claro)',
+        'settings.theme.night': 'Noche (Oscuro)',
+        'settings.theme.forest': 'Bosque (Verde)',
+        'settings.theme.sky': 'Cielo (Azul)',
+        'settings.theme.desert': 'Desierto (Arena)',
+        'settings.updateSuccess': '¡Configuraciones actualizadas con éxito!',
+        'settings.loadError': 'Error al cargar las configuraciones',
+        'settings.saveError': 'Error al guardar la configuración',
+
+        // Footer
+        'footer.rights': 'Todos los derechos reservados.',
+
+        // Common
+        'common.loading': 'Cargando...',
+        'common.saving': 'Guardando...',
+        'common.success': 'Éxito',
+        'common.save': 'Guardar',
+        'common.cancel': 'Cancelar',
+        'common.edit': 'Editar',
+        'common.delete': 'Eliminar',
+        'common.close': 'Cerrar',
+        'common.clear': 'Limpiar',
+        'common.upload': 'Subir',
+
+        // Contact Page
+        'contact.title': 'Contáctenos',
+        'contact.subtitle': 'Póngase en Contacto',
+        'contact.phone': 'Teléfono',
+        'contact.email': 'Correo',
+        'contact.social': 'Redes Sociales',
+        'contact.instagram': 'Síguenos en Instagram',
+        'contact.message': '¿Tiene preguntas? ¿Quiere unirse a nuestra próxima expedición? ¡Contáctenos!',
+        'contact.noInfo': 'No hay información de contacto disponible en este momento.',
+
+        // Gender & Roles
+        'gender.label': 'Género',
+        'gender.male': 'Masculino',
+        'gender.female': 'Femenino',
+        'member.role': 'Rol',
+        'role.admin': 'Administrador',
+        'role.member': 'Miembro',
+
+        // Errores
+        'error.usernameExists': 'El nombre de usuario ya existe. Por favor elija otro.',
+        'error.adminInactivation': 'Los administradores no pueden ser desactivados.',
+
+        // Login
+        'login.title': 'Inicio de Sesión',
+        'login.password': 'Contraseña',
+        'login.button': 'Entrar',
+        'login.loggingIn': 'Iniciando sesión...',
+        'login.error': 'Usuario o contraseña inválidos.',
+        'login.errorInactive': 'Usuario inactivo, por favor contacte al administrador',
     }
 };

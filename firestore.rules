@@ -75,6 +75,11 @@ service cloud.firestore {
     match /global_transactions/{id} {
       allow read, write: if isAdmin();
     }
+
+    match /pages/{pageId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
     
     // LogBook collection
     match /logs/{logId} {

@@ -223,7 +223,7 @@ const MemberProfile = () => {
         }
     };
 
-    if (!member) return <div className="container">Loading...</div>;
+    if (!member) return <div className="container">{t('common.loading')}</div>;
 
     const isOwnProfile = user && user.id === member.id;
     const canEdit = isAdmin || isOwnProfile;
@@ -393,15 +393,15 @@ const MemberProfile = () => {
                             </select>
                         </div>
                         <div className="form-group">
-                            <label>{t('member.role') || 'Role'}</label>
+                            <label>{t('member.role')}</label>
                             <select
                                 className="input-field"
                                 value={editData.role}
                                 onChange={e => setEditData({ ...editData, role: e.target.value })}
                                 disabled={!isAdmin}
                             >
-                                <option value="member">{t('role.member') || 'Member'}</option>
-                                <option value="admin">{t('role.admin') || 'Admin'}</option>
+                                <option value="member">{t('role.member')}</option>
+                                <option value="admin">{t('role.admin')}</option>
                             </select>
                         </div>
                         <div className="form-group full-width">

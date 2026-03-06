@@ -15,6 +15,7 @@ import AdminLogBook from './pages/AdminLogBook';
 import Events from './pages/Events';
 import EventGallery from './pages/EventGallery';
 import Contact from './pages/Contact';
+import About from './pages/About';
 import Login from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -73,6 +74,7 @@ function App() {
 
 
           <Route path="contact" element={<Contact />} />
+          <Route path="about" element={<About />} />
           <Route path="login" element={<Login />} />
 
         </Route>

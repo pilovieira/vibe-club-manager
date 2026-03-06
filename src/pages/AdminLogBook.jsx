@@ -48,7 +48,7 @@ const AdminLogBook = () => {
             <div className="card filter-card">
                 <div className="filter-group">
                     <div className="filter-item">
-                        <label>{t('log.startDate') || 'Start Date'}</label>
+                        <label>{t('log.startDate')}</label>
                         <input
                             type="date"
                             className="input-field"
@@ -57,7 +57,7 @@ const AdminLogBook = () => {
                         />
                     </div>
                     <div className="filter-item">
-                        <label>{t('log.endDate') || 'End Date'}</label>
+                        <label>{t('log.endDate')}</label>
                         <input
                             type="date"
                             className="input-field"
@@ -69,7 +69,7 @@ const AdminLogBook = () => {
                         className="btn btn-outline"
                         onClick={() => { setStartDate(''); setEndDate(''); }}
                     >
-                        {t('common.clear') || 'Clear'}
+                        {t('common.clear')}
                     </button>
                 </div>
             </div>

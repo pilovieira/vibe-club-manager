@@ -31,7 +31,7 @@ const AdminMonthlySummary = () => {
 
     const [displayYear, displayMonth] = selectedDate.split('-');
     const dateObj = new Date(parseInt(displayYear), parseInt(displayMonth) - 1);
-    const monthName = dateObj.toLocaleString(language === 'en' ? 'en-US' : 'pt-BR', { month: 'long' });
+    const monthName = dateObj.toLocaleString(language, { month: 'long' });
 
     if (loading) {
         return <div className="container" style={{ paddingTop: '2rem' }}>{t('common.loading')}...</div>;
@@ -58,7 +58,7 @@ const AdminMonthlySummary = () => {
             </div>
 
             <div className="summary-grid">
-                <h2 className="summary-title">Status for {monthName} {displayYear}</h2>
+                <h2 className="summary-title">{t('monthly.statusFor')} {monthName} {displayYear}</h2>
 
                 <div className="members-status-list">
                     {members.filter(member => {
@@ -101,7 +101,7 @@ const AdminMonthlySummary = () => {
                                     removePaymentAsync();
                                 }
                             } else {
-                                if (window.confirm(`Mark ${member.name} as PAID for ${monthName}?`)) {
+                                if (window.confirm(t('monthly.confirmMarkPaid').replace('{name}', member.name).replace('{month}', monthName))) {
                                     const addPaymentAsync = async () => {
                                         try {
                                             await mockService.addContribution({

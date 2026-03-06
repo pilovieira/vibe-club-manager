@@ -134,9 +134,9 @@ const AdminGlobalBalance = () => {
         <div className="container global-balance-page">
             <header className="page-header">
                 <div className="header-left">
-                    <h1 className="page-title">Global Balance</h1>
+                    <h1 className="page-title">{t('balance.title')}</h1>
                     <div className="filter-control">
-                        <label>Filter by Month:</label>
+                        <label>{t('balance.filterByMonth')}</label>
                         <input
                             type="month"
                             className="input-field-sm"
@@ -144,19 +144,19 @@ const AdminGlobalBalance = () => {
                             onChange={(e) => setSelectedMonth(e.target.value)}
                         />
                         {selectedMonth && (
-                            <button className="btn-text" onClick={() => setSelectedMonth('')}>Clear</button>
+                            <button className="btn-text" onClick={() => setSelectedMonth('')}>{t('common.clear')}</button>
                         )}
                     </div>
                 </div>
                 <div className={`balance-display ${totalBalance >= 0 ? 'positive' : 'negative'}`}>
-                    <span className="balance-label">{selectedMonth ? 'Net Balance' : 'Total Balance'}:</span>
+                    <span className="balance-label">{selectedMonth ? t('balance.netBalance') : t('balance.totalBalance')}:</span>
                     <span className="balance-amount">${totalBalance.toFixed(2)}</span>
                 </div>
             </header>
 
             <div className="balance-main-grid">
                 <div className="transactions-section">
-                    <h2 className="section-title">History</h2>
+                    <h2 className="section-title">{t('balance.history')}</h2>
                     <div className="transactions-list">
                         {filteredTransactions.map(item => (
                             <div key={item.id} className={`transaction-card ${item.type}`}>
@@ -209,7 +209,7 @@ const AdminGlobalBalance = () => {
                                         className="input-field"
                                         value={newTransaction.description}
                                         onChange={e => setNewTransaction({ ...newTransaction, description: e.target.value })}
-                                        placeholder={newTransaction.type === 'expense' ? 'e.g. Event Snacks' : 'e.g. Donation'}
+                                        placeholder={newTransaction.type === 'expense' ? (t('balance.expense') + '...') : (t('balance.revenue') + '...')}
                                         required
                                     />
                                 </div>
@@ -243,7 +243,7 @@ const AdminGlobalBalance = () => {
                                 >
                                     {isSavingTransaction ? (
                                         <>
-                                            <FaSpinner className="icon-spin" /> {t('common.saving') || 'Saving...'}
+                                            <FaSpinner className="icon-spin" /> {t('common.saving')}
                                         </>
                                     ) : (
                                         newTransaction.type === 'expense' ? t('balance.recordExpense') : t('balance.recordRevenue')
@@ -253,7 +253,7 @@ const AdminGlobalBalance = () => {
                         </div>
                     ) : (
                         <div className="card text-center text-secondary">
-                            <p>Log in to record expenses</p>
+                            <p>{t('balance.loginToRecord')}</p>
                         </div>
                     )}
                 </div>
