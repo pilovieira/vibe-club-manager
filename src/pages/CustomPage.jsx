@@ -17,8 +17,33 @@ const CustomPage = () => {
     const [isUploading, setIsUploading] = useState(false);
     const [showLinkModal, setShowLinkModal] = useState(false);
     const [linkData, setLinkData] = useState({ text: '', url: '' });
+    const [resizingImg, setResizingImg] = useState(null);
+    const [startSize, setStartSize] = useState({ width: 0, x: 0 });
     const editorRef = useRef(null);
     const fileInputRef = useRef(null);
+
+    useEffect(() => {
+        const handleMouseMove = (e) => {
+            if (!resizingImg) return;
+            const deltaX = e.clientX - startSize.x;
+            const newWidth = Math.max(50, startSize.width + deltaX);
+            resizingImg.style.width = `${newWidth}px`;
+            resizingImg.style.height = 'auto';
+        };
+
+        const handleMouseUp = () => {
+            setResizingImg(null);
+        };
+
+        if (resizingImg) {
+            window.addEventListener('mousemove', handleMouseMove);
+            window.addEventListener('mouseup', handleMouseUp);
+        }
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [resizingImg, startSize]);
 
     useEffect(() => {
         if (!isLoading && pageData && editorRef.current && !isEditing) {
@@ -146,11 +171,37 @@ const CustomPage = () => {
         }
     };
 
+    const handleEditorMouseDown = (e) => {
+        if (!isEditing || e.target.tagName !== 'IMG') return;
+
+        const img = e.target;
+        const rect = img.getBoundingClientRect();
+        const offsetX = e.clientX - rect.left;
+        const offsetY = e.clientY - rect.top;
+
+        // If near bottom-right corner (within 40px)
+        if (offsetX > rect.width - 40 && offsetY > rect.height - 40) {
+            e.preventDefault();
+            e.stopPropagation();
+            setResizingImg(img);
+            setStartSize({ width: rect.width, x: e.clientX });
+        }
+    };
+
     const handleEditorClick = async (e) => {
         if (!isEditing) return;
 
         if (e.target.tagName === 'IMG') {
             const img = e.target;
+            const rect = img.getBoundingClientRect();
+            const offsetX = e.clientX - rect.left;
+            const offsetY = e.clientY - rect.top;
+
+            // Only trigger delete if NOT clicking the resize corner
+            if (offsetX > rect.width - 40 && offsetY > rect.height - 40) {
+                return;
+            }
+
             if (window.confirm(t('pageEditor.confirmDeleteImage'))) {
                 const src = img.src;
                 if (src.includes('firebasestorage.googleapis.com')) {
@@ -219,6 +270,7 @@ const CustomPage = () => {
                     ref={editorRef}
                     className="custom-page-content"
                     contentEditable={isEditing}
+                    onMouseDown={handleEditorMouseDown}
                     onClick={handleEditorClick}
                     onInput={() => {/* Triggered on every change, but we read on save */ }}
                     style={{
@@ -364,12 +416,28 @@ const CustomPage = () => {
                     margin: 1.5rem 0;
                 }
                 .custom-page-content-card.editing .custom-page-content img {
-                    cursor: pointer;
-                    transition: all 0.2s;
+                    cursor: nwse-resize;
+                    transition: outline 0.2s;
+                    position: relative;
+                    outline: 2px dashed rgba(255, 255, 255, 0.3);
                 }
                 .custom-page-content-card.editing .custom-page-content img:hover {
-                    outline: 3px solid #ef4444;
-                    opacity: 0.8;
+                    outline: 3px solid var(--primary);
+                }
+                .custom-page-content-card.editing .custom-page-content img::after {
+                    content: '┛';
+                    position: absolute;
+                    bottom: 0;
+                    right: 0;
+                    background: var(--primary);
+                    color: white;
+                    width: 20px;
+                    height: 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 14px;
+                    pointer-events: none;
                 }
                 .custom-page-content a {
                     color: var(--primary);
