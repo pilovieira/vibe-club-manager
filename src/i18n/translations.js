@@ -217,6 +217,9 @@ export const translations = {
         'pageEditor.addLink': 'Add Link',
         'pageEditor.linkText': 'Link Text',
         'pageEditor.linkUrl': 'Link URL (e.g., https://...)',
+        'pageEditor.alignLeft': 'Align Left',
+        'pageEditor.alignCenter': 'Align Center',
+        'pageEditor.alignRight': 'Align Right',
 
         // Events extra
         'events.beFirst': 'Be the first to join!',
@@ -514,6 +517,9 @@ export const translations = {
         'pageEditor.addLink': 'Adicionar Link',
         'pageEditor.linkText': 'Texto do Link',
         'pageEditor.linkUrl': 'URL do Link (ex: https://...)',
+        'pageEditor.alignLeft': 'Alinhar à Esquerda',
+        'pageEditor.alignCenter': 'Centralizar',
+        'pageEditor.alignRight': 'Alinhar à Direita',
 
         // Events extra
         'events.beFirst': 'Seja o primeiro a participar!',
@@ -811,6 +817,9 @@ export const translations = {
         'pageEditor.addLink': 'Añadir Enlace',
         'pageEditor.linkText': 'Texto del Enlace',
         'pageEditor.linkUrl': 'URL del Enlace (ej: https://...)',
+        'pageEditor.alignLeft': 'Alinear a la Izquierda',
+        'pageEditor.alignCenter': 'Centrar',
+        'pageEditor.alignRight': 'Alinear a la Derecha',
 
         // Events extra
         'events.beFirst': '¡Sé el primero en unirte!',

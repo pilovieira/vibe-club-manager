@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { mockService } from '../services/mockData';
-import { FaEdit, FaSave, FaSpinner, FaBold, FaItalic, FaListUl, FaListOl, FaLink, FaImage, FaUpload, FaTrash, FaHeading } from 'react-icons/fa';
+import { FaEdit, FaSave, FaSpinner, FaBold, FaItalic, FaListUl, FaListOl, FaLink, FaImage, FaUpload, FaTrash, FaHeading, FaAlignLeft, FaAlignCenter, FaAlignRight } from 'react-icons/fa';
 
 const CustomPage = () => {
     const { path } = useParams();
@@ -269,6 +269,10 @@ const CustomPage = () => {
                     <div className="editor-toolbar">
                         <button onClick={() => execCommand('bold')} title="Bold"><FaBold /></button>
                         <button onClick={() => execCommand('italic')} title="Italic"><FaItalic /></button>
+                        <div className="toolbar-separator"></div>
+                        <button onClick={() => execCommand('justifyLeft')} title={t('pageEditor.alignLeft')}><FaAlignLeft /></button>
+                        <button onClick={() => execCommand('justifyCenter')} title={t('pageEditor.alignCenter')}><FaAlignCenter /></button>
+                        <button onClick={() => execCommand('justifyRight')} title={t('pageEditor.alignRight')}><FaAlignRight /></button>
                         <div className="toolbar-separator"></div>
                         <div className="toolbar-select-wrapper">
                             <FaHeading className="select-icon" />
