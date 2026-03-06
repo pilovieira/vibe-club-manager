@@ -61,9 +61,19 @@ const AdminMemberContributions = () => {
 
         const addContributionAsync = async () => {
             try {
+                // Force date to be the 10th of the month to prevent timezone issues
+                let adjustedDate = newContribution.date;
+                if (adjustedDate && adjustedDate.includes('-')) {
+                    const parts = adjustedDate.split('-');
+                    if (parts.length === 3) {
+                        adjustedDate = `${parts[0]}-${parts[1]}-10`;
+                    }
+                }
+
                 const added = await mockService.addContribution({
                     member_id: selectedMemberId, // snake_case as per schema
-                    ...newContribution
+                    ...newContribution,
+                    date: adjustedDate
                 });
 
                 setContributions([...contributions, added]);

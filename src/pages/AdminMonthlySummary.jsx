@@ -102,7 +102,7 @@ const AdminMonthlySummary = () => {
                                         try {
                                             await mockService.addContribution({
                                                 member_id: member.id,
-                                                date: `${selectedDate}-01`,
+                                                date: `${selectedDate}-10`,
                                                 amount: monthlyContribution
                                             });
                                             const updatedContributions = await mockService.getAllContributions();
