@@ -66,3 +66,20 @@ export const formatDateTime = (date, lang = 'pt') => {
         return String(date);
     }
 };
+
+/**
+ * Formats a date string or object to localized month and year
+ * @param {string|Date} date 
+ * @param {string} lang 'en' or 'pt'
+ * @returns {string}
+ */
+export const formatMonthYear = (date, lang = 'pt') => {
+    if (!date) return '';
+    try {
+        const d = parseSafeDate(date);
+        if (isNaN(d.getTime())) return String(date);
+        return d.toLocaleDateString(getLocale(lang), { month: 'short', year: 'numeric' });
+    } catch (e) {
+        return String(date);
+    }
+};

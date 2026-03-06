@@ -5,7 +5,7 @@ import { mockService } from '../services/mockData';
 import { storageService } from '../services/storageService';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { formatDate } from '../utils/dateUtils';
+import { formatDate, formatMonthYear } from '../utils/dateUtils';
 import { FaCamera, FaSpinner, FaLock, FaUserEdit, FaEnvelope, FaUser, FaCalendarAlt, FaVenusMars, FaIdCard } from 'react-icons/fa';
 
 const MemberProfile = () => {
@@ -280,7 +280,7 @@ const MemberProfile = () => {
                                 <li>
                                     <span className="info-icon"><FaCalendarAlt /></span>
                                     <span className="info-label">{t('profile.memberSince')}:</span>
-                                    <span className="info-value">{new Date(member.joinDate).getFullYear()}</span>
+                                    <span className="info-value">{formatMonthYear(member.joinDate, language)}</span>
                                 </li>
                                 <li>
                                     <span className="info-icon"><FaVenusMars /></span>

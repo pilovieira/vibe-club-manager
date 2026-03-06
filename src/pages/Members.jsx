@@ -3,9 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { mockService } from '../services/mockData';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { formatMonthYear } from '../utils/dateUtils';
 
 const Members = () => {
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const [members, setMembers] = useState([]);
     const [dataLoading, setDataLoading] = useState(true);
     const { user, isAdmin, loading } = useAuth();
@@ -60,7 +61,7 @@ const Members = () => {
                                         <img src={member.avatar} alt={member.name} className="member-avatar" />
                                         <div className="member-info">
                                             <h3 className="member-name">{member.name}</h3>
-                                            <p className="member-role">{member.role} • {t('members.joined')} {member.joinDate ? new Date(member.joinDate).getFullYear() : 'N/A'}</p>
+                                            <p className="member-role">{member.role} • {t('members.joined')} {formatMonthYear(member.joinDate, language)}</p>
                                             {(isAdmin || (user && user.id === member.id)) && (
                                                 <button
                                                     className="btn-edit-sm"
