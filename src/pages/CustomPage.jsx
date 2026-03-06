@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { mockService } from '../services/mockData';
-import { FaEdit, FaSave, FaSpinner, FaBold, FaItalic, FaListUl, FaListOl, FaLink, FaImage, FaUpload, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaSave, FaSpinner, FaBold, FaItalic, FaListUl, FaListOl, FaLink, FaImage, FaUpload, FaTrash, FaHeading } from 'react-icons/fa';
 
 const CustomPage = () => {
     const { path } = useParams();
@@ -269,6 +269,22 @@ const CustomPage = () => {
                     <div className="editor-toolbar">
                         <button onClick={() => execCommand('bold')} title="Bold"><FaBold /></button>
                         <button onClick={() => execCommand('italic')} title="Italic"><FaItalic /></button>
+                        <div className="toolbar-separator"></div>
+                        <div className="toolbar-select-wrapper">
+                            <FaHeading className="select-icon" />
+                            <select
+                                onChange={(e) => execCommand('formatBlock', e.target.value)}
+                                className="editor-select"
+                                defaultValue="P"
+                            >
+                                <option value="P">{t('pageEditor.textNormal')}</option>
+                                <option value="H1">{t('pageEditor.title1')}</option>
+                                <option value="H2">{t('pageEditor.title2')}</option>
+                                <option value="H3">{t('pageEditor.title3')}</option>
+                                <option value="H4">{t('pageEditor.title4')}</option>
+                            </select>
+                        </div>
+                        <div className="toolbar-separator"></div>
                         <button onClick={() => execCommand('insertUnorderedList')} title="Unordered List"><FaListUl /></button>
                         <button onClick={() => execCommand('insertOrderedList')} title="Ordered List"><FaListOl /></button>
                         <button onClick={addLink} title="Add Link"><FaLink /></button>
@@ -436,6 +452,39 @@ const CustomPage = () => {
                 }
                 .editor-toolbar button:hover {
                     background: var(--primary);
+                    color: white;
+                }
+                .toolbar-separator {
+                    width: 1px;
+                    height: 24px;
+                    background: var(--glass-border);
+                    margin: 0 0.25rem;
+                }
+                .toolbar-select-wrapper {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    border: 1px solid var(--glass-border);
+                    border-radius: 0.25rem;
+                    padding: 0 0.5rem;
+                    background: rgba(255, 255, 255, 0.05);
+                }
+                .select-icon {
+                    font-size: 0.8rem;
+                    color: var(--text-secondary);
+                    margin-right: 0.5rem;
+                }
+                .editor-select {
+                    background: none;
+                    border: none;
+                    color: var(--text-primary);
+                    font-size: 0.9rem;
+                    padding: 0.4rem 0.25rem;
+                    cursor: pointer;
+                    outline: none;
+                }
+                .editor-select option {
+                    background: #1a1a1a;
                     color: white;
                 }
                 .custom-page-content {
