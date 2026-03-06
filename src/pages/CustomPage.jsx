@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { mockService } from '../services/mockData';
-import { FaEdit, FaSave, FaSpinner, FaBold, FaItalic, FaListUl, FaListOl, FaLink, FaImage, FaUpload } from 'react-icons/fa';
+import { FaEdit, FaSave, FaSpinner, FaBold, FaItalic, FaListUl, FaListOl, FaLink, FaImage, FaUpload, FaTrash } from 'react-icons/fa';
 
 const CustomPage = () => {
     const { path } = useParams();
@@ -19,6 +19,8 @@ const CustomPage = () => {
     const [linkData, setLinkData] = useState({ text: '', url: '' });
     const [resizingImg, setResizingImg] = useState(null);
     const [startSize, setStartSize] = useState({ width: 0, x: 0 });
+    const [hoveredImg, setHoveredImg] = useState(null);
+    const [imgRect, setImgRect] = useState(null);
     const editorRef = useRef(null);
     const fileInputRef = useRef(null);
 
@@ -188,31 +190,50 @@ const CustomPage = () => {
         }
     };
 
+    const handleEditorMouseMove = (e) => {
+        if (!isEditing) return;
+        const target = e.target;
+
+        if (target.tagName === 'IMG') {
+            setHoveredImg(target);
+            setImgRect(target.getBoundingClientRect());
+        } else if (hoveredImg) {
+            // Check if mouse is still near the active image
+            const rect = hoveredImg.getBoundingClientRect();
+            const buffer = 30; // 30px buffer to allow moving to the delete button
+            if (
+                e.clientX < rect.left - buffer ||
+                e.clientX > rect.right + buffer ||
+                e.clientY < rect.top - buffer ||
+                e.clientY > rect.bottom + buffer
+            ) {
+                setHoveredImg(null);
+                setImgRect(null);
+            }
+        }
+    };
+
+    const handleDeleteImage = async (img) => {
+        if (window.confirm(t('pageEditor.confirmDeleteImage'))) {
+            const src = img.src;
+            if (src.includes('firebasestorage.googleapis.com')) {
+                try {
+                    await mockService.deleteImageByUrl(src);
+                } catch (err) {
+                    console.error('Error deleting from storage:', err);
+                }
+            }
+            img.remove();
+            setHoveredImg(null);
+            setImgRect(null);
+        }
+    };
+
     const handleEditorClick = async (e) => {
         if (!isEditing) return;
 
         if (e.target.tagName === 'IMG') {
-            const img = e.target;
-            const rect = img.getBoundingClientRect();
-            const offsetX = e.clientX - rect.left;
-            const offsetY = e.clientY - rect.top;
-
-            // Only trigger delete if NOT clicking the resize corner
-            if (offsetX > rect.width - 40 && offsetY > rect.height - 40) {
-                return;
-            }
-
-            if (window.confirm(t('pageEditor.confirmDeleteImage'))) {
-                const src = img.src;
-                if (src.includes('firebasestorage.googleapis.com')) {
-                    try {
-                        await mockService.deleteImageByUrl(src);
-                    } catch (err) {
-                        console.error('Error deleting from storage:', err);
-                    }
-                }
-                img.remove();
-            }
+            // Click no longer triggers delete
         }
     };
 
@@ -271,6 +292,7 @@ const CustomPage = () => {
                     className="custom-page-content"
                     contentEditable={isEditing}
                     onMouseDown={handleEditorMouseDown}
+                    onMouseMove={handleEditorMouseMove}
                     onClick={handleEditorClick}
                     onInput={() => {/* Triggered on every change, but we read on save */ }}
                     style={{
@@ -280,6 +302,26 @@ const CustomPage = () => {
                     }}
                 />
             </div>
+
+            {isEditing && hoveredImg && imgRect && (
+                <button
+                    className="floating-delete-btn animate-fade-in"
+                    style={{
+                        position: 'absolute',
+                        top: imgRect.top + window.scrollY + 10,
+                        left: imgRect.right + window.scrollX - 40,
+                        zIndex: 100,
+                    }}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleDeleteImage(hoveredImg);
+                    }}
+                    title={t('common.delete')}
+                >
+                    <FaTrash />
+                </button>
+            )}
 
             {showLinkModal && (
                 <div className="modal-overlay">
@@ -424,20 +466,23 @@ const CustomPage = () => {
                 .custom-page-content-card.editing .custom-page-content img:hover {
                     outline: 3px solid var(--primary);
                 }
-                .custom-page-content-card.editing .custom-page-content img::after {
-                    content: '┛';
-                    position: absolute;
-                    bottom: 0;
-                    right: 0;
-                    background: var(--primary);
+                .floating-delete-btn {
+                    background: #ef4444;
                     color: white;
-                    width: 20px;
-                    height: 20px;
+                    border: none;
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 50%;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    font-size: 14px;
-                    pointer-events: none;
+                    cursor: pointer;
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                    transition: all 0.2s;
+                }
+                .floating-delete-btn:hover {
+                    background: #dc2626;
+                    transform: scale(1.1);
                 }
                 .custom-page-content a {
                     color: var(--primary);
