@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { mockService } from '../services/mockData';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { FaTrash } from 'react-icons/fa';
+import { FaTrash, FaSpinner } from 'react-icons/fa';
 import { formatDate } from '../utils/dateUtils';
 
 const AdminGlobalBalance = () => {
@@ -13,6 +13,7 @@ const AdminGlobalBalance = () => {
     const [totalBalance, setTotalBalance] = useState(0);
     const [selectedMonth, setSelectedMonth] = useState('');
     const [newTransaction, setNewTransaction] = useState({ description: '', amount: '', date: '', type: 'expense' });
+    const [isSavingTransaction, setIsSavingTransaction] = useState(false);
 
     if (loading) {
         return <div className="container" style={{ paddingTop: '2rem' }}>{t('common.loading')}...</div>;
@@ -78,6 +79,7 @@ const AdminGlobalBalance = () => {
         if (!newTransaction.description || !newTransaction.amount || !newTransaction.date) return;
 
         const addTransactionAsync = async () => {
+            setIsSavingTransaction(true);
             try {
                 // Both expenses and revenues (non-member contributions) go to globalTransactions
                 await mockService.addGlobalTransaction({
@@ -88,7 +90,7 @@ const AdminGlobalBalance = () => {
                 });
 
                 setNewTransaction({ description: '', amount: '', date: '', type: 'expense' });
-                loadTransactions();
+                await loadTransactions();
 
                 // Log operation
                 await mockService.createLog({
@@ -98,6 +100,8 @@ const AdminGlobalBalance = () => {
                 });
             } catch (err) {
                 console.error('Error adding transaction:', err);
+            } finally {
+                setIsSavingTransaction(false);
             }
         };
         addTransactionAsync();
@@ -235,8 +239,15 @@ const AdminGlobalBalance = () => {
                                 <button
                                     type="submit"
                                     className={`btn full-width ${newTransaction.type === 'expense' ? 'btn-danger-outline' : 'btn-success-outline'}`}
+                                    disabled={isSavingTransaction}
                                 >
-                                    {newTransaction.type === 'expense' ? t('balance.recordExpense') : t('balance.recordRevenue')}
+                                    {isSavingTransaction ? (
+                                        <>
+                                            <FaSpinner className="icon-spin" /> {t('common.saving') || 'Saving...'}
+                                        </>
+                                    ) : (
+                                        newTransaction.type === 'expense' ? t('balance.recordExpense') : t('balance.recordRevenue')
+                                    )}
                                 </button>
                             </form>
                         </div>
@@ -411,6 +422,14 @@ const AdminGlobalBalance = () => {
                 .btn-delete-icon:hover {
                     background: rgba(239, 68, 68, 0.1);
                     transform: scale(1.1);
+                }
+
+                @keyframes spin {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+                .icon-spin {
+                    animation: spin 1s linear infinite;
                 }
             `}</style>
         </div >
