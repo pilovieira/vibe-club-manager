@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { mockService } from '../services/mockData';
+import { storageService } from '../services/storageService';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useAlert } from '../context/ConfirmContext';
@@ -56,7 +57,7 @@ const AdminProperties = () => {
 
         setUploading(true);
         try {
-            const url = await mockService.uploadImage(`logos/app_logo_${Date.now()}`, file);
+            const url = await storageService.uploadAppLogo(file);
             setProperties({ ...properties, app_logo: url });
             setSuccess(t('settings.logoUploaded') || 'Logo uploaded! Click Save All to apply.');
             setTimeout(() => setSuccess(''), 3000);

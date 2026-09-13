@@ -1,4 +1,21 @@
 {
-    "indexes": [],
-    "fieldOverrides": []
+  "indexes": [
+    {
+      "collectionGroup": "contributions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "member_id", "order": "ASCENDING" },
+        { "fieldPath": "date", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "event_photos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "event_id", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
 }
