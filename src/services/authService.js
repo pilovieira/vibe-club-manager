@@ -51,10 +51,15 @@ const ensureMemberProfile = async (user) => {
 
         if (existingId !== user.uid) {
             // If the ID in Firestore is different from the UID (shouldn't happen if created via AdminCreateMember)
-            // But we should probably fix it by re-mapping or something.
-            // For now, let's just use it.
-            console.log('authService: Mapping existing member profile to new UID');
-            await setDoc(doc(db, 'members', user.uid), { ...memberData, id: user.uid });
+            // Security rules only allow self-creating a 'member' doc, so this remap can fail with
+            // permission-denied for pre-created admins/other roles. Don't let that crash the login;
+            // fall back to using the existing record read-only so the user can still sign in.
+            try {
+                console.log('authService: Mapping existing member profile to new UID');
+                await setDoc(doc(db, 'members', user.uid), { ...memberData, id: user.uid });
+            } catch (err) {
+                console.warn('authService: Could not remap member profile to new UID, continuing with existing data:', err);
+            }
         }
         return memberData;
     }
