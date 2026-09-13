@@ -37,6 +37,9 @@ export const translations = {
         'members.inactive': 'Inactive',
         'members.createMember': 'Create Member',
         'members.memberCreated': 'Member created successfully!',
+        'members.memberCreatedWithLink': 'Member created! A sign-in link was sent to their email.',
+        'members.memberCreatedNoLink': 'Member created, but the sign-in link failed to send. Ask them to use "Login" and enter their email.',
+        'members.createHint': 'Just enter their name and email — we\'ll create their account and send them a sign-in link automatically.',
         'members.joined': 'Joined',
         'members.noMembersFound': 'No members found.',
 
@@ -396,6 +399,9 @@ export const translations = {
         'members.inactive': 'Inativo',
         'members.createMember': 'Criar Membro',
         'members.memberCreated': 'Membro criado com sucesso!',
+        'members.memberCreatedWithLink': 'Membro criado! Um link de acesso foi enviado para o email dele(a).',
+        'members.memberCreatedNoLink': 'Membro criado, mas o envio do link de acesso falhou. Peça para ele(a) usar "Entrar" e digitar o email.',
+        'members.createHint': 'Basta digitar o nome e o email — nós criamos a conta e enviamos o link de acesso automaticamente.',
         'members.joined': 'Entrou em',
         'members.noMembersFound': 'Nenhum membro encontrado.',
 
@@ -755,6 +761,9 @@ export const translations = {
         'members.inactive': 'Inactivo',
         'members.createMember': 'Crear Miembro',
         'members.memberCreated': '¡Miembro criado con éxito!',
+        'members.memberCreatedWithLink': '¡Miembro creado! Se envió un enlace de acceso a su correo.',
+        'members.memberCreatedNoLink': 'Miembro creado, pero no se pudo enviar el enlace de acceso. Pídale que use "Ingresar" e introduzca su correo.',
+        'members.createHint': 'Solo ingrese el nombre y el correo — crearemos la cuenta y enviaremos el enlace de acceso automáticamente.',
         'members.joined': 'Se unió en',
         'members.noMembersFound': 'No se encontraron miembros.',
 

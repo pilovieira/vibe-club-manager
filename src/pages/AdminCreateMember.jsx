@@ -5,16 +5,23 @@ import { mockService } from '../services/mockData';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 
+const generateUniqueUsername = (email, existingMembers) => {
+    const base = email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '') || 'membro';
+    const taken = new Set(existingMembers.map(m => (m.username || '').toLowerCase()));
+
+    if (!taken.has(base)) return base;
+
+    let suffix = 2;
+    while (taken.has(`${base}${suffix}`)) suffix++;
+    return `${base}${suffix}`;
+};
+
 const AdminCreateMember = () => {
     const { t } = useLanguage();
     const { user } = useAuth();
     const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({
-        email: '',
-        name: '',
-        username: ''
-    });
+    const [formData, setFormData] = useState({ email: '', name: '' });
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -27,38 +34,50 @@ const AdminCreateMember = () => {
         setSuccess('');
 
         try {
-            // 1. Create Auth User with default password
-            const defaultPassword = Date.now().toString();
-            const newAuthUser = await authService.createUser(formData.email.trim(), defaultPassword);
+            const email = formData.email.trim().toLowerCase();
+            const name = formData.name.trim();
 
-            // 2. Create Member document in Firestore using the Auth User UID
+            // 1. Create the Firebase Auth account. Members never use a password to log in
+            // (the app is passwordless: magic email link or Google), so a random one is fine here.
+            const randomPassword = crypto.randomUUID();
+            const newAuthUser = await authService.createUser(email, randomPassword);
+
+            // 2. Auto-generate a unique username so the admin only has to type an email and a name.
+            const existingMembers = await mockService.getMembers();
+            const username = generateUniqueUsername(email, existingMembers);
+
+            // 3. Create the member document in Firestore, linked to the Auth user's UID.
             await mockService.createMember({
                 id: newAuthUser.uid,
-                email: formData.email.trim(),
-                name: formData.name.trim(),
-                username: formData.username.toLowerCase().trim(),
+                email,
+                name,
+                username,
                 status: 'active',
                 role: 'member'
             });
 
-            setSuccess(`${t('members.memberCreated')} (Pass: ${defaultPassword})`);
-            setFormData({
-                email: '',
-                name: '',
-                username: ''
-            });
+            // 4. Immediately send the new member their passwordless sign-in link.
+            let linkSent = true;
+            try {
+                await authService.sendEmailLink(email);
+            } catch (linkErr) {
+                console.error('Error sending sign-in link to new member:', linkErr);
+                linkSent = false;
+            }
+
+            setSuccess(linkSent ? t('members.memberCreatedWithLink') : t('members.memberCreatedNoLink'));
+            setFormData({ email: '', name: '' });
 
             // Log operation
             await mockService.createLog({
                 userId: user.id || user.uid,
                 userName: user.profile?.name || user.email,
                 userEmail: user.email,
-                description: `Created new member and auth user: ${formData.email}`
+                description: `Created new member and auth user: ${email}`
             });
 
             setTimeout(() => navigate('/admin'), 3000);
         } catch (err) {
-            // Handle error (e.g., user already exists)
             console.error('Error creating user:', err);
             setError(err.message);
         } finally {
@@ -70,6 +89,7 @@ const AdminCreateMember = () => {
         <div className="container create-member-page">
             <div className="card form-card">
                 <h1>{t('admin.createUser')}</h1>
+                <p className="form-hint">{t('members.createHint')}</p>
 
                 {error && <div className="error-message">{error}</div>}
                 {success && <div className="success-message">{success}</div>}
@@ -87,23 +107,13 @@ const AdminCreateMember = () => {
                     </div>
 
                     <div className="form-group">
-                        <label>{t('member.username')}</label>
-                        <input
-                            type="text"
-                            className="input-field"
-                            value={formData.username}
-                            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                            required
-                        />
-                    </div>
-
-                    <div className="form-group">
                         <label>{t('login.email')}</label>
                         <input
                             type="email"
                             className="input-field"
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            placeholder="name@example.com"
                             required
                         />
                     </div>
@@ -133,8 +143,14 @@ const AdminCreateMember = () => {
                 }
                 h1 {
                     text-align: center;
-                    margin-bottom: 2rem;
+                    margin-bottom: 0.5rem;
                     color: var(--primary);
+                }
+                .form-hint {
+                    text-align: center;
+                    color: var(--text-secondary);
+                    font-size: 0.9rem;
+                    margin-bottom: 2rem;
                 }
                 .form-vertical {
                     display: flex;
