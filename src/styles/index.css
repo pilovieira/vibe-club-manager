@@ -193,6 +193,21 @@ button {
   color: var(--text-primary);
 }
 
+.btn-outline {
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--glass-border);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-outline:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
 .card {
   background-color: var(--bg-card);
   border-radius: 0.5rem;
@@ -212,6 +227,31 @@ button {
 @media (max-width: 768px) {
   .page-title {
     font-size: 1.75rem;
+    margin-bottom: var(--spacing-md);
+  }
+}
+
+/* Shared page header layout: title on the left, actions/filters on the right.
+   Pages may override specifics locally, but every page gets this base layout
+   for free so a header is never missing its flex alignment. */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: var(--spacing-lg);
+}
+
+.page-header .page-title {
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
     margin-bottom: var(--spacing-md);
   }
 }

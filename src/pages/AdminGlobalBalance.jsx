@@ -408,6 +408,15 @@ const AdminGlobalBalance = () => {
                     background: var(--danger);
                     color: white;
                 }
+                .btn-success-outline {
+                    border: 1px solid var(--success);
+                    color: var(--success);
+                    background: transparent;
+                }
+                .btn-success-outline:hover {
+                    background: var(--success);
+                    color: white;
+                }
                 .btn-delete-icon {
                     background: none;
                     border: none;
