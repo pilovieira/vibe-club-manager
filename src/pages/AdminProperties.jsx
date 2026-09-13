@@ -10,7 +10,7 @@ import GenericLogo from '../components/GenericLogo';
 
 const AdminProperties = () => {
     const { user, isAdmin, loading } = useAuth();
-    const { t, language } = useLanguage();
+    const { t } = useLanguage();
     const alert = useAlert();
     const { settings, refreshSettings } = useSettings();
     const [properties, setProperties] = useState({});
@@ -235,7 +235,7 @@ const AdminProperties = () => {
                         </div>
                         <div className="setting-action" style={{ flex: 1, maxWidth: '500px' }}>
                             <div className="input-group" style={{ width: '100%' }}>
-                                <span className="input-prefix">$</span>
+                                <span className="input-prefix">R$</span>
                                 <input
                                     type="number"
                                     className="input-field"

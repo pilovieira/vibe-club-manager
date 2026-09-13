@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useConfirm, useAlert } from '../context/ConfirmContext';
 import { useSettings } from '../context/SettingsContext';
 import { mockService } from '../services/mockData';
-import { FaPlus, FaTrash, FaEdit, FaExternalLinkAlt, FaTimes } from 'react-icons/fa';
+import RichTextEditor from '../components/RichTextEditor';
+import { FaPlus, FaTrash, FaEdit, FaExternalLinkAlt, FaTimes, FaUpload, FaSpinner, FaImage } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+
+const emptyForm = { title: '', path: '', coverImage: '' };
 
 const AdminCustomPages = () => {
     const { isAdmin, user } = useAuth();
@@ -15,30 +18,63 @@ const AdminCustomPages = () => {
     const { customPages, refreshSettings } = useSettings();
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingPage, setEditingPage] = useState(null);
-    const [formData, setFormData] = useState({ title: '', path: '' });
+    const [formData, setFormData] = useState(emptyForm);
     const [isSaving, setIsSaving] = useState(false);
+    const [isUploadingCover, setIsUploadingCover] = useState(false);
+    const editorRef = useRef(null);
+    const coverInputRef = useRef(null);
 
     const openCreateForm = () => {
         setEditingPage(null);
-        setFormData({ title: '', path: '' });
+        setFormData(emptyForm);
         setIsFormOpen(true);
     };
 
-    const openEditForm = (page) => {
-        setEditingPage(page);
-        setFormData({ title: page.title, path: page.path });
-        setIsFormOpen(true);
+    const [pendingContent, setPendingContent] = useState('');
+    const [isLoadingPage, setIsLoadingPage] = useState(false);
+
+    const handleEditClick = async (page) => {
+        setIsLoadingPage(true);
+        try {
+            // Content isn't loaded in the list view, fetch the full page doc for editing.
+            const fullPage = await mockService.getPageContent(page.id);
+            setEditingPage(page);
+            setFormData({ title: page.title, path: page.path, coverImage: page.coverImage || '' });
+            setPendingContent(fullPage?.content || '');
+            setIsFormOpen(true);
+        } catch (err) {
+            console.error('Error loading page content:', err);
+            await alert(t('common.error') || 'Error loading page');
+        } finally {
+            setIsLoadingPage(false);
+        }
+    };
+
+    const handleCoverUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setIsUploadingCover(true);
+        try {
+            const fileName = `cover_${Date.now()}_${file.name}`;
+            const storagePath = `pages/${editingPage?.id || 'new'}/${fileName}`;
+            const url = await mockService.uploadImage(storagePath, file);
+            setFormData(prev => ({ ...prev, coverImage: url }));
+        } catch (err) {
+            console.error('Error uploading cover image:', err);
+            await alert(t('pageEditor.errorUpload'));
+        } finally {
+            setIsUploadingCover(false);
+            e.target.value = '';
+        }
     };
 
     const handleSave = async (e) => {
         e.preventDefault();
         if (!formData.title || !formData.path) return;
 
-        // Normalize path: remove leading / and lowercase
         const normalizedPath = formData.path.replace(/^\//, '').toLowerCase().trim();
         const pageId = normalizedPath.replace(/\//g, '_');
 
-        // Validation: Check for repeated pages
         const isDuplicate = customPages.some(p =>
             p.path === normalizedPath && (!editingPage || p.id !== editingPage.id)
         );
@@ -50,23 +86,20 @@ const AdminCustomPages = () => {
 
         setIsSaving(true);
         try {
-            // If editing, we might be changing the ID if the path changes
-            // But usually we just update the content if ID is path-based.
-            // If path changed, we should probably delete the old one and create new or just update if we use a stable ID.
-            // mockService.updatePageContent uses pageId as the doc ID.
-
             if (editingPage && editingPage.id !== pageId) {
-                // Path changed -> New ID. Delete old one.
                 await mockService.deleteCustomPage(editingPage.id);
             }
 
-            // Update/Create
+            const content = editorRef.current?.getHTML() ?? pendingContent;
+            const images = editorRef.current?.getImages() ?? [];
+
             await mockService.updatePageContent(
                 pageId,
-                editingPage?.content || '',
-                editingPage?.images || [],
+                content,
+                images,
                 formData.title,
-                normalizedPath
+                normalizedPath,
+                formData.coverImage || ''
             );
 
             await mockService.createLog({
@@ -76,7 +109,8 @@ const AdminCustomPages = () => {
                 description: `${editingPage ? 'Updated' : 'Created'} custom page: ${formData.title} (/pages/${normalizedPath})`
             });
 
-            setFormData({ title: '', path: '' });
+            setFormData(emptyForm);
+            setPendingContent('');
             setIsFormOpen(false);
             setEditingPage(null);
             await refreshSettings();
@@ -127,32 +161,83 @@ const AdminCustomPages = () => {
                         <button className="btn-close" onClick={() => setIsFormOpen(false)}><FaTimes /></button>
                     </div>
                     <form onSubmit={handleSave} className="form-vertical">
-                        <div className="form-group">
-                            <label>{t('admin.pageTitle')}</label>
-                            <textarea
-                                className="input-field"
-                                value={formData.title}
-                                onChange={e => setFormData({ ...formData, title: e.target.value })}
-                                placeholder="e.g. Terms of Service"
-                                rows={4}
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>{t('admin.pagePath')}</label>
-                            <div className="path-input-wrapper">
-                                <span className="path-prefix">/pages/</span>
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>{t('admin.pageTitle')}</label>
                                 <input
                                     type="text"
                                     className="input-field"
-                                    value={formData.path}
-                                    onChange={e => setFormData({ ...formData, path: e.target.value })}
-                                    placeholder="e.g. terms"
+                                    value={formData.title}
+                                    onChange={e => setFormData({ ...formData, title: e.target.value })}
+                                    placeholder="e.g. Terms of Service"
                                     required
                                 />
                             </div>
-                            <small className="form-hint">{t('admin.pathHint')}</small>
+                            <div className="form-group">
+                                <label>{t('admin.pagePath')}</label>
+                                <div className="path-input-wrapper">
+                                    <span className="path-prefix">/pages/</span>
+                                    <input
+                                        type="text"
+                                        className="input-field"
+                                        value={formData.path}
+                                        onChange={e => setFormData({ ...formData, path: e.target.value })}
+                                        placeholder="e.g. terms"
+                                        required
+                                    />
+                                </div>
+                                <small className="form-hint">{t('admin.pathHint')}</small>
+                            </div>
                         </div>
+
+                        <div className="form-group">
+                            <label>{t('pageEditor.coverImage')}</label>
+                            <small className="form-hint">{t('pageEditor.coverImageDesc')}</small>
+                            <div className="cover-image-field">
+                                {formData.coverImage ? (
+                                    <div className="cover-preview">
+                                        <img src={formData.coverImage} alt="Cover" />
+                                        <button
+                                            type="button"
+                                            className="btn-icon delete cover-remove"
+                                            onClick={() => setFormData(prev => ({ ...prev, coverImage: '' }))}
+                                            title={t('pageEditor.removeCoverImage')}
+                                        >
+                                            <FaTrash />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline cover-upload-btn"
+                                        onClick={() => coverInputRef.current?.click()}
+                                        disabled={isUploadingCover}
+                                    >
+                                        {isUploadingCover ? <FaSpinner className="icon-spin" /> : <FaImage />}
+                                        {t('pageEditor.uploadImage')}
+                                    </button>
+                                )}
+                                <input
+                                    type="file"
+                                    ref={coverInputRef}
+                                    style={{ display: 'none' }}
+                                    accept="image/*"
+                                    onChange={handleCoverUpload}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="form-group">
+                            <label>{t('pageEditor.content')}</label>
+                            <RichTextEditor
+                                key={editingPage?.id || 'new'}
+                                ref={editorRef}
+                                initialValue={pendingContent}
+                                storagePathPrefix={`pages/${editingPage?.id || 'new'}`}
+                                placeholder={t('pageEditor.placeholder')}
+                            />
+                        </div>
+
                         <div className="form-actions">
                             <button type="button" className="btn btn-outline" onClick={() => setIsFormOpen(false)}>
                                 {t('common.cancel')}
@@ -174,20 +259,25 @@ const AdminCustomPages = () => {
                     <div className="pages-grid">
                         {customPages.map(page => (
                             <div key={page.id} className="card page-card">
-                                <div className="page-info">
-                                    <h3>{page.title}</h3>
-                                    <p className="page-path">/pages/{page.path}</p>
-                                </div>
-                                <div className="page-actions">
-                                    <button className="btn-icon" onClick={() => openEditForm(page)} title={t('common.edit')}>
-                                        <FaEdit />
-                                    </button>
-                                    <Link to={`/pages/${page.path}`} className="btn-icon" title={t('common.view')}>
-                                        <FaExternalLinkAlt />
-                                    </Link>
-                                    <button className="btn-icon delete" onClick={() => handleDelete(page.id, page.title)} title={t('common.delete')}>
-                                        <FaTrash />
-                                    </button>
+                                {page.coverImage && (
+                                    <img src={page.coverImage} alt={page.title} className="page-card-cover" />
+                                )}
+                                <div className="page-card-body">
+                                    <div className="page-info">
+                                        <h3>{page.title}</h3>
+                                        <p className="page-path">/pages/{page.path}</p>
+                                    </div>
+                                    <div className="page-actions">
+                                        <button className="btn-icon" onClick={() => handleEditClick(page)} disabled={isLoadingPage} title={t('common.edit')}>
+                                            <FaEdit />
+                                        </button>
+                                        <Link to={`/pages/${page.path}`} className="btn-icon" title={t('common.view')}>
+                                            <FaExternalLinkAlt />
+                                        </Link>
+                                        <button className="btn-icon delete" onClick={() => handleDelete(page.id, page.title)} title={t('common.delete')}>
+                                            <FaTrash />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -201,7 +291,7 @@ const AdminCustomPages = () => {
                 }
                 .create-form {
                     margin-bottom: 2rem;
-                    max-width: 600px;
+                    max-width: 900px;
                 }
                 .card-header {
                     display: flex;
@@ -221,6 +311,16 @@ const AdminCustomPages = () => {
                     flex-direction: column;
                     gap: 1.5rem;
                 }
+                .form-row {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 1rem;
+                }
+                .form-group {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
                 .path-input-wrapper {
                     display: flex;
                     align-items: center;
@@ -233,12 +333,44 @@ const AdminCustomPages = () => {
                 .form-hint {
                     color: var(--text-secondary);
                     font-size: 0.8rem;
-                    margin-top: 0.25rem;
                 }
                 .form-actions {
                     display: flex;
                     justify-content: flex-end;
                     gap: 1rem;
+                }
+                .cover-image-field {
+                    display: flex;
+                }
+                .cover-upload-btn {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
+                .cover-preview {
+                    position: relative;
+                    width: 100%;
+                    max-width: 400px;
+                }
+                .cover-preview img {
+                    width: 100%;
+                    max-height: 200px;
+                    object-fit: cover;
+                    border-radius: 0.75rem;
+                    border: 1px solid var(--glass-border);
+                }
+                .cover-remove {
+                    position: absolute;
+                    top: 0.5rem;
+                    right: 0.5rem;
+                    background: rgba(0,0,0,0.6);
+                }
+                .icon-spin {
+                    animation: spin 1s linear infinite;
+                }
+                @keyframes spin {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
                 }
                 .pages-grid {
                     display: grid;
@@ -246,6 +378,17 @@ const AdminCustomPages = () => {
                     gap: 1.5rem;
                 }
                 .page-card {
+                    display: flex;
+                    flex-direction: column;
+                    padding: 0;
+                    overflow: hidden;
+                }
+                .page-card-cover {
+                    width: 100%;
+                    height: 120px;
+                    object-fit: cover;
+                }
+                .page-card-body {
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
@@ -300,10 +443,10 @@ const AdminCustomPages = () => {
                     from { opacity: 0; transform: translateY(10px); }
                     to { opacity: 1; transform: translateY(0); }
                 }
-                textarea.input-field {
-                   font-family: monospace;
-                   font-size: 0.9rem;
-                   resize: vertical;
+                @media (max-width: 640px) {
+                    .form-row {
+                        grid-template-columns: 1fr;
+                    }
                 }
             `}</style>
         </div>

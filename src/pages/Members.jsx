@@ -9,16 +9,14 @@ const Members = () => {
     const { t, language } = useLanguage();
     const [members, setMembers] = useState([]);
     const [dataLoading, setDataLoading] = useState(true);
-    const { user, isAdmin, loading } = useAuth();
+    const { user, isAdmin } = useAuth();
     const navigate = useNavigate();
 
 
     const fetchMembers = async () => {
-        console.log('Members: fetchMembers() started');
         setDataLoading(true);
         try {
             const data = await mockService.getMembers();
-            console.log('Members: data received, count:', data?.length);
             setMembers(data || []);
         } catch (err) {
             console.error('Members: Error fetching members:', err);
@@ -61,7 +59,7 @@ const Members = () => {
                                         <img src={member.avatar} alt={member.name} className="member-avatar" />
                                         <div className="member-info">
                                             <h3 className="member-name">{member.name}</h3>
-                                            <p className="member-role">{member.role} • {t('members.joined')} {formatMonthYear(member.joinDate, language)}</p>
+                                            <p className="member-role"><span className="member-role-name">{member.role}</span> • {t('members.joined')} {formatMonthYear(member.joinDate, language)}</p>
                                             {(isAdmin || (user && user.id === member.id)) && (
                                                 <button
                                                     className="btn-edit-sm"
@@ -160,8 +158,10 @@ const Members = () => {
         .member-role {
             font-size: 0.8rem;
             color: var(--text-secondary);
-            text-transform: capitalize;
             margin-bottom: 0.25rem;
+        }
+        .member-role-name {
+            text-transform: capitalize;
         }
         .member-detail-sm {
             font-size: 0.75rem;

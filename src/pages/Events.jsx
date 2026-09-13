@@ -666,20 +666,6 @@ const Events = () => {
             margin-bottom: 2px;
         }
         
-        .events-list {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            width: 100%;
-        }
-        .event-card {
-            display: flex;
-            align-items: flex-start;
-            gap: 2rem;
-            padding: 2rem;
-            transition: transform 0.3s ease, border-color 0.3s ease;
-        }
-        
         .event-card.event-type-club-official-meetup {
             background: linear-gradient(135deg, var(--primary-semi), var(--bg-card));
             border-left: 4px solid var(--primary);
@@ -723,12 +709,13 @@ const Events = () => {
             font-style: italic;
         }
         .events-list {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.25rem;
         }
         .event-card-wrapper {
             transition: transform 0.2s ease;
+            height: 100%;
         }
         .event-card-wrapper:hover {
             transform: translateY(-4px);
@@ -742,6 +729,7 @@ const Events = () => {
             flex-direction: column;
             position: relative;
             width: 100%;
+            height: 100%;
         }
         .event-card-wrapper:hover .event-card {
             border-color: var(--primary);
@@ -749,17 +737,18 @@ const Events = () => {
         }
         .event-card-content {
             display: flex;
-            padding: 2rem;
-            gap: 2rem;
+            padding: 1.25rem;
+            gap: 1rem;
+            flex: 1;
         }
         .event-date {
-            min-width: 80px;
+            min-width: 60px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
             background: rgba(255, 255, 255, 0.05);
-            padding: 0.75rem;
+            padding: 0.5rem;
             border-radius: 0.75rem;
             border: 1px solid var(--glass-border);
             height: fit-content;
@@ -808,7 +797,7 @@ const Events = () => {
         }
         .event-body h2 {
             flex: 1;
-            font-size: 1.75rem;
+            font-size: 1.25rem;
             font-weight: 700;
             margin: 0;
             line-height: 1.2;
@@ -857,8 +846,12 @@ const Events = () => {
         .event-desc {
             color: var(--text-secondary);
             line-height: 1.5;
-            margin-bottom: 1.5rem;
-            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
         .attendees-section {
             display: flex;
@@ -904,23 +897,25 @@ const Events = () => {
 
         .event-footer-actions {
             display: flex;
+            flex-wrap: wrap;
             border-top: 1px solid var(--glass-border);
             background: rgba(0,0,0,0.1);
         }
         .action-btn {
             flex: 1;
-            padding: 1rem;
+            min-width: 45%;
+            padding: 0.65rem;
             background: transparent;
             border: none;
             color: var(--text-secondary);
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
         .action-btn:hover {
             background: rgba(255,255,255,0.05);
@@ -928,6 +923,13 @@ const Events = () => {
         }
         .action-btn:not(:last-child) {
             border-right: 1px solid var(--glass-border);
+        }
+        .action-btn {
+            border-top: 1px solid var(--glass-border);
+        }
+        .event-footer-actions .action-btn:first-child,
+        .event-footer-actions .action-btn:nth-child(2) {
+            border-top: none;
         }
         
         .join-btn {
@@ -1012,6 +1014,9 @@ const Events = () => {
             }
             .modal-content {
                 max-width: 90vw;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
             }
         }
       `}</style>

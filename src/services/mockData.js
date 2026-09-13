@@ -363,11 +363,12 @@ export const mockService = {
         return null; // Return null if not found
     },
 
-    updatePageContent: async (pageId, content, images = [], title = '', path = '') => {
+    updatePageContent: async (pageId, content, images = [], title = '', path = '', coverImage = undefined) => {
         const docRef = doc(db, 'pages', pageId);
         const data = { content, images, updatedAt: new Date().toISOString() };
         if (title) data.title = title;
         if (path) data.path = path;
+        if (coverImage !== undefined) data.coverImage = coverImage;
 
         await setDoc(docRef, data, { merge: true });
         return { id: pageId, ...data };

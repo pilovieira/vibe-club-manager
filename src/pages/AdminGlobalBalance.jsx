@@ -5,6 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useConfirm } from '../context/ConfirmContext';
 import { FaTrash, FaSpinner } from 'react-icons/fa';
 import { formatDate } from '../utils/dateUtils';
+import { formatCurrency } from '../utils/currency';
 
 const AdminGlobalBalance = () => {
     const { user, isAdmin, loading } = useAuth();
@@ -17,11 +18,6 @@ const AdminGlobalBalance = () => {
     const [newTransaction, setNewTransaction] = useState({ description: '', amount: '', date: '', type: 'expense' });
     const [isSavingTransaction, setIsSavingTransaction] = useState(false);
 
-    if (loading) {
-        return <div className="container" style={{ paddingTop: '2rem' }}>{t('common.loading')}...</div>;
-    }
-
-
     useEffect(() => {
         loadTransactions();
     }, []);
@@ -29,6 +25,10 @@ const AdminGlobalBalance = () => {
     useEffect(() => {
         filterTransactions();
     }, [selectedMonth, transactions]);
+
+    if (loading) {
+        return <div className="container" style={{ paddingTop: '2rem' }}>{t('common.loading')}...</div>;
+    }
 
     const loadTransactions = async () => {
         try {
@@ -152,7 +152,7 @@ const AdminGlobalBalance = () => {
                 </div>
                 <div className={`balance-display ${totalBalance >= 0 ? 'positive' : 'negative'}`}>
                     <span className="balance-label">{selectedMonth ? t('balance.netBalance') : t('balance.totalBalance')}:</span>
-                    <span className="balance-amount">${totalBalance.toFixed(2)}</span>
+                    <span className="balance-amount">{formatCurrency(totalBalance)}</span>
                 </div>
             </header>
 
@@ -173,7 +173,7 @@ const AdminGlobalBalance = () => {
                                     </div>
                                 </div>
                                 <span className="transaction-amount">
-                                    {(item.type === 'income' || item.type === 'revenue') ? '+' : '-'}${Number(item.amount).toFixed(2)}
+                                    {(item.type === 'income' || item.type === 'revenue') ? '+' : '-'}{formatCurrency(item.amount)}
                                 </span>
                                 {isAdmin && (
                                     <button

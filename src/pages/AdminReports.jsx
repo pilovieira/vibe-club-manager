@@ -3,6 +3,7 @@ import { mockService } from '../services/mockData';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { formatDate } from '../utils/dateUtils';
+import { formatCurrency } from '../utils/currency';
 import { FaPrint, FaFileInvoiceDollar } from 'react-icons/fa';
 
 const toISODate = (d) => d.toISOString().slice(0, 10);
@@ -174,19 +175,19 @@ const AdminReports = () => {
             <div className="summary-cards">
                 <div className="summary-card income">
                     <span className="summary-label">{t('report.totalIncome')}</span>
-                    <span className="summary-value">${totalIncome.toFixed(2)}</span>
+                    <span className="summary-value">{formatCurrency(totalIncome)}</span>
                 </div>
                 <div className="summary-card expense">
                     <span className="summary-label">{t('report.totalExpenses')}</span>
-                    <span className="summary-value">${totalExpenses.toFixed(2)}</span>
+                    <span className="summary-value">{formatCurrency(totalExpenses)}</span>
                 </div>
                 <div className={`summary-card net ${netBalance >= 0 ? 'positive' : 'negative'}`}>
                     <span className="summary-label">{t('report.netBalance')}</span>
-                    <span className="summary-value">${netBalance.toFixed(2)}</span>
+                    <span className="summary-value">{formatCurrency(netBalance)}</span>
                 </div>
                 <div className="summary-card contributions">
                     <span className="summary-label">{t('report.contributionsCollected')}</span>
-                    <span className="summary-value">${totalContributions.toFixed(2)}</span>
+                    <span className="summary-value">{formatCurrency(totalContributions)}</span>
                 </div>
             </div>
 
@@ -208,7 +209,7 @@ const AdminReports = () => {
                                 <tr key={m.key}>
                                     <td style={{ textTransform: 'capitalize' }}>{monthLabel(m.key)}</td>
                                     <td>{m.count}</td>
-                                    <td>${m.total.toFixed(2)}</td>
+                                    <td>{formatCurrency(m.total)}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -234,7 +235,7 @@ const AdminReports = () => {
                                 <tr key={m.id}>
                                     <td>{m.name}</td>
                                     <td>{m.count}</td>
-                                    <td>${m.total.toFixed(2)}</td>
+                                    <td>{formatCurrency(m.total)}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -263,7 +264,7 @@ const AdminReports = () => {
                                     <td>{tx.description}</td>
                                     <td>{tx.type === 'expense' ? t('balance.expense') : t('balance.revenue')}</td>
                                     <td style={{ color: tx.type === 'expense' ? 'var(--danger)' : 'var(--success)' }}>
-                                        {tx.type === 'expense' ? '-' : '+'}${Number(tx.amount).toFixed(2)}
+                                        {tx.type === 'expense' ? '-' : ''}{formatCurrency(tx.amount)}
                                     </td>
                                 </tr>
                             ))}

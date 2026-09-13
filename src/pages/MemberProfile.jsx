@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { authService } from '../services/authService';
 import { mockService } from '../services/mockData';
 import { storageService } from '../services/storageService';
 import { useAuth } from '../context/AuthContext';
@@ -338,7 +337,7 @@ const MemberProfile = () => {
                             <div className="profile-status-section">
                                 <span className={`status-badge-premium ${member.status}`}>
                                     <span className="status-dot-inner"></span>
-                                    {member.status}
+                                    {member.status === 'active' ? t('members.active') : t('members.inactive')}
                                 </span>
                             </div>
                         </div>

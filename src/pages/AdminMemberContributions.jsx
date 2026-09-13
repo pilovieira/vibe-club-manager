@@ -6,6 +6,7 @@ import { useConfirm } from '../context/ConfirmContext';
 import { Link } from 'react-router-dom';
 import { FaTrash } from 'react-icons/fa';
 import { formatDate } from '../utils/dateUtils';
+import { formatCurrency } from '../utils/currency';
 
 const AdminMemberContributions = () => {
     const { user, isAdmin, loading } = useAuth();
@@ -19,11 +20,6 @@ const AdminMemberContributions = () => {
     const [showAddForm, setShowAddForm] = useState(false);
     const [monthlyContribution, setMonthlyContribution] = useState(50);
     const [newContribution, setNewContribution] = useState({ date: '', amount: 50, description: '' });
-
-    if (loading) {
-        return <div className="container" style={{ paddingTop: '2rem' }}>{t('common.loading')}...</div>;
-    }
-
 
     useEffect(() => {
         const fetchMembers = async () => {
@@ -56,6 +52,10 @@ const AdminMemberContributions = () => {
         };
         fetchContributions();
     }, [selectedMemberId]);
+
+    if (loading) {
+        return <div className="container" style={{ paddingTop: '2rem' }}>{t('common.loading')}...</div>;
+    }
 
     const handleCreateContribution = (e) => {
         e.preventDefault();
@@ -212,7 +212,7 @@ const AdminMemberContributions = () => {
                                         <tr key={c.id}>
                                             <td>{formatDate(c.date, language)}</td>
                                             <td>{c.description || (c.type === 'income' ? t('monthly.defaultDescription') : '')}</td>
-                                            <td>${c.amount}</td>
+                                            <td>{formatCurrency(c.amount)}</td>
                                             <td><span className="badge-paid">{t('monthly.paid')}</span></td>
                                             {isAdmin && (
                                                 <td>

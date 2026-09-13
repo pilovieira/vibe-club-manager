@@ -45,7 +45,7 @@ export const formatDate = (date, lang = 'pt') => {
         const d = parseSafeDate(date);
         if (isNaN(d.getTime())) return String(date);
         return d.toLocaleDateString(getLocale(lang));
-    } catch (e) {
+    } catch {
         return String(date);
     }
 };
@@ -62,7 +62,7 @@ export const formatDateTime = (date, lang = 'pt') => {
         const d = parseSafeDate(date);
         if (isNaN(d.getTime())) return String(date);
         return d.toLocaleString(getLocale(lang));
-    } catch (e) {
+    } catch {
         return String(date);
     }
 };
@@ -79,7 +79,7 @@ export const formatMonthYear = (date, lang = 'pt') => {
         const d = parseSafeDate(date);
         if (isNaN(d.getTime())) return String(date);
         return d.toLocaleDateString(getLocale(lang), { month: 'short', year: 'numeric' });
-    } catch (e) {
+    } catch {
         return String(date);
     }
 };

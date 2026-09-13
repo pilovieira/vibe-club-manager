@@ -16,6 +16,7 @@ const EventGallery = () => {
 
     const [event, setEvent] = useState(null);
     const [photos, setPhotos] = useState([]);
+    const [membersById, setMembersById] = useState({});
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(null);
@@ -32,6 +33,9 @@ const EventGallery = () => {
 
                 const eventPhotos = await mockService.getEventPhotos(eventId);
                 setPhotos(eventPhotos);
+
+                const members = await mockService.getMembers();
+                setMembersById(Object.fromEntries(members.map(m => [m.id, m])));
             } catch (err) {
                 console.error('Error fetching gallery data:', err);
                 setError(t('events.uploadError'));
@@ -140,6 +144,14 @@ const EventGallery = () => {
         }
     };
 
+    const getUploader = (photo) => {
+        const member = membersById[photo.uploaded_by_id];
+        return {
+            name: member?.name || photo.uploaded_by_name,
+            avatar: member?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${photo.uploaded_by_id || photo.uploaded_by_name}`
+        };
+    };
+
     const navigatePhoto = (direction) => {
         if (selectedIndex === null) return;
         let newIndex = selectedIndex + direction;
@@ -219,7 +231,9 @@ const EventGallery = () => {
                         <p>{t('events.noPhotos')}</p>
                     </div>
                 ) : (
-                    photos.map((photo, index) => (
+                    photos.map((photo, index) => {
+                        const uploader = getUploader(photo);
+                        return (
                         <div key={photo.id} className="gallery-item" onClick={() => setSelectedIndex(index)}>
                             {photo.media_type === 'video' ? (
                                 <video src={photo.url} muted preload="metadata" />
@@ -228,7 +242,10 @@ const EventGallery = () => {
                             )}
                             {photo.media_type === 'video' && <div className="video-badge">▶</div>}
                             <div className="photo-info">
-                                <span className="uploader">{photo.uploaded_by_name}</span>
+                                <span className="uploader">
+                                    <img src={uploader.avatar} alt={uploader.name} className="uploader-avatar" />
+                                    {uploader.name}
+                                </span>
                                 {(isAdmin || user?.id === photo.uploaded_by_id) && (
                                     <button
                                         className="btn-delete-photo"
@@ -240,7 +257,8 @@ const EventGallery = () => {
                                 )}
                             </div>
                         </div>
-                    ))
+                        );
+                    })
                 )}
             </div>
 
@@ -277,7 +295,8 @@ const EventGallery = () => {
                         )}
                         <div className="modal-info">
                             <span className="modal-uploader">
-                                {t('events.photoUploadedBy')}: <strong>{photos[selectedIndex].uploaded_by_name}</strong>
+                                <img src={getUploader(photos[selectedIndex]).avatar} alt={getUploader(photos[selectedIndex]).name} className="uploader-avatar" />
+                                {t('events.photoUploadedBy')}: <strong>{getUploader(photos[selectedIndex]).name}</strong>
                             </span>
                             <span className="photo-counter">{selectedIndex + 1} / {photos.length}</span>
                         </div>
@@ -476,7 +495,7 @@ const EventGallery = () => {
                     transform: scale(1.02);
                     border-color: var(--primary);
                 }
-                .gallery-item img, .gallery-item video {
+                .gallery-item > img, .gallery-item > video {
                     width: 100%;
                     height: 100%;
                     object-fit: cover;
@@ -507,6 +526,17 @@ const EventGallery = () => {
                 .uploader {
                     font-weight: 500;
                     opacity: 0.9;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
+                .uploader-avatar {
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    object-fit: cover;
+                    border: 1px solid rgba(255,255,255,0.4);
+                    flex-shrink: 0;
                 }
                 .no-photos {
                     grid-column: 1 / -1;
@@ -558,6 +588,14 @@ const EventGallery = () => {
                 .modal-uploader {
                     font-size: 1rem;
                     opacity: 0.9;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.5rem;
+                }
+                .modal-uploader .uploader-avatar {
+                    width: 28px;
+                    height: 28px;
                 }
                 .photo-counter {
                     font-size: 0.85rem;

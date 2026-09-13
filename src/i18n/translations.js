@@ -269,6 +269,13 @@ export const translations = {
         'pageEditor.alignLeft': 'Align Left',
         'pageEditor.alignCenter': 'Align Center',
         'pageEditor.alignRight': 'Align Right',
+        'pageEditor.undo': 'Undo',
+        'pageEditor.redo': 'Redo',
+        'pageEditor.quote': 'Quote',
+        'pageEditor.content': 'Content',
+        'pageEditor.coverImage': 'Cover Image',
+        'pageEditor.coverImageDesc': 'Displayed as a banner at the top of the page.',
+        'pageEditor.removeCoverImage': 'Remove cover image',
 
         // Events extra
         'events.beFirst': 'Be the first to join!',
@@ -290,6 +297,9 @@ export const translations = {
         // Settings Page
         'settings.monthlyContribution': 'Monthly Contribution Value',
         'settings.monthlyContributionDesc': 'Standard amount charged to members each month.',
+        'settings.general': 'General',
+        'settings.financial': 'Financial',
+        'settings.eventsTitle': 'Events Configuration',
         'settings.appTheme': 'App Theme',
         'settings.appThemeDesc': 'Choose the visual style for the entire application.',
         'settings.appTitle': 'App Title',
@@ -323,6 +333,8 @@ export const translations = {
         'common.save': 'Save',
         'common.cancel': 'Cancel',
         'common.confirm': 'Confirm',
+        'common.confirmDelete': 'Are you sure you want to delete this?',
+        'common.unauthorized': 'You are not authorized to view this page.',
         'common.edit': 'Edit',
         'common.delete': 'Delete',
         'common.close': 'Close',
@@ -474,7 +486,7 @@ export const translations = {
         'events.upcomingTitle': 'Próximos Eventos',
         'events.pastTitle': 'Eventos Passados',
         'events.showPastEvents': 'Mostrar Eventos Passados',
-        'events.gallery': 'Fotos',
+        'events.gallery': 'Galeria de Imagens',
         'events.openGallery': 'Abrir Galeria',
         'events.uploadPhoto': 'Enviar Foto',
         'events.photoUploadedBy': 'Enviado por',
@@ -631,6 +643,13 @@ export const translations = {
         'pageEditor.alignLeft': 'Alinhar à Esquerda',
         'pageEditor.alignCenter': 'Centralizar',
         'pageEditor.alignRight': 'Alinhar à Direita',
+        'pageEditor.undo': 'Desfazer',
+        'pageEditor.redo': 'Refazer',
+        'pageEditor.quote': 'Citação',
+        'pageEditor.content': 'Conteúdo',
+        'pageEditor.coverImage': 'Imagem de Capa',
+        'pageEditor.coverImageDesc': 'Exibida como um banner no topo da página.',
+        'pageEditor.removeCoverImage': 'Remover imagem de capa',
 
         // Events extra
         'events.beFirst': 'Seja o primeiro a participar!',
@@ -650,6 +669,9 @@ export const translations = {
         'log.title': 'Logs de Operação',
 
         // Settings Page
+        'settings.general': 'Geral',
+        'settings.financial': 'Financeiro',
+        'settings.eventsTitle': 'Configuração de Eventos',
         'settings.monthlyContribution': 'Valor da Mensalidade',
         'settings.monthlyContributionDesc': 'Valor padrão cobrado dos membros todos os meses.',
         'settings.appTheme': 'Tema do Aplicativo',
@@ -685,6 +707,8 @@ export const translations = {
         'common.save': 'Salvar',
         'common.cancel': 'Cancelar',
         'common.confirm': 'Confirmar',
+        'common.confirmDelete': 'Tem certeza que deseja excluir isto?',
+        'common.unauthorized': 'Você não tem permissão para ver esta página.',
         'common.edit': 'Editar',
         'common.delete': 'Excluir',
         'common.close': 'Fechar',
@@ -993,6 +1017,13 @@ export const translations = {
         'pageEditor.alignLeft': 'Alinear a la Izquierda',
         'pageEditor.alignCenter': 'Centrar',
         'pageEditor.alignRight': 'Alinear a la Derecha',
+        'pageEditor.undo': 'Deshacer',
+        'pageEditor.redo': 'Rehacer',
+        'pageEditor.quote': 'Cita',
+        'pageEditor.content': 'Contenido',
+        'pageEditor.coverImage': 'Imagen de Portada',
+        'pageEditor.coverImageDesc': 'Se muestra como un banner en la parte superior de la página.',
+        'pageEditor.removeCoverImage': 'Eliminar imagen de portada',
 
         // Events extra
         'events.beFirst': '¡Sé el primero en unirte!',
@@ -1012,6 +1043,9 @@ export const translations = {
         'log.title': 'Registros de Operación',
 
         // Settings Page
+        'settings.general': 'General',
+        'settings.financial': 'Financiero',
+        'settings.eventsTitle': 'Configuración de Eventos',
         'settings.monthlyContribution': 'Valor de la Mensualidad',
         'settings.monthlyContributionDesc': 'Monto estándar cobrado a los miembros cada mes.',
         'settings.appTheme': 'Tema de la Aplicación',
@@ -1047,6 +1081,8 @@ export const translations = {
         'common.save': 'Guardar',
         'common.cancel': 'Cancelar',
         'common.confirm': 'Confirmar',
+        'common.confirmDelete': '¿Estás seguro de que deseas eliminar esto?',
+        'common.unauthorized': 'No tienes permiso para ver esta página.',
         'common.edit': 'Editar',
         'common.delete': 'Eliminar',
         'common.close': 'Cerrar',
