@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useConfirm, useAlert } from '../context/ConfirmContext';
 import { mockService } from '../services/mockData';
 import { FaEdit, FaSave, FaSpinner, FaBold, FaItalic, FaListUl, FaListOl, FaLink, FaImage, FaUpload, FaTrash, FaHeading, FaAlignLeft, FaAlignCenter, FaAlignRight } from 'react-icons/fa';
 
@@ -9,6 +10,8 @@ const CustomPage = () => {
     const { path } = useParams();
     const { isAdmin, user } = useAuth();
     const { t } = useLanguage();
+    const confirm = useConfirm();
+    const alert = useAlert();
     const navigate = useNavigate();
     const [pageData, setPageData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -94,7 +97,7 @@ const CustomPage = () => {
             });
         } catch (err) {
             console.error('Error saving page content:', err);
-            alert(t('common.error') || 'Error saving content');
+            await alert(t('common.error') || 'Error saving content');
         } finally {
             setIsSaving(false);
         }
@@ -167,7 +170,7 @@ const CustomPage = () => {
             e.target.value = '';
         } catch (err) {
             console.error('Error uploading image:', err);
-            alert(t('pageEditor.errorUpload'));
+            await alert(t('pageEditor.errorUpload'));
         } finally {
             setIsUploading(false);
         }
@@ -214,7 +217,7 @@ const CustomPage = () => {
     };
 
     const handleDeleteImage = async (img) => {
-        if (window.confirm(t('pageEditor.confirmDeleteImage'))) {
+        if (await confirm(t('pageEditor.confirmDeleteImage'))) {
             const src = img.src;
             if (src.includes('firebasestorage.googleapis.com')) {
                 try {

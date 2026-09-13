@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { mockService } from '../services/mockData';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useAlert } from '../context/ConfirmContext';
 import { useSettings } from '../context/SettingsContext';
 import { FaSave, FaHistory, FaUpload, FaTrash } from 'react-icons/fa';
 import GenericLogo from '../components/GenericLogo';
@@ -9,6 +10,7 @@ import GenericLogo from '../components/GenericLogo';
 const AdminProperties = () => {
     const { user, isAdmin, loading } = useAuth();
     const { t, language } = useLanguage();
+    const alert = useAlert();
     const { settings, refreshSettings } = useSettings();
     const [properties, setProperties] = useState({});
     const [saving, setSaving] = useState(false);
@@ -42,7 +44,7 @@ const AdminProperties = () => {
             setTimeout(() => setSuccess(''), 5000);
         } catch (err) {
             console.error('Error updating settings:', err);
-            alert(t('common.error'));
+            await alert(t('common.error'));
         } finally {
             setSaving(false);
         }
@@ -60,7 +62,7 @@ const AdminProperties = () => {
             setTimeout(() => setSuccess(''), 3000);
         } catch (err) {
             console.error('Error uploading logo:', err);
-            alert(t('pageEditor.errorUpload'));
+            await alert(t('pageEditor.errorUpload'));
         } finally {
             setUploading(false);
         }

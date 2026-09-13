@@ -22,6 +22,12 @@ const AdminDashboard = () => {
                     <p>{t('admin.monthlySummaryDesc')}</p>
                 </Link>
 
+                <Link to="/admin/reports" className="dashboard-card">
+                    <div className="icon">📈</div>
+                    <h2>{t('admin.rangeReport')}</h2>
+                    <p>{t('admin.rangeReportDesc')}</p>
+                </Link>
+
                 <Link to="/admin/global-balance" className="dashboard-card">
                     <div className="icon">💰</div>
                     <h2>{t('admin.globalBalance')}</h2>

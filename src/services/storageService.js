@@ -73,6 +73,47 @@ export const storageService = {
         }
     },
 
+    /**
+     * Uploads a photo or video to an event gallery
+     * @param {string} eventId - ID of the event
+     * @param {string} userId - ID of the user uploading
+     * @param {File} file - Image or video file to upload
+     * @returns {Promise<{url: string, mediaType: 'image'|'video'}>}
+     */
+    uploadEventMedia: async (eventId, userId, file) => {
+        if (!file) throw new Error('No file provided');
+
+        const isImage = file.type.startsWith('image/');
+        const isVideo = file.type.startsWith('video/');
+
+        if (!isImage && !isVideo) {
+            throw new Error('Only image or video files are allowed');
+        }
+
+        // Photos max 10MB, videos max 100MB
+        const maxSize = isVideo ? 100 * 1024 * 1024 : 10 * 1024 * 1024;
+        if (file.size > maxSize) {
+            throw new Error(isVideo ? 'Video size should be less than 100MB' : 'File size should be less than 10MB');
+        }
+
+        const storageRef = ref(storage, `events/${eventId}/photos/${Date.now()}_${file.name}`);
+
+        const metadata = {
+            customMetadata: {
+                'uploadedById': userId
+            }
+        };
+
+        try {
+            const snapshot = await uploadBytes(storageRef, file, metadata);
+            const downloadURL = await getDownloadURL(snapshot.ref);
+            return { url: downloadURL, mediaType: isVideo ? 'video' : 'image' };
+        } catch (error) {
+            console.error('Error uploading event media:', error);
+            throw new Error('Failed to upload file. Please try again.');
+        }
+    },
+
     deleteFile: async (fileUrl) => {
         if (!fileUrl) return;
         try {

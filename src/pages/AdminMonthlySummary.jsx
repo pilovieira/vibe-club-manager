@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { mockService } from '../services/mockData';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useConfirm } from '../context/ConfirmContext';
 import { Link } from 'react-router-dom';
 
 const AdminMonthlySummary = () => {
     const { user, isAdmin, loading } = useAuth();
     const { t, language } = useLanguage();
+    const confirm = useConfirm();
     const [members, setMembers] = useState([]);
     const [contributions, setContributions] = useState([]);
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM format
@@ -77,53 +79,47 @@ const AdminMonthlySummary = () => {
 
                         const isPaid = !!contribution;
 
-                        const handleTogglePayment = () => {
+                        const handleTogglePayment = async () => {
                             if (!isAdmin) return;
 
                             if (isPaid) {
-                                if (window.confirm(t('contributions.confirmDelete'))) {
-                                    const removePaymentAsync = async () => {
-                                        try {
-                                            await mockService.deleteContribution(contribution.id);
-                                            const updatedContributions = await mockService.getAllContributions();
-                                            setContributions(updatedContributions);
+                                if (await confirm(t('contributions.confirmDelete'))) {
+                                    try {
+                                        await mockService.deleteContribution(contribution.id);
+                                        const updatedContributions = await mockService.getAllContributions();
+                                        setContributions(updatedContributions);
 
-                                            // Log operation
-                                            await mockService.createLog({
-                                                userId: user.id || user.uid,
-                                                userName: user.name || user.displayName || user.email,
-                                                description: `Unmarked ${member.name} as paid for ${monthName} ${displayYear}`
-                                            });
-                                        } catch (err) {
-                                            console.error('Error removing payment:', err);
-                                        }
-                                    };
-                                    removePaymentAsync();
+                                        // Log operation
+                                        await mockService.createLog({
+                                            userId: user.id || user.uid,
+                                            userName: user.name || user.displayName || user.email,
+                                            description: `Unmarked ${member.name} as paid for ${monthName} ${displayYear}`
+                                        });
+                                    } catch (err) {
+                                        console.error('Error removing payment:', err);
+                                    }
                                 }
                             } else {
-                                if (window.confirm(t('monthly.confirmMarkPaid').replace('{name}', member.name).replace('{month}', monthName))) {
-                                    const addPaymentAsync = async () => {
-                                        try {
-                                            await mockService.addContribution({
-                                                member_id: member.id,
-                                                date: `${selectedDate}-10`,
-                                                amount: monthlyContribution,
-                                                description: t('monthly.defaultDescription')
-                                            });
-                                            const updatedContributions = await mockService.getAllContributions();
-                                            setContributions(updatedContributions);
+                                if (await confirm(t('monthly.confirmMarkPaid').replace('{name}', member.name).replace('{month}', monthName))) {
+                                    try {
+                                        await mockService.addContribution({
+                                            member_id: member.id,
+                                            date: `${selectedDate}-10`,
+                                            amount: monthlyContribution,
+                                            description: t('monthly.defaultDescription')
+                                        });
+                                        const updatedContributions = await mockService.getAllContributions();
+                                        setContributions(updatedContributions);
 
-                                            // Log operation
-                                            await mockService.createLog({
-                                                userId: user.id || user.uid,
-                                                userName: user.name || user.displayName || user.email,
-                                                description: `Marked ${member.name} as paid for ${monthName} ${displayYear}`
-                                            });
-                                        } catch (err) {
-                                            console.error('Error adding payment:', err);
-                                        }
-                                    };
-                                    addPaymentAsync();
+                                        // Log operation
+                                        await mockService.createLog({
+                                            userId: user.id || user.uid,
+                                            userName: user.name || user.displayName || user.email,
+                                            description: `Marked ${member.name} as paid for ${monthName} ${displayYear}`
+                                        });
+                                    } catch (err) {
+                                        console.error('Error adding payment:', err);
+                                    }
                                 }
                             }
                         };

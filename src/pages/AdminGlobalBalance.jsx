@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { mockService } from '../services/mockData';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useConfirm } from '../context/ConfirmContext';
 import { FaTrash, FaSpinner } from 'react-icons/fa';
 import { formatDate } from '../utils/dateUtils';
 
 const AdminGlobalBalance = () => {
     const { user, isAdmin, loading } = useAuth();
     const { t, language } = useLanguage();
+    const confirm = useConfirm();
     const [transactions, setTransactions] = useState([]);
     const [filteredTransactions, setFilteredTransactions] = useState([]);
     const [totalBalance, setTotalBalance] = useState(0);
@@ -108,7 +110,7 @@ const AdminGlobalBalance = () => {
     };
 
     const handleDeleteTransaction = async (item) => {
-        if (!window.confirm(t('contributions.confirmDelete'))) return;
+        if (!(await confirm(t('contributions.confirmDelete')))) return;
 
         try {
             if (item.source === 'global') { // Check source to distinguish global transactions from contributions

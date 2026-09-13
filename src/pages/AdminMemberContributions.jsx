@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { mockService } from '../services/mockData';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useConfirm } from '../context/ConfirmContext';
 import { Link } from 'react-router-dom';
 import { FaTrash } from 'react-icons/fa';
 import { formatDate } from '../utils/dateUtils';
@@ -9,6 +10,7 @@ import { formatDate } from '../utils/dateUtils';
 const AdminMemberContributions = () => {
     const { user, isAdmin, loading } = useAuth();
     const { t, language } = useLanguage();
+    const confirm = useConfirm();
     const [members, setMembers] = useState([]);
     const [selectedMemberId, setSelectedMemberId] = useState('');
     const [contributions, setContributions] = useState([]);
@@ -94,7 +96,7 @@ const AdminMemberContributions = () => {
     };
 
     const handleDeleteContribution = async (id) => {
-        if (!window.confirm(t('contributions.confirmDelete'))) return;
+        if (!(await confirm(t('contributions.confirmDelete')))) return;
 
         try {
             const contributionToDelete = contributions.find(c => c.id === id);

@@ -29,19 +29,22 @@ service firebase.storage {
                     && request.resource.contentType.matches('image/.*');
     }
 
-    // Event Gallery Photos
+    // Event Gallery Photos & Videos
     match /events/{eventId}/photos/{fileName} {
-      // Photos are visible to all authenticated users
+      // Photos/videos are visible to all authenticated users
       allow read: if isAuthenticated();
-      
-      // All authenticated users can upload photos (max 10MB)
-      allow create: if isAuthenticated()
-                    && request.resource.size < 10 * 1024 * 1024
-                    && request.resource.contentType.matches('image/.*');
 
-      // Only the uploader or an admin can delete the photo
+      // All authenticated users can upload photos (max 10MB) or videos (max 100MB)
+      allow create: if isAuthenticated()
+                    && (
+                      (request.resource.contentType.matches('image/.*') && request.resource.size < 10 * 1024 * 1024)
+                      ||
+                      (request.resource.contentType.matches('video/.*') && request.resource.size < 100 * 1024 * 1024)
+                    );
+
+      // Only the uploader or an admin can delete the file
       // Note: resource.metadata contains the customMetadata we set during upload
-      allow delete: if isAuthenticated() 
+      allow delete: if isAuthenticated()
                     && (resource.metadata.uploadedById == request.auth.uid || isAdmin());
     }
     

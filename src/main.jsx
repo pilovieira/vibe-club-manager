@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext.jsx';
 import { LanguageProvider } from './context/LanguageContext.jsx';
 import { ThemeProvider } from './context/ThemeContext.jsx';
 import { SettingsProvider } from './context/SettingsContext.jsx';
+import { ConfirmProvider } from './context/ConfirmContext.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import App from './App.jsx'
 import './styles/index.css'
@@ -14,9 +15,11 @@ createRoot(document.getElementById('root')).render(
       <SettingsProvider>
         <LanguageProvider>
           <ThemeProvider>
-            <AuthProvider>
-              <App />
-            </AuthProvider>
+            <ConfirmProvider>
+              <AuthProvider>
+                <App />
+              </AuthProvider>
+            </ConfirmProvider>
           </ThemeProvider>
         </LanguageProvider>
       </SettingsProvider>

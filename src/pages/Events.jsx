@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { mockService } from '../services/mockData';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useConfirm, useAlert } from '../context/ConfirmContext';
 import { useSettings } from '../context/SettingsContext';
 import { FaImages, FaLock, FaGlobe, FaUsers, FaTimes } from 'react-icons/fa';
 import { parseSafeDate } from '../utils/dateUtils';
@@ -11,6 +12,8 @@ const Events = () => {
     const navigate = useNavigate();
     const { user, isAdmin } = useAuth();
     const { t, language } = useLanguage();
+    const confirm = useConfirm();
+    const alert = useAlert();
     const { settings } = useSettings();
     const [events, setEvents] = useState([]);
     const [members, setMembers] = useState([]);
@@ -113,7 +116,7 @@ const Events = () => {
         setShowCreateForm(true);
     };
 
-    const handleToggleEvent = (eventId) => {
+    const handleToggleEvent = async (eventId) => {
         if (!user) return;
 
         const event = events.find(e => e.id === eventId);
@@ -121,7 +124,7 @@ const Events = () => {
         const isPast = eventDate < new Date();
 
         if (isPast) {
-            alert(t('events.ended'));
+            await alert(t('events.ended'));
             return;
         }
 
@@ -131,7 +134,7 @@ const Events = () => {
             try {
                 if (attending) {
                     // Leave Event
-                    if (confirm(t('events.confirmLeave') || "Are you sure you want to leave this event?")) {
+                    if (await confirm(t('events.confirmLeave') || "Are you sure you want to leave this event?")) {
                         await mockService.leaveEvent(eventId, user.id);
                         await fetchEventsAndMembers(); // Refresh after action
 
@@ -146,7 +149,7 @@ const Events = () => {
                 } else {
                     // Join Event
                     if (user.status === 'inactive') {
-                        alert(t('events.inactiveWarning'));
+                        await alert(t('events.inactiveWarning'));
                         return;
                     }
                     await mockService.joinEvent(eventId, user.id);

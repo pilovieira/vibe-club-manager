@@ -5,12 +5,15 @@ import { mockService } from '../services/mockData';
 import { storageService } from '../services/storageService';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useConfirm, useAlert } from '../context/ConfirmContext';
 import { formatDate, formatMonthYear } from '../utils/dateUtils';
 import { FaCamera, FaSpinner, FaLock, FaUserEdit, FaEnvelope, FaUser, FaCalendarAlt, FaVenusMars, FaIdCard } from 'react-icons/fa';
 
 const MemberProfile = () => {
     const { id } = useParams();
     const { t, language } = useLanguage();
+    const confirm = useConfirm();
+    const alert = useAlert();
     const navigate = useNavigate();
     const location = useLocation();
     const [member, setMember] = useState(null);
@@ -111,17 +114,17 @@ const MemberProfile = () => {
     };
 
 
-    const handleToggleStatus = () => {
+    const handleToggleStatus = async () => {
         if (!member) return;
 
         const confirmMsg = member.status === 'active'
             ? t('profile.confirmDeactivate')
             : t('profile.confirmActivate');
-        if (window.confirm(confirmMsg)) {
+        if (await confirm(confirmMsg)) {
             const toggleStatusAsync = async () => {
                 try {
                     const newStatus = member.status === 'active' ? 'inactive' : 'active';
-                    const updated = await mockService.updateMemberStatus(member.id, newStatus);
+                    await mockService.updateMemberStatus(member.id, newStatus);
                     setMember({ ...member, status: newStatus });
                     setEditData({ ...editData, status: newStatus });
 
@@ -133,7 +136,7 @@ const MemberProfile = () => {
                     });
                 } catch (err) {
                     console.error('Error updating status:', err);
-                    alert(t(err.message) || err.message);
+                    await alert(t(err.message) || err.message);
                 }
 
             };

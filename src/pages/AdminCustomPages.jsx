@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useConfirm, useAlert } from '../context/ConfirmContext';
 import { useSettings } from '../context/SettingsContext';
 import { mockService } from '../services/mockData';
 import { FaPlus, FaTrash, FaEdit, FaExternalLinkAlt, FaTimes } from 'react-icons/fa';
@@ -9,6 +10,8 @@ import { Link } from 'react-router-dom';
 const AdminCustomPages = () => {
     const { isAdmin, user } = useAuth();
     const { t } = useLanguage();
+    const confirm = useConfirm();
+    const alert = useAlert();
     const { customPages, refreshSettings } = useSettings();
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingPage, setEditingPage] = useState(null);
@@ -41,7 +44,7 @@ const AdminCustomPages = () => {
         );
 
         if (isDuplicate) {
-            alert(t('admin.duplicatePathError') || 'A page with this path already exists.');
+            await alert(t('admin.duplicatePathError') || 'A page with this path already exists.');
             return;
         }
 
@@ -79,7 +82,7 @@ const AdminCustomPages = () => {
             await refreshSettings();
         } catch (err) {
             console.error('Error saving page:', err);
-            alert(t('common.error') || 'Error saving page');
+            await alert(t('common.error') || 'Error saving page');
         } finally {
             setIsSaving(false);
         }
@@ -87,7 +90,7 @@ const AdminCustomPages = () => {
 
     const handleDelete = async (pageId, title) => {
         const displayTitle = title;
-        if (!window.confirm(t('common.confirmDelete') || `Are you sure you want to delete "${displayTitle}"?`)) return;
+        if (!(await confirm(t('common.confirmDelete') || `Are you sure you want to delete "${displayTitle}"?`))) return;
 
         try {
             await mockService.deleteCustomPage(pageId);
@@ -102,7 +105,7 @@ const AdminCustomPages = () => {
             await refreshSettings();
         } catch (err) {
             console.error('Error deleting page:', err);
-            alert(t('common.error') || 'Error deleting page');
+            await alert(t('common.error') || 'Error deleting page');
         }
     };
 

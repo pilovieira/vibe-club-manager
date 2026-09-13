@@ -4,6 +4,7 @@ import { mockService } from '../services/mockData';
 import { storageService } from '../services/storageService';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useConfirm } from '../context/ConfirmContext';
 import { FaCamera, FaArrowLeft, FaChevronLeft, FaChevronRight, FaTimes, FaSpinner, FaTrash } from 'react-icons/fa';
 
 const EventGallery = () => {
@@ -11,6 +12,7 @@ const EventGallery = () => {
     const navigate = useNavigate();
     const { user, isAdmin } = useAuth();
     const { t } = useLanguage();
+    const confirm = useConfirm();
 
     const [event, setEvent] = useState(null);
     const [photos, setPhotos] = useState([]);
@@ -54,11 +56,12 @@ const EventGallery = () => {
         try {
             const uploadPromises = files.map(async (file) => {
                 try {
-                    const downloadURL = await storageService.uploadEventPhoto(eventId, user.id, file);
+                    const { url: downloadURL, mediaType } = await storageService.uploadEventMedia(eventId, user.id, file);
 
                     const newPhoto = {
                         event_id: eventId,
                         url: downloadURL,
+                        media_type: mediaType,
                         uploaded_by_id: user.id,
                         uploaded_by_name: user.name || user.email,
                         file_name: file.name
@@ -107,7 +110,7 @@ const EventGallery = () => {
     const handleDeletePhoto = async (photo, e) => {
         if (e) e.stopPropagation();
 
-        if (!window.confirm(t('events.confirmDeletePhoto'))) return;
+        if (!(await confirm(t('events.confirmDeletePhoto')))) return;
 
         try {
             setLoading(true);
@@ -193,7 +196,7 @@ const EventGallery = () => {
                         <label className={`btn btn-primary upload-btn ${uploading ? 'disabled' : ''}`}>
                             <input
                                 type="file"
-                                accept="image/*"
+                                accept="image/*,video/*"
                                 multiple
                                 onChange={handleFileUpload}
                                 disabled={uploading}
@@ -202,7 +205,7 @@ const EventGallery = () => {
                             {uploading ? <FaSpinner className="spinner" /> : <FaCamera />}
                             <span>{t('events.uploadPhoto')}</span>
                         </label>
-                        <span className="max-size-hint">{t('events.maxSize')}: 10MB</span>
+                        <span className="max-size-hint">{t('events.maxSize')}: 10MB ({t('events.photos') || 'fotos'}) / 100MB ({t('events.videos') || 'vídeos'})</span>
                     </div>
                 )}
             </header>
@@ -218,7 +221,12 @@ const EventGallery = () => {
                 ) : (
                     photos.map((photo, index) => (
                         <div key={photo.id} className="gallery-item" onClick={() => setSelectedIndex(index)}>
-                            <img src={photo.url} alt={`Photo ${index}`} loading="lazy" />
+                            {photo.media_type === 'video' ? (
+                                <video src={photo.url} muted preload="metadata" />
+                            ) : (
+                                <img src={photo.url} alt={`Photo ${index}`} loading="lazy" />
+                            )}
+                            {photo.media_type === 'video' && <div className="video-badge">▶</div>}
                             <div className="photo-info">
                                 <span className="uploader">{photo.uploaded_by_name}</span>
                                 {(isAdmin || user?.id === photo.uploaded_by_id) && (
@@ -262,7 +270,11 @@ const EventGallery = () => {
                     </button>
 
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <img src={photos[selectedIndex].url} alt="Expanded view" />
+                        {photos[selectedIndex].media_type === 'video' ? (
+                            <video src={photos[selectedIndex].url} controls autoPlay />
+                        ) : (
+                            <img src={photos[selectedIndex].url} alt="Expanded view" />
+                        )}
                         <div className="modal-info">
                             <span className="modal-uploader">
                                 {t('events.photoUploadedBy')}: <strong>{photos[selectedIndex].uploaded_by_name}</strong>
@@ -464,10 +476,30 @@ const EventGallery = () => {
                     transform: scale(1.02);
                     border-color: var(--primary);
                 }
-                .gallery-item img {
+                .gallery-item img, .gallery-item video {
                     width: 100%;
                     height: 100%;
                     object-fit: cover;
+                }
+                .video-badge {
+                    position: absolute;
+                    top: 0.5rem;
+                    right: 0.5rem;
+                    background: rgba(0,0,0,0.6);
+                    color: white;
+                    width: 28px;
+                    height: 28px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 0.8rem;
+                }
+                .modal-content video {
+                    max-width: 100%;
+                    max-height: 80vh;
+                    border-radius: 0.5rem;
+                    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
                 }
                 .gallery-item:hover .photo-info {
                     opacity: 1;
