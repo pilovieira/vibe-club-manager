@@ -65,6 +65,13 @@ service cloud.firestore {
       allow update: if false;
     }
 
+    // Member vehicles showcase
+    match /vehicles/{vehicleId} {
+      allow read: if true;
+      allow create: if isAuth() && (request.resource.data.member_id == request.auth.uid || isAdmin());
+      allow update, delete: if isAuth() && (resource.data.member_id == request.auth.uid || isAdmin());
+    }
+
     match /contributions/{id} {
       allow read: if isAuth() && (resource.data.member_id == request.auth.uid || isAdmin());
       allow write: if isAdmin();

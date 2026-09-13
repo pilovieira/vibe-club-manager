@@ -7,7 +7,9 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useConfirm, useAlert } from '../context/ConfirmContext';
 import { formatDate, formatMonthYear } from '../utils/dateUtils';
-import { FaCamera, FaSpinner, FaLock, FaUserEdit, FaEnvelope, FaUser, FaCalendarAlt, FaVenusMars, FaIdCard } from 'react-icons/fa';
+import { FaCamera, FaSpinner, FaLock, FaUserEdit, FaEnvelope, FaUser, FaCalendarAlt, FaVenusMars, FaIdCard, FaCar, FaPlus, FaTrash, FaEdit, FaTimes } from 'react-icons/fa';
+
+const emptyVehicleForm = { name: '', nickname: '', year: '', description: '', photo: null, photoUrl: '' };
 
 const MemberProfile = () => {
     const { id } = useParams();
@@ -32,6 +34,14 @@ const MemberProfile = () => {
     const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
     const [uploadError, setUploadError] = useState('');
     const [uploadSuccess, setUploadSuccess] = useState('');
+
+    // Vehicles State
+    const [vehicles, setVehicles] = useState([]);
+    const [showVehicleForm, setShowVehicleForm] = useState(false);
+    const [editingVehicleId, setEditingVehicleId] = useState(null);
+    const [vehicleForm, setVehicleForm] = useState(emptyVehicleForm);
+    const [isSavingVehicle, setIsSavingVehicle] = useState(false);
+    const [vehicleError, setVehicleError] = useState('');
 
     useEffect(() => {
         if (loading) return;
@@ -60,6 +70,9 @@ const MemberProfile = () => {
                     role: m.role || 'member'
                 });
                 setError('');
+
+                const memberVehicles = await mockService.getMemberVehicles(id);
+                setVehicles(memberVehicles);
             } catch (err) {
                 console.error('Error fetching member details:', err);
                 navigate('/members');
@@ -178,6 +191,105 @@ const MemberProfile = () => {
             setTimeout(() => setUploadError(''), 5000);
         } finally {
             setIsUploadingAvatar(false);
+        }
+    };
+
+    const openAddVehicleForm = () => {
+        setEditingVehicleId(null);
+        setVehicleForm(emptyVehicleForm);
+        setVehicleError('');
+        setShowVehicleForm(true);
+    };
+
+    const openEditVehicleForm = (vehicle) => {
+        setEditingVehicleId(vehicle.id);
+        setVehicleForm({
+            name: vehicle.name || '',
+            nickname: vehicle.nickname || '',
+            year: vehicle.year || '',
+            description: vehicle.description || '',
+            photo: null,
+            photoUrl: vehicle.photo_url || ''
+        });
+        setVehicleError('');
+        setShowVehicleForm(true);
+    };
+
+    const closeVehicleForm = () => {
+        setShowVehicleForm(false);
+        setEditingVehicleId(null);
+        setVehicleForm(emptyVehicleForm);
+        setVehicleError('');
+    };
+
+    const handleVehiclePhotoSelect = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setVehicleForm(prev => ({ ...prev, photo: file, photoUrl: URL.createObjectURL(file) }));
+    };
+
+    const handleSaveVehicle = async (e) => {
+        e.preventDefault();
+        if (!vehicleForm.name.trim()) return;
+
+        setIsSavingVehicle(true);
+        setVehicleError('');
+        try {
+            let photoUrl = vehicleForm.photoUrl;
+            if (vehicleForm.photo) {
+                photoUrl = await storageService.uploadVehiclePhoto(member.id, vehicleForm.photo);
+            }
+
+            const vehicleData = {
+                member_id: member.id,
+                name: vehicleForm.name.trim(),
+                nickname: vehicleForm.nickname.trim(),
+                year: vehicleForm.year ? Number(vehicleForm.year) : null,
+                description: vehicleForm.description.trim(),
+                photo_url: photoUrl && !photoUrl.startsWith('blob:') ? photoUrl : ''
+            };
+
+            if (editingVehicleId) {
+                const updated = await mockService.updateVehicle(editingVehicleId, vehicleData);
+                setVehicles(prev => prev.map(v => v.id === editingVehicleId ? updated : v));
+            } else {
+                const created = await mockService.addVehicle(vehicleData);
+                setVehicles(prev => [...prev, created]);
+            }
+
+            await mockService.createLog({
+                userId: user.id || user.uid,
+                userName: user.name || user.displayName || user.email,
+                description: `${editingVehicleId ? 'Updated' : 'Added'} vehicle "${vehicleData.name}" for member: ${member.name}`
+            });
+
+            closeVehicleForm();
+        } catch (err) {
+            console.error('Error saving vehicle:', err);
+            setVehicleError(err.message || t('common.error'));
+        } finally {
+            setIsSavingVehicle(false);
+        }
+    };
+
+    const handleDeleteVehicle = async (vehicle) => {
+        if (!(await confirm(t('vehicles.confirmDelete')))) return;
+
+        try {
+            await mockService.deleteVehicle(vehicle.id);
+            if (vehicle.photo_url) {
+                await storageService.deleteFile(vehicle.photo_url);
+            }
+            setVehicles(prev => prev.filter(v => v.id !== vehicle.id));
+
+            await mockService.createLog({
+                userId: user.id || user.uid,
+                userName: user.name || user.displayName || user.email,
+                description: `Removed vehicle "${vehicle.name}" from member: ${member.name}`
+            });
+        } catch (err) {
+            console.error('Error deleting vehicle:', err);
+            await alert(t('common.error'));
         }
     };
 
@@ -374,6 +486,122 @@ const MemberProfile = () => {
                 </div>
             )}
 
+            <div className="vehicles-section card">
+                <div className="vehicles-header">
+                    <h2 className="vehicles-title"><FaCar /> {t('vehicles.title')}</h2>
+                    {canEdit && (
+                        <button className="btn btn-primary btn-sm-icon" onClick={openAddVehicleForm}>
+                            <FaPlus /> {t('vehicles.add')}
+                        </button>
+                    )}
+                </div>
+
+                {vehicles.length === 0 ? (
+                    <p className="text-secondary text-center vehicles-empty">{t('vehicles.none')}</p>
+                ) : (
+                    <div className="vehicles-grid">
+                        {vehicles.map(vehicle => (
+                            <div key={vehicle.id} className="vehicle-card">
+                                <div className="vehicle-photo-wrap">
+                                    {vehicle.photo_url ? (
+                                        <img src={vehicle.photo_url} alt={vehicle.name} className="vehicle-photo" />
+                                    ) : (
+                                        <div className="vehicle-photo-placeholder"><FaCar /></div>
+                                    )}
+                                    {vehicle.year && <span className="vehicle-year-badge">{vehicle.year}</span>}
+                                </div>
+                                <div className="vehicle-info">
+                                    <h3 className="vehicle-name">{vehicle.name}</h3>
+                                    {vehicle.nickname && <p className="vehicle-nickname">"{vehicle.nickname}"</p>}
+                                    {vehicle.description && <p className="vehicle-description">{vehicle.description}</p>}
+                                </div>
+                                {canEdit && (
+                                    <div className="vehicle-actions">
+                                        <button className="btn-icon-sm" onClick={() => openEditVehicleForm(vehicle)} title={t('common.edit')}>
+                                            <FaEdit />
+                                        </button>
+                                        <button className="btn-icon-sm danger" onClick={() => handleDeleteVehicle(vehicle)} title={t('common.delete')}>
+                                            <FaTrash />
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            {showVehicleForm && (
+                <div className="modal-overlay" onClick={closeVehicleForm}>
+                    <div className="modal-card card" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header-row">
+                            <h3>{editingVehicleId ? t('vehicles.edit') : t('vehicles.add')}</h3>
+                            <button className="btn-icon-sm" onClick={closeVehicleForm}><FaTimes /></button>
+                        </div>
+                        {vehicleError && <div className="error-message">{vehicleError}</div>}
+                        <form onSubmit={handleSaveVehicle} className="form-vertical">
+                            <div className="vehicle-photo-upload">
+                                {vehicleForm.photoUrl ? (
+                                    <img src={vehicleForm.photoUrl} alt="preview" className="vehicle-photo-preview" />
+                                ) : (
+                                    <div className="vehicle-photo-placeholder"><FaCar /></div>
+                                )}
+                                <label className="btn btn-outline btn-sm-icon vehicle-photo-btn">
+                                    <input type="file" accept="image/*" onChange={handleVehiclePhotoSelect} style={{ display: 'none' }} />
+                                    <FaCamera /> {t('vehicles.uploadPhoto')}
+                                </label>
+                            </div>
+                            <div className="form-group">
+                                <label>{t('vehicles.name')}</label>
+                                <input
+                                    className="input-field"
+                                    value={vehicleForm.name}
+                                    onChange={e => setVehicleForm({ ...vehicleForm, name: e.target.value })}
+                                    placeholder={t('vehicles.namePlaceholder')}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>{t('vehicles.nickname')}</label>
+                                <input
+                                    className="input-field"
+                                    value={vehicleForm.nickname}
+                                    onChange={e => setVehicleForm({ ...vehicleForm, nickname: e.target.value })}
+                                    placeholder={t('vehicles.nicknamePlaceholder')}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>{t('vehicles.year')}</label>
+                                <input
+                                    type="number"
+                                    className="input-field"
+                                    value={vehicleForm.year}
+                                    onChange={e => setVehicleForm({ ...vehicleForm, year: e.target.value })}
+                                    placeholder="2020"
+                                    min="1900"
+                                    max="2100"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>{t('vehicles.description')}</label>
+                                <textarea
+                                    className="input-field"
+                                    value={vehicleForm.description}
+                                    onChange={e => setVehicleForm({ ...vehicleForm, description: e.target.value })}
+                                    rows="3"
+                                    placeholder={t('vehicles.descriptionPlaceholder')}
+                                />
+                            </div>
+                            <div className="form-actions">
+                                <button type="submit" className="btn btn-primary" disabled={isSavingVehicle}>
+                                    {isSavingVehicle ? <FaSpinner className="spinner" /> : t('vehicles.save')}
+                                </button>
+                                <button type="button" className="btn btn-outline" onClick={closeVehicleForm}>{t('common.cancel')}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
 
             <style>{`
             .profile-page {
@@ -729,6 +957,8 @@ const MemberProfile = () => {
             .modal-card {
                 width: 100%;
                 max-width: 400px;
+                max-height: 85vh;
+                overflow-y: auto;
                 padding: 2rem;
             }
             .modal-card h3 {
@@ -757,6 +987,176 @@ const MemberProfile = () => {
                 margin-bottom: 1rem;
                 font-size: 0.9rem;
                 text-align: center;
+            }
+
+            /* Vehicles Section */
+            .vehicles-section {
+                margin-top: 2rem;
+                padding: 2rem;
+                border-radius: 1.5rem;
+            }
+            .vehicles-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1.5rem;
+                padding-bottom: 1rem;
+                border-bottom: 1px solid var(--glass-border);
+            }
+            .vehicles-title {
+                display: flex;
+                align-items: center;
+                gap: 0.6rem;
+                font-size: 1.4rem;
+                margin: 0;
+            }
+            .btn-sm-icon {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.6rem 1.1rem;
+                font-size: 0.9rem;
+                border-radius: 0.6rem;
+            }
+            .vehicles-empty {
+                padding: 2rem 0;
+            }
+            .vehicles-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 1.5rem;
+            }
+            .vehicle-card {
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid var(--glass-border);
+                border-radius: 1rem;
+                overflow: hidden;
+                position: relative;
+                transition: transform 0.2s, border-color 0.2s;
+            }
+            .vehicle-card:hover {
+                transform: translateY(-3px);
+                border-color: var(--primary);
+            }
+            .vehicle-photo-wrap {
+                position: relative;
+                aspect-ratio: 4/3;
+                background: var(--bg-dark, #1a1a1a);
+            }
+            .vehicle-photo {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            .vehicle-photo-placeholder {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 2.5rem;
+                color: var(--text-secondary);
+                opacity: 0.4;
+            }
+            .vehicle-year-badge {
+                position: absolute;
+                top: 0.6rem;
+                right: 0.6rem;
+                background: rgba(0, 0, 0, 0.7);
+                color: white;
+                padding: 0.2rem 0.6rem;
+                border-radius: 0.5rem;
+                font-size: 0.8rem;
+                font-weight: 700;
+            }
+            .vehicle-info {
+                padding: 1rem 1.25rem;
+            }
+            .vehicle-name {
+                font-size: 1.1rem;
+                margin: 0 0 0.15rem 0;
+                color: var(--text-primary);
+            }
+            .vehicle-nickname {
+                margin: 0 0 0.5rem 0;
+                color: var(--accent);
+                font-style: italic;
+                font-size: 0.9rem;
+            }
+            .vehicle-description {
+                margin: 0;
+                color: var(--text-secondary);
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+            .vehicle-actions {
+                position: absolute;
+                top: 0.6rem;
+                left: 0.6rem;
+                display: flex;
+                gap: 0.4rem;
+            }
+            .btn-icon-sm {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: rgba(0, 0, 0, 0.6);
+                color: white;
+                border: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .btn-icon-sm:hover {
+                background: var(--primary);
+            }
+            .btn-icon-sm.danger:hover {
+                background: var(--danger);
+            }
+            .modal-header-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1.5rem;
+            }
+            .modal-header-row h3 {
+                margin: 0;
+            }
+            .vehicle-photo-upload {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.75rem;
+            }
+            .vehicle-photo-preview {
+                width: 120px;
+                height: 120px;
+                border-radius: 1rem;
+                object-fit: cover;
+                border: 2px solid var(--glass-border);
+            }
+            .vehicle-photo-upload .vehicle-photo-placeholder {
+                width: 120px;
+                height: 120px;
+                border-radius: 1rem;
+                border: 2px dashed var(--glass-border);
+                font-size: 2rem;
+            }
+            .vehicle-photo-btn {
+                cursor: pointer;
+            }
+
+            @media (max-width: 768px) {
+                .vehicles-section {
+                    padding: 1.25rem;
+                    border-radius: 0;
+                }
+                .vehicles-grid {
+                    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                    gap: 1rem;
+                }
             }
         `}</style>
         </div>

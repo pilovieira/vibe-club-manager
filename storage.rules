@@ -48,6 +48,18 @@ service firebase.storage {
                     && (resource.metadata.uploadedById == request.auth.uid || isAdmin());
     }
     
+    // Member Vehicle Photos
+    match /vehicles/{memberId}/{fileName} {
+      // Vehicle photos are visible to everyone (showcase)
+      allow read: if true;
+
+      // Only the vehicle's owner or an admin can upload/delete its photos
+      allow create: if (isOwner(memberId) || isAdmin())
+                    && request.resource.size < 10 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+      allow delete: if isOwner(memberId) || isAdmin();
+    }
+
     // Page Content Images (About Us, etc.)
     match /pages/{pageId}/{fileName} {
       // Images on pages are visible to all users

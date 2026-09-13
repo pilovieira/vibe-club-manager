@@ -114,6 +114,36 @@ export const storageService = {
         }
     },
 
+    /**
+     * Uploads a photo for a member's vehicle
+     * @param {string} memberId - ID of the member who owns the vehicle
+     * @param {File} file - Image file to upload
+     * @returns {Promise<string>} - Download URL of the uploaded image
+     */
+    uploadVehiclePhoto: async (memberId, file) => {
+        if (!file) throw new Error('No file provided');
+
+        if (!file.type.startsWith('image/')) {
+            throw new Error('Only image files are allowed');
+        }
+
+        const maxSize = 10 * 1024 * 1024;
+        if (file.size > maxSize) {
+            throw new Error('File size should be less than 10MB');
+        }
+
+        const storageRef = ref(storage, `vehicles/${memberId}/${Date.now()}_${file.name}`);
+
+        try {
+            const snapshot = await uploadBytes(storageRef, file);
+            const downloadURL = await getDownloadURL(snapshot.ref);
+            return downloadURL;
+        } catch (error) {
+            console.error('Error uploading vehicle photo:', error);
+            throw new Error('Failed to upload image. Please try again.');
+        }
+    },
+
     deleteFile: async (fileUrl) => {
         if (!fileUrl) return;
         try {

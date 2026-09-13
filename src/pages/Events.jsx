@@ -612,10 +612,25 @@ const Events = () => {
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
         }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .page-header .page-title {
+            margin-bottom: 0;
+        }
         .header-left {
             display: flex;
             align-items: center;
-            gap: 2rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        .btn-new-event {
+            white-space: nowrap;
         }
         .events-date-filters {
             display: flex;

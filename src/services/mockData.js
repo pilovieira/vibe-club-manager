@@ -379,6 +379,32 @@ export const mockService = {
         return { id: pageId };
     },
 
+    // Vehicles
+    getMemberVehicles: async (memberId) => {
+        const q = query(collection(db, 'vehicles'), where('member_id', '==', memberId));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+    },
+
+    addVehicle: async (vehicle) => {
+        const docRef = await addDoc(collection(db, 'vehicles'), vehicle);
+        const created = await getDoc(docRef);
+        return { ...created.data(), id: docRef.id };
+    },
+
+    updateVehicle: async (vehicleId, vehicle) => {
+        const docRef = doc(db, 'vehicles', vehicleId);
+        await updateDoc(docRef, vehicle);
+        const updated = await getDoc(docRef);
+        return { ...updated.data(), id: vehicleId };
+    },
+
+    deleteVehicle: async (vehicleId) => {
+        const docRef = doc(db, 'vehicles', vehicleId);
+        await deleteDoc(docRef);
+        return { id: vehicleId };
+    },
+
     // Storage
     uploadImage: async (path, file) => {
         const storageRef = ref(storage, path);
