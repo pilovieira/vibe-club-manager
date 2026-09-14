@@ -1,11 +1,11 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { mockService } from '../services/mockData';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useConfirm, useAlert } from '../context/ConfirmContext';
 import { useSettings } from '../context/SettingsContext';
-import { FaImages, FaLock, FaGlobe, FaUsers, FaTimes } from 'react-icons/fa';
+import { FaImages, FaLock, FaGlobe, FaUsers, FaTimes, FaImage, FaTrash, FaSpinner } from 'react-icons/fa';
 import { parseSafeDate } from '../utils/dateUtils';
 
 const Events = () => {
@@ -32,16 +32,19 @@ const Events = () => {
     // Create Event State
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [editingEventId, setEditingEventId] = useState(null);
-    const [newEvent, setNewEvent] = useState({ 
-        title: '', 
-        date: '', 
-        location: '', 
-        description: '', 
+    const [newEvent, setNewEvent] = useState({
+        title: '',
+        date: '',
+        location: '',
+        description: '',
         eventType: '',
-        visibility: 'private' // default
+        visibility: 'private', // default
+        coverImage: ''
     });
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [isUploadingCover, setIsUploadingCover] = useState(false);
+    const coverInputRef = useRef(null);
 
     // Modal state for attendees
     const [showAttendeesModal, setShowAttendeesModal] = useState(false);
@@ -87,7 +90,7 @@ const Events = () => {
                 }
                 setShowCreateForm(false);
                 setEditingEventId(null);
-                setNewEvent({ title: '', date: '', location: '', description: '', eventType: eventTypes[0] || '', visibility: 'private' });
+                setNewEvent({ title: '', date: '', location: '', description: '', eventType: eventTypes[0] || '', visibility: 'private', coverImage: '' });
 
                 // Log operation
                 await mockService.createLog({
@@ -111,9 +114,28 @@ const Events = () => {
             location: event.location,
             description: event.description,
             eventType: event.eventType || eventTypes[0] || '',
-            visibility: event.visibility || 'private'
+            visibility: event.visibility || 'private',
+            coverImage: event.coverImage || ''
         });
         setShowCreateForm(true);
+    };
+
+    const handleCoverUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setIsUploadingCover(true);
+        try {
+            const fileName = `cover_${Date.now()}_${file.name}`;
+            const storagePath = `events/${editingEventId || 'new'}/cover/${fileName}`;
+            const url = await mockService.uploadImage(storagePath, file);
+            setNewEvent(prev => ({ ...prev, coverImage: url }));
+        } catch (err) {
+            console.error('Error uploading cover image:', err);
+            await alert(t('events.uploadError'));
+        } finally {
+            setIsUploadingCover(false);
+            e.target.value = '';
+        }
     };
 
     const handleToggleEvent = async (eventId) => {
@@ -186,6 +208,9 @@ const Events = () => {
     const renderEventCard = (event) => (
         <div key={event.id} className="event-card-wrapper animate-fade-in">
             <div className={`event-card shadow-sm event-type-${(event.eventType || '').replace(/\s+/g, '-')}`}>
+                {event.coverImage && (
+                    <img src={event.coverImage} alt={event.title} className="event-cover-img" />
+                )}
                 <div className="event-card-content">
                     <div className="event-date">
                         {language === 'en' ? (
@@ -378,6 +403,41 @@ const Events = () => {
                         <div className="form-group">
                             <label>{t('events.eventTitle')}</label>
                             <input className="input-field" value={newEvent.title} onChange={e => setNewEvent({ ...newEvent, title: e.target.value })} required />
+                        </div>
+                        <div className="form-group">
+                            <label>{t('events.coverImage')}</label>
+                            <div className="cover-image-field">
+                                {newEvent.coverImage ? (
+                                    <div className="cover-preview">
+                                        <img src={newEvent.coverImage} alt="Cover" />
+                                        <button
+                                            type="button"
+                                            className="btn-icon delete cover-remove"
+                                            onClick={() => setNewEvent(prev => ({ ...prev, coverImage: '' }))}
+                                            title={t('pageEditor.removeCoverImage')}
+                                        >
+                                            <FaTrash />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline cover-upload-btn"
+                                        onClick={() => coverInputRef.current?.click()}
+                                        disabled={isUploadingCover}
+                                    >
+                                        {isUploadingCover ? <FaSpinner className="icon-spin" /> : <FaImage />}
+                                        {t('pageEditor.uploadImage')}
+                                    </button>
+                                )}
+                                <input
+                                    type="file"
+                                    ref={coverInputRef}
+                                    style={{ display: 'none' }}
+                                    accept="image/*"
+                                    onChange={handleCoverUpload}
+                                />
+                            </div>
                         </div>
                         <div className="form-row">
                             <div className="form-group">
@@ -611,6 +671,67 @@ const Events = () => {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
+        }
+        .cover-image-field {
+            display: flex;
+        }
+        .cover-upload-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .cover-preview {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+        }
+        .cover-preview img {
+            width: 100%;
+            max-height: 180px;
+            object-fit: cover;
+            border-radius: 0.75rem;
+            border: 1px solid var(--glass-border);
+        }
+        .cover-remove {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(0,0,0,0.6);
+        }
+        .btn-icon {
+            background: none;
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-icon:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .btn-icon.delete:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        .icon-spin {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .event-cover-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            display: block;
         }
         .page-header {
             display: flex;

@@ -38,6 +38,18 @@ service firebase.storage {
                     && request.resource.contentType.matches('image/.*');
     }
 
+    // Event Cover Image
+    match /events/{eventId}/cover/{fileName} {
+      // Visible to everyone (used on public event listings)
+      allow read: if true;
+
+      // Only admins can set/replace the event cover
+      allow create, update: if isAdmin()
+                    && request.resource.size < 10 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+      allow delete: if isAdmin();
+    }
+
     // Event Gallery Photos & Videos
     match /events/{eventId}/photos/{fileName} {
       // Photos/videos are visible to all authenticated users
