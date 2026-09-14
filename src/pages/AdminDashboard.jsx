@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
 const AdminDashboard = () => {
-    const { loading } = useAuth();
+    const { loading, isAdmin, isSuperuser } = useAuth();
     const { t } = useLanguage();
 
     if (loading) {
@@ -40,42 +40,49 @@ const AdminDashboard = () => {
                     <p>{t('admin.memberContributionsDesc')}</p>
                 </Link>
 
-                <Link to="/events" className="dashboard-card">
-                    <div className="icon">📅</div>
-                    <h2>{t('admin.manageEvents')}</h2>
-                    <p>{t('admin.manageEventsDesc')}</p>
-                </Link>
+                {isAdmin && (
+                    <>
+                        <Link to="/events" className="dashboard-card">
+                            <div className="icon">📅</div>
+                            <h2>{t('admin.manageEvents')}</h2>
+                            <p>{t('admin.manageEventsDesc')}</p>
+                        </Link>
 
-                <Link to="/members" className="dashboard-card">
-                    <div className="icon">👥</div>
-                    <h2>{t('admin.manageMembers')}</h2>
-                    <p>{t('admin.manageMembersDesc')}</p>
-                </Link>
+                        <Link to="/members" className="dashboard-card">
+                            <div className="icon">👥</div>
+                            <h2>{t('admin.manageMembers')}</h2>
+                            <p>{t('admin.manageMembersDesc')}</p>
+                        </Link>
 
+                        <Link to="/admin/create-member" className="dashboard-card">
+                            <div className="icon">👤</div>
+                            <h2>{t('admin.createUser')}</h2>
+                            <p>{t('admin.createUserDesc')}</p>
+                        </Link>
 
-                <Link to="/admin/create-member" className="dashboard-card">
-                    <div className="icon">👤</div>
-                    <h2>{t('admin.createUser')}</h2>
-                    <p>{t('admin.createUserDesc')}</p>
-                </Link>
+                        <Link to="/admin/logbook" className="dashboard-card">
+                            <div className="icon">📖</div>
+                            <h2>{t('admin.logBook')}</h2>
+                            <p>{t('admin.logBookDesc')}</p>
+                        </Link>
+                    </>
+                )}
 
-                <Link to="/admin/properties" className="dashboard-card">
-                    <div className="icon">⚙️</div>
-                    <h2>{t('admin.properties')}</h2>
-                    <p>{t('admin.propertiesDesc')}</p>
-                </Link>
+                {isSuperuser && (
+                    <>
+                        <Link to="/admin/properties" className="dashboard-card">
+                            <div className="icon">⚙️</div>
+                            <h2>{t('admin.properties')}</h2>
+                            <p>{t('admin.propertiesDesc')}</p>
+                        </Link>
 
-                <Link to="/admin/logbook" className="dashboard-card">
-                    <div className="icon">📖</div>
-                    <h2>{t('admin.logBook')}</h2>
-                    <p>{t('admin.logBookDesc')}</p>
-                </Link>
-
-                <Link to="/admin/custom-pages" className="dashboard-card">
-                    <div className="icon">📄</div>
-                    <h2>{t('admin.customPages')}</h2>
-                    <p>{t('admin.customPagesDesc')}</p>
-                </Link>
+                        <Link to="/admin/custom-pages" className="dashboard-card">
+                            <div className="icon">📄</div>
+                            <h2>{t('admin.customPages')}</h2>
+                            <p>{t('admin.customPagesDesc')}</p>
+                        </Link>
+                    </>
+                )}
 
             </div>
 

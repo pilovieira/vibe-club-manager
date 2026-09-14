@@ -18,7 +18,7 @@ const MemberProfile = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [member, setMember] = useState(null);
-    const { user, isAdmin, loading } = useAuth();
+    const { user, isAdmin, isSuperuser, loading } = useAuth();
     const [isEditing, setIsEditing] = useState(location.state?.edit || false);
 
 
@@ -357,7 +357,7 @@ const MemberProfile = () => {
                                 <li>
                                     <span className="info-icon"><FaIdCard /></span>
                                     <span className="info-label">{t('member.role')}:</span>
-                                    <span className="info-value role-badge">{memberRole}</span>
+                                    <span className="info-value role-badge">{t(`role.${memberRole}`)}</span>
                                 </li>
                                 <li>
                                     <span className="info-icon"><FaCalendarAlt /></span>
@@ -465,7 +465,11 @@ const MemberProfile = () => {
                                 disabled={!isAdmin}
                             >
                                 <option value="member">{t('role.member')}</option>
+                                <option value="financeiro">{t('role.financeiro')}</option>
                                 <option value="admin">{t('role.admin')}</option>
+                                {(isSuperuser || editData.role === 'superuser') && (
+                                    <option value="superuser">{t('role.superuser')}</option>
+                                )}
                             </select>
                         </div>
                         <div className="form-group full-width">

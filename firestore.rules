@@ -6,10 +6,24 @@ service cloud.firestore {
     	return request.auth != null;
     }
     
-    // Helper function to check if the user is an admin
+    // Helper to read the caller's role once
+    function myRole() {
+      return get(/databases/$(database)/documents/members/$(request.auth.uid)).data.role;
+    }
+
+    // Superuser has every permission, including settings/custom pages.
+    function isSuperuser() {
+      return isAuth() && myRole() == 'superuser';
+    }
+
+    // Admin: general admin permissions (members, events, logbook), also granted to superuser.
     function isAdmin() {
-      return isAuth() && 
-             get(/databases/$(database)/documents/members/$(request.auth.uid)).data.role == 'admin';
+      return isAuth() && (myRole() == 'admin' || isSuperuser());
+    }
+
+    // Finance: financial admin pages only, also granted to admin/superuser.
+    function isFinance() {
+      return isAuth() && (myRole() == 'financeiro' || isAdmin());
     }
     
     match /members/{memberId} {
@@ -30,9 +44,13 @@ service cloud.firestore {
       
       // Update Logic:
       allow update: if isAuth() && (
-        isAdmin() || 
         (
-          request.auth.uid == memberId && 
+          isAdmin() &&
+          // Only a superuser can grant the superuser role itself.
+          (request.resource.data.role != 'superuser' || isSuperuser())
+        ) ||
+        (
+          request.auth.uid == memberId &&
           !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role'])
         )
       );
@@ -41,7 +59,7 @@ service cloud.firestore {
     // Properties / Settings
     match /properties/{propertyId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if isSuperuser();
     }
     
     // Events & Core data
@@ -73,17 +91,17 @@ service cloud.firestore {
     }
 
     match /contributions/{id} {
-      allow read: if isAuth() && (resource.data.member_id == request.auth.uid || isAdmin());
-      allow write: if isAdmin();
+      allow read: if isAuth() && (resource.data.member_id == request.auth.uid || isFinance());
+      allow write: if isFinance();
     }
-    
+
     match /global_transactions/{id} {
-      allow read, write: if isAdmin();
+      allow read, write: if isFinance();
     }
 
     match /pages/{pageId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if isSuperuser();
     }
     
     // LogBook collection

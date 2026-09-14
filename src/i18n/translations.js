@@ -352,6 +352,8 @@ export const translations = {
         'member.role': 'Role',
         'role.admin': 'Admin',
         'role.member': 'Member',
+        'role.financeiro': 'Finance',
+        'role.superuser': 'Superuser',
 
         // Errors
         'error.usernameExists': 'Username already exists. Please choose another.',
@@ -726,6 +728,8 @@ export const translations = {
         'member.role': 'Função',
         'role.admin': 'Administrador',
         'role.member': 'Membro',
+        'role.financeiro': 'Financeiro',
+        'role.superuser': 'Superusuário',
 
         // Erros
         'error.usernameExists': 'Nome de usuário já existe. Por favor, escolha outro.',
@@ -1098,6 +1102,8 @@ export const translations = {
         'member.role': 'Rol',
         'role.admin': 'Administrador',
         'role.member': 'Miembro',
+        'role.financeiro': 'Finanzas',
+        'role.superuser': 'Superusuario',
 
         // Errores
         'error.usernameExists': 'El nombre de usuario ya existe. Por favor elija otro.',

@@ -64,16 +64,24 @@ function App() {
             <Route path="members/:id" element={<MemberProfile />} />
           </Route>
 
-          {/* Admin Routes */}
-          <Route element={<ProtectedRoute adminOnly={true} />}>
+          {/* Dashboard + Financial Routes (financeiro, admin or superuser) */}
+          <Route element={<ProtectedRoute financeOnly={true} />}>
             <Route path="admin" element={<AdminDashboard />} />
-            <Route path="admin/create-member" element={<AdminCreateMember />} />
             <Route path="admin/member-contributions" element={<AdminMemberContributions />} />
             <Route path="admin/summary" element={<AdminMonthlySummary />} />
             <Route path="admin/reports" element={<AdminReports />} />
             <Route path="admin/global-balance" element={<AdminGlobalBalance />} />
-            <Route path="admin/properties" element={<AdminProperties />} />
+          </Route>
+
+          {/* Admin Routes (admin or superuser) */}
+          <Route element={<ProtectedRoute adminOnly={true} />}>
+            <Route path="admin/create-member" element={<AdminCreateMember />} />
             <Route path="admin/logbook" element={<AdminLogBook />} />
+          </Route>
+
+          {/* Superuser-only Routes */}
+          <Route element={<ProtectedRoute superuserOnly={true} />}>
+            <Route path="admin/properties" element={<AdminProperties />} />
             <Route path="admin/custom-pages" element={<AdminCustomPages />} />
           </Route>
 

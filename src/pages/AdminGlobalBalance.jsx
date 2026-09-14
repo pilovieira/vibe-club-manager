@@ -8,7 +8,7 @@ import { formatDate } from '../utils/dateUtils';
 import { formatCurrency } from '../utils/currency';
 
 const AdminGlobalBalance = () => {
-    const { user, isAdmin, loading } = useAuth();
+    const { user, isFinance, loading } = useAuth();
     const { t, language } = useLanguage();
     const confirm = useConfirm();
     const [transactions, setTransactions] = useState([]);
@@ -175,7 +175,7 @@ const AdminGlobalBalance = () => {
                                 <span className="transaction-amount">
                                     {(item.type === 'income' || item.type === 'revenue') ? '+' : '-'}{formatCurrency(item.amount)}
                                 </span>
-                                {isAdmin && (
+                                {isFinance && (
                                     <button
                                         className="btn-delete-icon"
                                         onClick={() => handleDeleteTransaction(item)}
@@ -190,7 +190,7 @@ const AdminGlobalBalance = () => {
                 </div>
 
                 <div className="add-expense-section">
-                    {isAdmin ? (
+                    {isFinance ? (
                         <div className="card expense-form-card">
                             <h3>{t('balance.addTransaction') || 'Add Transaction'}</h3>
                             <form onSubmit={handleCreateTransaction}>

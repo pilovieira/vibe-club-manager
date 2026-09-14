@@ -6,7 +6,7 @@ import { useConfirm } from '../context/ConfirmContext';
 import { Link } from 'react-router-dom';
 
 const AdminMonthlySummary = () => {
-    const { user, isAdmin, loading } = useAuth();
+    const { user, isFinance, loading } = useAuth();
     const { t, language } = useLanguage();
     const confirm = useConfirm();
     const [members, setMembers] = useState([]);
@@ -29,7 +29,7 @@ const AdminMonthlySummary = () => {
             }
         };
         fetchData();
-    }, [loading, isAdmin]);
+    }, [loading, isFinance]);
 
     const [displayYear, displayMonth] = selectedDate.split('-');
     const dateObj = new Date(parseInt(displayYear), parseInt(displayMonth) - 1);
@@ -80,7 +80,7 @@ const AdminMonthlySummary = () => {
                         const isPaid = !!contribution;
 
                         const handleTogglePayment = async () => {
-                            if (!isAdmin) return;
+                            if (!isFinance) return;
 
                             if (isPaid) {
                                 if (await confirm(t('contributions.confirmDelete'))) {
@@ -127,9 +127,9 @@ const AdminMonthlySummary = () => {
                         return (
                             <div
                                 key={member.id}
-                                className={`status-card ${isPaid ? 'paid' : 'unpaid'} ${isAdmin ? 'clickable' : ''}`}
+                                className={`status-card ${isPaid ? 'paid' : 'unpaid'} ${isFinance ? 'clickable' : ''}`}
                                 onClick={handleTogglePayment}
-                                title={isAdmin ? (isPaid ? t('common.delete') : t('contributions.recordPayment')) : (isPaid ? t('monthly.paid') : t('monthly.pending'))}
+                                title={isFinance ? (isPaid ? t('common.delete') : t('contributions.recordPayment')) : (isPaid ? t('monthly.paid') : t('monthly.pending'))}
                             >
                                 <div className="member-info">
                                     <img src={member.avatar} alt="avatar" className="mini-avatar" />

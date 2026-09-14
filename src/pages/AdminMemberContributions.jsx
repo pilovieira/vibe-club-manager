@@ -9,7 +9,7 @@ import { formatDate } from '../utils/dateUtils';
 import { formatCurrency } from '../utils/currency';
 
 const AdminMemberContributions = () => {
-    const { user, isAdmin, loading } = useAuth();
+    const { user, isFinance, loading } = useAuth();
     const { t, language } = useLanguage();
     const confirm = useConfirm();
     const [members, setMembers] = useState([]);
@@ -145,7 +145,7 @@ const AdminMemberContributions = () => {
                 <div className="animate-fade-in">
                     <div className="section-header">
                         <h2>{t('contributions.paymentHistory')} - {selectedMember.name}</h2>
-                        {isAdmin && (
+                        {isFinance && (
                             <button className="btn btn-primary" onClick={() => setShowAddForm(!showAddForm)}>
                                 {showAddForm ? t('contributions.cancel') : t('contributions.recordPayment')}
                             </button>
@@ -204,7 +204,7 @@ const AdminMemberContributions = () => {
                                         <th>{t('contributions.description')}</th>
                                         <th>{t('contributions.amount')}</th>
                                         <th>{t('monthly.status')}</th>
-                                        {isAdmin && <th>{t('contributions.actions')}</th>}
+                                        {isFinance && <th>{t('contributions.actions')}</th>}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -214,7 +214,7 @@ const AdminMemberContributions = () => {
                                             <td>{c.description || (c.type === 'income' ? t('monthly.defaultDescription') : '')}</td>
                                             <td>{formatCurrency(c.amount)}</td>
                                             <td><span className="badge-paid">{t('monthly.paid')}</span></td>
-                                            {isAdmin && (
+                                            {isFinance && (
                                                 <td>
                                                     <button
                                                         className="btn-delete-icon"

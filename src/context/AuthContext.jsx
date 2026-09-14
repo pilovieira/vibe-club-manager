@@ -99,6 +99,13 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const role = user?.profile?.role || 'visitor';
+    const isSuperuser = role === 'superuser';
+    // Superuser has every admin permission plus the superuser-only ones.
+    const isAdmin = role === 'admin' || isSuperuser;
+    // Finance role has access to the financial admin pages, same as admin/superuser.
+    const isFinance = role === 'financeiro' || isAdmin;
+
     const value = {
         user,
         logout,
@@ -106,8 +113,10 @@ export const AuthProvider = ({ children }) => {
         isSignInWithEmailLink: authService.isSignInWithEmailLink,
         signInWithEmailLink: authService.signInWithEmailLink,
         loginWithGoogle: authService.loginWithGoogle,
-        isAdmin: user?.profile?.role === 'admin',
-        userRole: user?.profile?.role || 'visitor',
+        isAdmin,
+        isSuperuser,
+        isFinance,
+        userRole: role,
         loading
     };
 

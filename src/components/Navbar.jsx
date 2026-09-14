@@ -7,7 +7,7 @@ import GenericLogo from './GenericLogo';
 import { FaGlobe, FaChevronDown } from 'react-icons/fa';
 
 const Navbar = () => {
-  const { user, login, logout, isAdmin } = useAuth();
+  const { user, login, logout, isFinance } = useAuth();
   const { language, setLanguage, t } = useLanguage();
   const { settings, customPages } = useSettings();
   const navigate = useNavigate();
@@ -70,7 +70,7 @@ const Navbar = () => {
                 {page.title}
               </Link>
             ))}
-            {isAdmin && <Link to="/admin" className="nav-link admin-link" onClick={handleNavClick}>{t('nav.admin')}</Link>}
+            {isFinance && <Link to="/admin" className="nav-link admin-link" onClick={handleNavClick}>{t('nav.admin')}</Link>}
           </div>
 
           <div className="nav-auth-wrapper">

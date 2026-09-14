@@ -7,10 +7,19 @@ service firebase.storage {
       return request.auth != null;
     }
 
-    // Helper: Check if user is an admin by reading their firestore document
+    // Helper: read the caller's role once from Firestore
+    function myRole() {
+      return firestore.get(/databases/(default)/documents/members/$(request.auth.uid)).data.role;
+    }
+
+    // Superuser has every permission, including settings/custom pages.
+    function isSuperuser() {
+      return isAuthenticated() && myRole() == 'superuser';
+    }
+
+    // Helper: Check if user is an admin (or superuser)
     function isAdmin() {
-      return isAuthenticated() && 
-             firestore.get(/databases/(default)/documents/members/$(request.auth.uid)).data.role == 'admin';
+      return isAuthenticated() && (myRole() == 'admin' || isSuperuser());
     }
 
     // Helper: Check if user is the owner of the resource
@@ -65,20 +74,20 @@ service firebase.storage {
       // Images on pages are visible to all users
       allow read: if true;
       
-      // Only admins can upload and delete images for pages
-      allow create, update: if isAdmin()
+      // Only superusers can upload and delete images for pages
+      allow create, update: if isSuperuser()
                     && request.resource.size < 5 * 1024 * 1024
                     && request.resource.contentType.matches('image/.*');
-      allow delete: if isAdmin();
+      allow delete: if isSuperuser();
     }
-    
+
     // Application assets (logo, etc.)
     match /app/{fileName} {
       // Logos are visible to all users (even unauthenticated)
       allow read: if true;
-      
-      // Only admins can upload and manage app assets
-      allow write: if isAdmin()
+
+      // Only superusers can upload and manage app assets
+      allow write: if isSuperuser()
                     && request.resource.size < 2 * 1024 * 1024
                     && request.resource.contentType.matches('image/.*');
     }
