@@ -29,8 +29,10 @@ export const parseSafeDate = (date) => {
  * @param {string} lang 'en' or 'pt'
  * @returns {string} locale like 'en-US' or 'pt-BR'
  */
-const getLocale = (lang) => {
-    return lang === 'en' ? 'en-US' : 'pt-BR';
+export const getLocale = (lang) => {
+    if (lang === 'en') return 'en-US';
+    if (lang === 'es') return 'es-ES';
+    return 'pt-BR';
 };
 
 /**

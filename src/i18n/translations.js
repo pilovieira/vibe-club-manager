@@ -199,6 +199,10 @@ export const translations = {
         'monthly.totalCollected': 'Total Collected',
         'monthly.statusFor': 'Status for',
         'monthly.confirmMarkPaid': 'Mark {name} as PAID for {month}?',
+        'monthly.searchMember': 'Search member...',
+        'monthly.paidCount': 'Members paid',
+        'monthly.totalExpected': 'Total expected',
+        'monthly.noMembersFound': 'No members found.',
 
         // Admin Global Balance
         'balance.title': 'Global Balance',
@@ -575,6 +579,10 @@ export const translations = {
         'monthly.totalCollected': 'Total Arrecadado',
         'monthly.statusFor': 'Status para',
         'monthly.confirmMarkPaid': 'Marcar {name} como PAGO para {month}?',
+        'monthly.searchMember': 'Buscar membro...',
+        'monthly.paidCount': 'Membros pagaram',
+        'monthly.totalExpected': 'Total esperado',
+        'monthly.noMembersFound': 'Nenhum membro encontrado.',
 
         // Admin Global Balance
         'balance.title': 'Balanço Global',
@@ -951,6 +959,10 @@ export const translations = {
         'monthly.totalCollected': 'Total Recaudado',
         'monthly.statusFor': 'Estado para',
         'monthly.confirmMarkPaid': '¿Marcar a {name} como PAGADO para {month}?',
+        'monthly.searchMember': 'Buscar miembro...',
+        'monthly.paidCount': 'Miembros pagaron',
+        'monthly.totalExpected': 'Total esperado',
+        'monthly.noMembersFound': 'No se encontraron miembros.',
 
         // Admin Global Balance
         'balance.title': 'Balance Global',
