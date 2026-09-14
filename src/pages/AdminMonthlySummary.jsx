@@ -135,6 +135,7 @@ const AdminMonthlySummary = () => {
                 <h1 className="page-title">{t('monthly.title')}</h1>
                 <div className="header-actions">
                     <Link to="/admin/member-contributions" className="btn btn-outline">{t('contributions.title')}</Link>
+                    <Link to="/admin/annual-dues" className="btn btn-outline">{t('admin.annualDues')}</Link>
                 </div>
             </header>
 

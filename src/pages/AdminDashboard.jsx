@@ -40,6 +40,12 @@ const AdminDashboard = () => {
                     <p>{t('admin.memberContributionsDesc')}</p>
                 </Link>
 
+                <Link to="/admin/annual-dues" className="dashboard-card">
+                    <div className="icon">📆</div>
+                    <h2>{t('admin.annualDues')}</h2>
+                    <p>{t('admin.annualDuesDesc')}</p>
+                </Link>
+
                 {isAdmin && (
                     <>
                         <Link to="/events" className="dashboard-card">

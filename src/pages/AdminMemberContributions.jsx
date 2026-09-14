@@ -124,6 +124,7 @@ const AdminMemberContributions = () => {
                 <div className="header-actions">
                     {/* Navigation back to dashboard or other admin pages */}
                     <Link to="/admin/summary" className="btn btn-outline">{t('monthly.title')}</Link>
+                    <Link to="/admin/annual-dues" className="btn btn-outline">{t('admin.annualDues')}</Link>
                 </div>
             </header>
 

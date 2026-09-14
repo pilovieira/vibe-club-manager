@@ -10,6 +10,7 @@ import AdminMemberContributions from './pages/AdminMemberContributions';
 
 import AdminMonthlySummary from './pages/AdminMonthlySummary';
 import AdminReports from './pages/AdminReports';
+import AdminAnnualDues from './pages/AdminAnnualDues';
 import AdminGlobalBalance from './pages/AdminGlobalBalance';
 import AdminProperties from './pages/AdminProperties';
 import AdminLogBook from './pages/AdminLogBook';
@@ -70,6 +71,7 @@ function App() {
             <Route path="admin/member-contributions" element={<AdminMemberContributions />} />
             <Route path="admin/summary" element={<AdminMonthlySummary />} />
             <Route path="admin/reports" element={<AdminReports />} />
+            <Route path="admin/annual-dues" element={<AdminAnnualDues />} />
             <Route path="admin/global-balance" element={<AdminGlobalBalance />} />
           </Route>
 
