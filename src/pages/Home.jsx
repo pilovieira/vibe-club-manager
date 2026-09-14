@@ -1,11 +1,8 @@
-import { Link } from 'react-router-dom';
-import { useLanguage } from '../context/LanguageContext';
 import { useSettings } from '../context/SettingsContext';
 import GenericLogo from '../components/GenericLogo';
 import { useMemo } from 'react';
 
 const Home = () => {
-  const { t } = useLanguage();
   const { settings, customPages = [] } = useSettings();
 
   const titleParts = (settings.app_title || 'App Title').split(' ');
@@ -46,10 +43,6 @@ const Home = () => {
             )}
           </div>
 
-          <div className="hero-buttons">
-            <Link to="/members" className="btn btn-primary hero-btn">{t('home.exploreMembers')}</Link>
-            <Link to="/events" className="btn btn-outline hero-btn">{t('home.upcomingEvents')}</Link>
-          </div>
         </div>
       </section>
 
@@ -93,15 +86,6 @@ const Home = () => {
           color: var(--text-secondary);
           max-width: 600px;
           margin: 0 auto;
-        }
-        .hero-buttons {
-          display: flex;
-          gap: 1rem;
-          justify-content: center;
-        }
-        .hero-btn {
-          padding: 0.75rem 2rem;
-          font-size: 1.1rem;
         }
         .hero-logo-wrapper {
             display: flex;
