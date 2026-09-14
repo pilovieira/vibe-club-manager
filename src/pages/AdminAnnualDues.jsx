@@ -85,13 +85,15 @@ const AdminAnnualDues = () => {
         return { member, months, eligibleCount: eligibleMonths.length, paidCount: paidMonths.length, totalPaid };
     };
 
+    const nonExemptMembers = useMemo(() => members.filter(m => !m.isExempt), [members]);
+
     const yearData = useMemo(
-        () => members
+        () => nonExemptMembers
             .map(buildMemberYear)
             // Members still missing payments first, so they're easy to spot and follow up with.
             .sort((a, b) => (a.paidCount - a.eligibleCount) - (b.paidCount - b.eligibleCount) || a.member.name.localeCompare(b.member.name)),
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [members, contributions, selectedYear]
+        [nonExemptMembers, contributions, selectedYear]
     );
 
     const totalEligible = yearData.reduce((sum, r) => sum + r.eligibleCount, 0);
@@ -175,7 +177,7 @@ const AdminAnnualDues = () => {
                     <label>{t('annual.viewMember')}</label>
                     <select className="input-field" value={selectedMemberId} onChange={e => { setSelectedMemberId(e.target.value); setShowCertificate(false); }}>
                         <option value="">{t('annual.allMembers')}</option>
-                        {members.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+                        {nonExemptMembers.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
                     </select>
                 </div>
                 <button className="btn btn-outline" onClick={handlePrint}>

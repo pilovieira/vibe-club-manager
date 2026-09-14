@@ -59,6 +59,7 @@ const AdminMonthlySummary = () => {
     };
 
     const eligibleMembers = members.filter(member => {
+        if (member.isExempt) return false;
         if (!member.joinDate) return true;
         const joinYYYYMM = member.joinDate.slice(0, 7);
         return joinYYYYMM <= selectedDate;

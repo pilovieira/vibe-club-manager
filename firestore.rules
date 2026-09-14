@@ -51,7 +51,8 @@ service cloud.firestore {
         ) ||
         (
           request.auth.uid == memberId &&
-          !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role'])
+          // Members can't change their own role or dues exemption.
+          !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'isExempt'])
         )
       );
     }

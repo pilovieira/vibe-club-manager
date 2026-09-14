@@ -26,7 +26,7 @@ const MemberProfile = () => {
     // Edit Profile State
     const [error, setError] = useState('');
     const [editData, setEditData] = useState({
-        name: '', username: '', email: '', avatar: '', description: '', dateBirth: '', status: 'active', gender: 'male', role: 'member'
+        name: '', username: '', email: '', avatar: '', description: '', dateBirth: '', status: 'active', gender: 'male', role: 'member', isExempt: false
     });
 
     // Avatar Upload State
@@ -66,7 +66,8 @@ const MemberProfile = () => {
                     dateBirth: m.dateBirth || '',
                     status: m.status || 'active',
                     gender: m.gender || 'male',
-                    role: m.role || 'member'
+                    role: m.role || 'member',
+                    isExempt: !!m.isExempt
                 });
                 setError('');
 
@@ -89,7 +90,9 @@ const MemberProfile = () => {
                 const updated = await mockService.updateMember(member.id, {
                     ...editData,
                     username: editData.username.toLowerCase().trim(),
-                    avatar: editData.avatar.trim() || member.avatar // Keep old avatar if empty
+                    avatar: editData.avatar.trim() || member.avatar, // Keep old avatar if empty
+                    // Only admin/superuser can grant or revoke the dues exemption.
+                    isExempt: isAdmin ? editData.isExempt : !!member.isExempt
                 });
 
                 setMember(updated);
@@ -105,6 +108,7 @@ const MemberProfile = () => {
                 if (editData.gender !== (member.gender || '')) changedFields.push(t('gender.label'));
                 if (editData.role !== (member.role || '')) changedFields.push(t('member.role'));
                 if (editData.status !== (member.status || '')) changedFields.push(t('members.status'));
+                if (isAdmin && editData.isExempt !== !!member.isExempt) changedFields.push(t('member.exempt'));
 
                 const fieldsDescription = changedFields.length > 0 ? ` (${changedFields.join(', ')})` : '';
 
@@ -359,6 +363,13 @@ const MemberProfile = () => {
                                     <span className="info-label">{t('member.role')}:</span>
                                     <span className="info-value role-badge">{t(`role.${memberRole}`)}</span>
                                 </li>
+                                {member.isExempt && (
+                                    <li>
+                                        <span className="info-icon"><FaIdCard /></span>
+                                        <span className="info-label">{t('member.exempt')}:</span>
+                                        <span className="info-value exempt-badge">{t('common.yes')}</span>
+                                    </li>
+                                )}
                                 <li>
                                     <span className="info-icon"><FaCalendarAlt /></span>
                                     <span className="info-label">{t('profile.memberSince')}:</span>
@@ -472,6 +483,19 @@ const MemberProfile = () => {
                                 )}
                             </select>
                         </div>
+                        {isAdmin && (
+                            <div className="form-group checkbox-group">
+                                <label className="checkbox-label">
+                                    <input
+                                        type="checkbox"
+                                        checked={editData.isExempt}
+                                        onChange={e => setEditData({ ...editData, isExempt: e.target.checked })}
+                                    />
+                                    {t('member.exempt')}
+                                </label>
+                                <small className="form-hint">{t('member.exemptHint')}</small>
+                            </div>
+                        )}
                         <div className="form-group full-width">
                             <label>{t('profile.bio')}</label>
                             <textarea
@@ -607,6 +631,26 @@ const MemberProfile = () => {
             )}
 
             <style>{`
+            .checkbox-group {
+                display: flex;
+                flex-direction: column;
+                gap: 0.35rem;
+            }
+            .checkbox-label {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                cursor: pointer;
+            }
+            .checkbox-label input[type="checkbox"] {
+                width: 16px;
+                height: 16px;
+                cursor: pointer;
+            }
+            .form-hint {
+                color: var(--text-secondary);
+                font-size: 0.8rem;
+            }
             .profile-page {
                 max-width: 900px;
                 margin: 0 auto;
@@ -839,6 +883,14 @@ const MemberProfile = () => {
                 padding: 0.2rem 0.6rem;
                 border-radius: 0.5rem;
                 font-size: 0.9rem;
+            }
+            .exempt-badge {
+                background: rgba(59, 130, 246, 0.15);
+                color: #3b82f6;
+                padding: 0.2rem 0.6rem;
+                border-radius: 0.5rem;
+                font-size: 0.9rem;
+                font-weight: 700;
             }
             
             .profile-bio-box {
