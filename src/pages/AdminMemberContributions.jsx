@@ -85,8 +85,8 @@ const AdminMemberContributions = () => {
                 // Log operation
                 await mockService.createLog({
                     userId: user.id || user.uid,
-                    userName: user.name || user.displayName || user.email,
-                    description: `Recorded contribution of $${added.amount} for member ${selectedMember.name} on date ${added.date}`
+                    userName: user.profile?.name || user.email,
+                    description: `Recorded contribution of ${formatCurrency(added.amount)} for member ${selectedMember.name} on date ${added.date}`
                 });
             } catch (err) {
                 console.error('Error adding contribution:', err);
@@ -106,8 +106,8 @@ const AdminMemberContributions = () => {
             // Log operation
             await mockService.createLog({
                 userId: user.id || user.uid,
-                userName: user.name || user.displayName || user.email,
-                description: `Removed contribution of $${contributionToDelete.amount} for member ${selectedMember.name} dated ${contributionToDelete.date}`
+                userName: user.profile?.name || user.email,
+                description: `Removed contribution of ${formatCurrency(contributionToDelete.amount)} for member ${selectedMember.name} dated ${contributionToDelete.date}`
             });
         } catch (err) {
             console.error('Error deleting contribution:', err);

@@ -115,7 +115,7 @@ const MemberProfile = () => {
                 // Log operation
                 await mockService.createLog({
                     userId: user.id || user.uid,
-                    userName: user.name || user.displayName || user.email,
+                    userName: user.profile?.name || user.email,
                     description: `Updated profile for member: ${member.name}${fieldsDescription}`
                 });
             };
@@ -147,7 +147,7 @@ const MemberProfile = () => {
                     // Log operation
                     await mockService.createLog({
                         userId: user.id || user.uid,
-                        userName: user.name || user.displayName || user.email,
+                        userName: user.profile?.name || user.email,
                         description: `${newStatus === 'active' ? 'Activated' : 'Deactivated'} member: ${member.name}`
                     });
                 } catch (err) {
@@ -184,7 +184,7 @@ const MemberProfile = () => {
             // Log operation
             await mockService.createLog({
                 userId: user.id || user.uid,
-                userName: user.name || user.displayName || user.email,
+                userName: user.profile?.name || user.email,
                 description: `Updated profile picture for ${member.name}`
             });
 
@@ -262,7 +262,7 @@ const MemberProfile = () => {
 
             await mockService.createLog({
                 userId: user.id || user.uid,
-                userName: user.name || user.displayName || user.email,
+                userName: user.profile?.name || user.email,
                 description: `${editingVehicleId ? 'Updated' : 'Added'} vehicle "${vehicleData.name}" for member: ${member.name}`
             });
 
@@ -287,7 +287,7 @@ const MemberProfile = () => {
 
             await mockService.createLog({
                 userId: user.id || user.uid,
-                userName: user.name || user.displayName || user.email,
+                userName: user.profile?.name || user.email,
                 description: `Removed vehicle "${vehicle.name}" from member: ${member.name}`
             });
         } catch (err) {

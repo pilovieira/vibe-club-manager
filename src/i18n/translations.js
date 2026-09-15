@@ -314,6 +314,7 @@ export const translations = {
         'log.startDate': 'Start Date',
         'log.endDate': 'End Date',
         'log.title': 'Operation Logs',
+        'log.resultsCount': '{count} record(s) found',
 
         // Settings Page
         'settings.monthlyContribution': 'Monthly Contribution Value',
@@ -714,6 +715,7 @@ export const translations = {
         'log.startDate': 'Data Inicial',
         'log.endDate': 'Data Final',
         'log.title': 'Logs de Operação',
+        'log.resultsCount': '{count} registro(s) encontrado(s)',
 
         // Settings Page
         'settings.general': 'Geral',
@@ -1114,6 +1116,7 @@ export const translations = {
         'log.startDate': 'Fecha Inicial',
         'log.endDate': 'Fecha Final',
         'log.title': 'Registros de Operación',
+        'log.resultsCount': '{count} registro(s) encontrado(s)',
 
         // Settings Page
         'settings.general': 'General',

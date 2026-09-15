@@ -108,7 +108,8 @@ service cloud.firestore {
     // LogBook collection
     match /logs/{logId} {
       allow read: if isAdmin();
-      allow create: if isAuth();
+      // A user can only ever log actions as themselves, never impersonate another member.
+      allow create: if isAuth() && request.resource.data.userId == request.auth.uid;
       allow update, delete: if false;
     }
   }

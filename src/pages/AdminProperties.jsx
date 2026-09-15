@@ -30,6 +30,21 @@ const AdminProperties = () => {
         setSuccess('');
 
         try {
+            // Figure out which settings actually changed, for a useful log entry.
+            const fieldLabels = {
+                app_title: t('settings.appTitle'),
+                app_logo: t('settings.appLogo'),
+                app_language: t('settings.appLanguage'),
+                app_theme: t('settings.appTheme'),
+                event_types: t('settings.eventTypes'),
+                monthly_contribution_value: t('settings.monthlyContribution')
+            };
+            const changedFields = Object.keys(fieldLabels).filter(key => {
+                const before = JSON.stringify(settings?.[key] ?? '');
+                const after = JSON.stringify(properties?.[key] ?? '');
+                return before !== after;
+            }).map(key => fieldLabels[key]);
+
             await mockService.updateProperties(properties);
             await refreshSettings();
             setSuccess(t('settings.updateSuccess') || 'All settings updated successfully!');
@@ -39,7 +54,9 @@ const AdminProperties = () => {
                 userId: user.id || user.uid,
                 userName: user.profile?.name || user.email,
                 userEmail: user.email,
-                description: 'Updated application properties (Batch)'
+                description: changedFields.length > 0
+                    ? `Updated application properties: ${changedFields.join(', ')}`
+                    : 'Saved application properties (no changes detected)'
             });
 
             setTimeout(() => setSuccess(''), 5000);

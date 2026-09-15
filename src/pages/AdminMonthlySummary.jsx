@@ -101,7 +101,7 @@ const AdminMonthlySummary = () => {
                     await refreshContributions();
                     await mockService.createLog({
                         userId: user.id || user.uid,
-                        userName: user.name || user.displayName || user.email,
+                        userName: user.profile?.name || user.email,
                         description: `Unmarked ${member.name} as paid for ${monthName} ${selectedYear}`
                     });
                 } catch (err) {
@@ -120,7 +120,7 @@ const AdminMonthlySummary = () => {
                     await refreshContributions();
                     await mockService.createLog({
                         userId: user.id || user.uid,
-                        userName: user.name || user.displayName || user.email,
+                        userName: user.profile?.name || user.email,
                         description: `Marked ${member.name} as paid for ${monthName} ${selectedYear}`
                     });
                 } catch (err) {

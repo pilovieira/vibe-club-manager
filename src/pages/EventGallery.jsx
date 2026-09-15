@@ -67,7 +67,7 @@ const EventGallery = () => {
                         url: downloadURL,
                         media_type: mediaType,
                         uploaded_by_id: user.id,
-                        uploaded_by_name: user.name || user.email,
+                        uploaded_by_name: user.profile?.name || user.email,
                         file_name: file.name
                     };
 
@@ -97,7 +97,7 @@ const EventGallery = () => {
             if (successCount > 0) {
                 await mockService.createLog({
                     userId: user.id,
-                    userName: user.name || user.email,
+                    userName: user.profile?.name || user.email,
                     description: `Uploaded ${successCount} photos to event: ${event?.title || eventId}`
                 });
             }
@@ -133,7 +133,7 @@ const EventGallery = () => {
             // Log the deletion
             await mockService.createLog({
                 userId: user.id,
-                userName: user.name || user.email,
+                userName: user.profile?.name || user.email,
                 description: `Deleted photo from event: ${event?.title || eventId}`
             });
         } catch (err) {

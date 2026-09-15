@@ -152,6 +152,19 @@ const AdminAnnualDues = () => {
 
     const handlePrint = () => window.print();
 
+    const handleIssueCertificate = async () => {
+        setShowCertificate(true);
+        try {
+            await mockService.createLog({
+                userId: user.id || user.uid,
+                userName: user.profile?.name || user.displayName || user.email,
+                description: `Issued annual dues clearance certificate for ${selectedMemberData.member.name} (${selectedYear})`
+            });
+        } catch (err) {
+            console.error('Error logging certificate issuance:', err);
+        }
+    };
+
     if (loading || dataLoading) {
         return <div className="container" style={{ paddingTop: '2rem' }}>{t('common.loading')}...</div>;
     }
@@ -253,7 +266,7 @@ const AdminAnnualDues = () => {
                             <p className="text-secondary">{selectedMemberData.paidCount}/{selectedMemberData.eligibleCount} {t('annual.monthsPaidLower')} · {formatCurrency(selectedMemberData.totalPaid)}</p>
                         </div>
                         {canIssueCertificate && (
-                            <button className="btn btn-primary certificate-btn no-print" onClick={() => setShowCertificate(true)}>
+                            <button className="btn btn-primary certificate-btn no-print" onClick={handleIssueCertificate}>
                                 <FaCertificate style={{ marginRight: '0.5rem' }} />{t('annual.issueCertificate')}
                             </button>
                         )}

@@ -97,8 +97,8 @@ const AdminGlobalBalance = () => {
                 // Log operation
                 await mockService.createLog({
                     userId: user.id || user.uid,
-                    userName: user.name || user.displayName || user.email,
-                    description: `Recorded ${newTransaction.type}: ${newTransaction.description} of $${newTransaction.amount}`
+                    userName: user.profile?.name || user.email,
+                    description: `Recorded ${newTransaction.type}: ${newTransaction.description} of ${formatCurrency(newTransaction.amount)}`
                 });
             } catch (err) {
                 console.error('Error adding transaction:', err);
@@ -123,8 +123,8 @@ const AdminGlobalBalance = () => {
             // Log operation
             await mockService.createLog({
                 userId: user.id || user.uid,
-                userName: user.name || user.displayName || user.email,
-                description: `Deleted ${item.type}: ${item.type === 'income' ? 'Contribution from ' + item.memberName : item.description} of $${item.amount}`
+                userName: user.profile?.name || user.email,
+                description: `Deleted ${item.type}: ${item.type === 'income' ? 'Contribution from ' + item.memberName : item.description} of ${formatCurrency(item.amount)}`
             });
         } catch (err) {
             console.error('Error deleting transaction:', err);

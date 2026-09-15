@@ -10,7 +10,8 @@ import {
     query,
     where,
     setDoc,
-    orderBy
+    orderBy,
+    limit
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 
@@ -298,15 +299,15 @@ export const mockService = {
     },
 
     // Logs
-    getLogs: async () => {
+    getLogs: async (max = 1000) => {
         try {
-            const q = query(collection(db, 'logs'), orderBy('timestamp', 'desc'));
+            const q = query(collection(db, 'logs'), orderBy('timestamp', 'desc'), limit(max));
             const querySnapshot = await getDocs(q);
             return querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
         } catch (error) {
             console.warn('mockService: Failed to fetch sorted logs, falling back to unsorted with in-memory sort:', error);
             // Fallback: Fetch all logs and sort them in memory
-            const q = query(collection(db, 'logs'));
+            const q = query(collection(db, 'logs'), limit(max));
             const querySnapshot = await getDocs(q);
             const logs = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
             return logs.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));

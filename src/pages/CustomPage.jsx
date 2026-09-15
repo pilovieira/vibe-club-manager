@@ -60,7 +60,7 @@ const CustomPage = () => {
 
             await mockService.createLog({
                 userId: user.id || user.uid,
-                userName: user.name || user.displayName || user.email,
+                userName: user.profile?.name || user.email,
                 description: `Updated custom page content: ${pageData.title}`
             });
         } catch (err) {

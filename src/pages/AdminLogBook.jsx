@@ -1,8 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { mockService } from '../services/mockData';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { formatDateTime } from '../utils/dateUtils';
+
+// Classifies a log entry by the leading verb in its description, for a quick-scan color badge.
+const classifyLog = (description = '') => {
+    const text = description.toLowerCase();
+    if (/^(deleted|removed|unmarked|left)\b/.test(text)) return 'delete';
+    if (/^(created|added|recorded|joined|issued)\b/.test(text)) return 'create';
+    if (/^(updated|marked|activated|deactivated|saved)\b/.test(text)) return 'update';
+    return 'other';
+};
 
 const AdminLogBook = () => {
     const { isAdmin, loading } = useAuth();
@@ -12,6 +21,26 @@ const AdminLogBook = () => {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [userEmailFilter, setUserEmailFilter] = useState('');
+
+    const filteredLogs = useMemo(() => logs.filter(log => {
+        const matchesDate = (() => {
+            if (!startDate && !endDate) return true;
+            const logDate = new Date(log.timestamp);
+            if (startDate && logDate < new Date(startDate + 'T00:00:00')) return false;
+            if (endDate && logDate > new Date(endDate + 'T23:59:59')) return false;
+            return true;
+        })();
+
+        const matchesEmail = (() => {
+            if (!userEmailFilter) return true;
+            const search = userEmailFilter.toLowerCase();
+            const name = (log.userName || '').toLowerCase();
+            const email = (log.userEmail || '').toLowerCase();
+            return name.includes(search) || email.includes(search);
+        })();
+
+        return matchesDate && matchesEmail;
+    }), [logs, startDate, endDate, userEmailFilter]);
 
     useEffect(() => {
         const fetchLogs = async () => {
@@ -85,6 +114,8 @@ const AdminLogBook = () => {
                 </div>
             </div>
 
+            <p className="log-count">{t('log.resultsCount').replace('{count}', filteredLogs.length)}</p>
+
             <div className="card log-list-card">
                 <div className="log-table-container">
                     <table className="log-table">
@@ -96,36 +127,12 @@ const AdminLogBook = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {(() => {
-                                const filtered = logs.filter(log => {
-                                    const matchesDate = (() => {
-                                        if (!startDate && !endDate) return true;
-                                        const logDate = new Date(log.timestamp);
-                                        if (startDate && logDate < new Date(startDate + 'T00:00:00')) return false;
-                                        if (endDate && logDate > new Date(endDate + 'T23:59:59')) return false;
-                                        return true;
-                                    })();
-
-                                    const matchesEmail = (() => {
-                                        if (!userEmailFilter) return true;
-                                        const search = userEmailFilter.toLowerCase();
-                                        const name = (log.userName || '').toLowerCase();
-                                        const email = (log.userEmail || '').toLowerCase();
-                                        return name.includes(search) || email.includes(search);
-                                    })();
-
-                                    return matchesDate && matchesEmail;
-                                });
-
-                                if (filtered.length === 0) {
-                                    return (
-                                        <tr>
-                                            <td colSpan="3" className="text-center">{t('contributions.noHistory')}</td>
-                                        </tr>
-                                    );
-                                }
-
-                                return filtered.map(log => (
+                            {filteredLogs.length === 0 ? (
+                                <tr>
+                                    <td colSpan="3" className="text-center">{t('contributions.noHistory')}</td>
+                                </tr>
+                            ) : (
+                                filteredLogs.map(log => (
                                     <tr key={log.id}>
                                         <td className="log-date">
                                             {formatDateTime(log.timestamp, language)}
@@ -133,10 +140,13 @@ const AdminLogBook = () => {
                                         <td className="log-user">
                                             <span className="user-badge">{log.userName}</span>
                                         </td>
-                                        <td className="log-desc">{log.description}</td>
+                                        <td className="log-desc">
+                                            <span className={`action-dot ${classifyLog(log.description)}`}></span>
+                                            {log.description}
+                                        </td>
                                     </tr>
-                                ));
-                            })()}
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>
@@ -219,6 +229,31 @@ const AdminLogBook = () => {
                 }
                 .log-desc {
                     color: var(--text-primary);
+                }
+                .log-count {
+                    color: var(--text-secondary);
+                    font-size: 0.85rem;
+                    margin: 0 0 0.75rem 0.25rem;
+                }
+                .action-dot {
+                    display: inline-block;
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                    margin-right: 0.6rem;
+                    flex-shrink: 0;
+                }
+                .action-dot.create {
+                    background: var(--success, #22c55e);
+                }
+                .action-dot.update {
+                    background: #f59e0b;
+                }
+                .action-dot.delete {
+                    background: var(--danger, #ef4444);
+                }
+                .action-dot.other {
+                    background: var(--text-secondary);
                 }
                 .text-center {
                     text-align: center;

@@ -104,7 +104,7 @@ const AdminCustomPages = () => {
 
             await mockService.createLog({
                 userId: user.id || user.uid,
-                userName: user.name || user.displayName || user.email,
+                userName: user.profile?.name || user.email,
                 userEmail: user.email,
                 description: `${editingPage ? 'Updated' : 'Created'} custom page: ${formData.title} (/pages/${normalizedPath})`
             });
@@ -131,7 +131,7 @@ const AdminCustomPages = () => {
 
             await mockService.createLog({
                 userId: user.id || user.uid,
-                userName: user.name || user.displayName || user.email,
+                userName: user.profile?.name || user.email,
                 userEmail: user.email,
                 description: `Deleted custom page: ${displayTitle}`
             });
