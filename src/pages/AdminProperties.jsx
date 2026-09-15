@@ -32,7 +32,6 @@ const AdminProperties = () => {
         try {
             // Figure out which settings actually changed, for a useful log entry.
             const fieldLabels = {
-                app_title: t('settings.appTitle'),
                 app_logo: t('settings.appLogo'),
                 app_language: t('settings.appLanguage'),
                 app_theme: t('settings.appTheme'),
@@ -124,22 +123,6 @@ const AdminProperties = () => {
             <div className="properties-container card animate-fade-in">
                 <div className="settings-section">
                     <h2 className="section-subtitle">{t('settings.general')}</h2>
-
-                    <div className="setting-item">
-                        <div className="setting-info">
-                            <h3>{t('settings.appTitle')}</h3>
-                            <p>{t('settings.appTitleDesc')}</p>
-                        </div>
-                        <div className="setting-action" style={{ flex: 1, maxWidth: '500px' }}>
-                            <input
-                                type="text"
-                                className="input-field"
-                                value={properties.app_title || ''}
-                                onChange={(e) => setProperties({ ...properties, app_title: e.target.value })}
-                                style={{ width: '100%' }}
-                            />
-                        </div>
-                    </div>
 
                     <div className="setting-item">
                         <div className="setting-info">

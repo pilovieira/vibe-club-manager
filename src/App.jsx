@@ -22,14 +22,9 @@ import Login from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 
 import { useSettings } from './context/SettingsContext';
-import { useEffect } from 'react';
 
 function App() {
-  const { settings, loading } = useSettings();
-
-  useEffect(() => {
-    document.title = settings.app_title;
-  }, [settings.app_title]);
+  const { loading } = useSettings();
 
   if (loading) {
     return (

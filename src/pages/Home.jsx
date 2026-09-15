@@ -1,11 +1,12 @@
 import { useSettings } from '../context/SettingsContext';
 import GenericLogo from '../components/GenericLogo';
 import { useMemo } from 'react';
+import { APP_NAME } from '../constants';
 
 const Home = () => {
   const { settings, customPages = [] } = useSettings();
 
-  const titleParts = (settings.app_title || 'App Title').split(' ');
+  const titleParts = APP_NAME.split(' ');
   const firstPart = titleParts[0];
   const secondPart = titleParts.slice(1).join(' ');
 

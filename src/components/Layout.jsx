@@ -1,11 +1,10 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import { useLanguage } from '../context/LanguageContext';
-import { useSettings } from '../context/SettingsContext';
+import { APP_NAME } from '../constants';
 
 const Layout = () => {
   const { t } = useLanguage();
-  const { settings } = useSettings();
   return (
     <div className="layout">
       <Navbar />
@@ -14,7 +13,7 @@ const Layout = () => {
       </main>
       <footer className="footer">
         <div className="container">
-          <p>&copy; {new Date().getFullYear()} {settings.app_title}. {t('footer.rights')}</p>
+          <p>&copy; {new Date().getFullYear()} {APP_NAME}. {t('footer.rights')}</p>
         </div>
       </footer>
       <style>{`

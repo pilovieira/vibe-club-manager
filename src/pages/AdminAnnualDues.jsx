@@ -8,6 +8,7 @@ import { useConfirm } from '../context/ConfirmContext';
 import { getLocale } from '../utils/dateUtils';
 import { formatCurrency } from '../utils/currency';
 import { FaPrint, FaCertificate, FaFileInvoiceDollar } from 'react-icons/fa';
+import { APP_NAME } from '../constants';
 
 const monthKey = (year, month) => `${year}-${String(month).padStart(2, '0')}`;
 
@@ -308,7 +309,7 @@ const AdminAnnualDues = () => {
                     <button className="btn btn-outline no-print back-btn" onClick={() => setShowCertificate(false)}>← {t('common.cancel')}</button>
                     <div className="certificate card">
                         {settings.app_logo && <img src={settings.app_logo} alt="" className="certificate-logo" />}
-                        <h1 className="certificate-club">{settings.app_title}</h1>
+                        <h1 className="certificate-club">{APP_NAME}</h1>
                         <h2 className="certificate-title">{t('annual.certificateTitle')}</h2>
                         <p className="certificate-body">
                             {t('annual.certificateBody')
@@ -323,7 +324,7 @@ const AdminAnnualDues = () => {
                         <div className="certificate-signature">
                             <div className="signature-line"></div>
                             <span>{user.profile?.name || user.displayName || user.email}</span>
-                            <span className="text-secondary">{settings.app_title}</span>
+                            <span className="text-secondary">{APP_NAME}</span>
                         </div>
                     </div>
                 </div>

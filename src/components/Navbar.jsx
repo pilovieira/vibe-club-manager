@@ -5,6 +5,7 @@ import { useSettings } from '../context/SettingsContext';
 import { useState } from 'react';
 import GenericLogo from './GenericLogo';
 import { FaGlobe, FaChevronDown } from 'react-icons/fa';
+import { APP_NAME } from '../constants';
 
 const Navbar = () => {
   const { user, logout, isFinance } = useAuth();
@@ -43,11 +44,11 @@ const Navbar = () => {
       <div className="container nav-container">
         <Link to="/" className="nav-logo" onClick={handleNavClick}>
           {settings.app_logo ? (
-            <img src={settings.app_logo} alt={settings.app_title} className="logo-img" />
+            <img src={settings.app_logo} alt={APP_NAME} className="logo-img" />
           ) : (
             <GenericLogo />
           )}
-          <span className="logo-text desktop-only">{settings.app_title}</span>
+          <span className="logo-text desktop-only">{APP_NAME}</span>
         </Link>
 
         {/* Hamburger Menu Icon */}
