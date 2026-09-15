@@ -16,12 +16,6 @@ const AdminDashboard = () => {
             <h1 className="page-title">{t('admin.title')}</h1>
 
             <div className="dashboard-grid">
-                <Link to="/admin/summary" className="dashboard-card">
-                    <div className="icon">📊</div>
-                    <h2>{t('admin.monthlySummary')}</h2>
-                    <p>{t('admin.monthlySummaryDesc')}</p>
-                </Link>
-
                 <Link to="/admin/reports" className="dashboard-card">
                     <div className="icon">📈</div>
                     <h2>{t('admin.rangeReport')}</h2>

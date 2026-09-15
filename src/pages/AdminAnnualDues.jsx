@@ -181,7 +181,6 @@ const AdminAnnualDues = () => {
             <header className="page-header no-print">
                 <h1 className="page-title"><FaFileInvoiceDollar style={{ marginRight: '0.5rem' }} />{t('annual.title')}</h1>
                 <div className="header-actions">
-                    <Link to="/admin/summary" className="btn btn-outline">{t('monthly.title')}</Link>
                     <Link to="/admin/member-contributions" className="btn btn-outline">{t('contributions.title')}</Link>
                 </div>
             </header>
