@@ -122,5 +122,7 @@ export const ConfirmProvider = ({ children }) => {
     );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components -- hook lives alongside its provider by design
 export const useConfirm = () => useContext(ConfirmContext).confirm;
+// eslint-disable-next-line react-refresh/only-export-components -- hook lives alongside its provider by design
 export const useAlert = () => useContext(ConfirmContext).alert;

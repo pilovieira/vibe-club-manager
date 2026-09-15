@@ -4,6 +4,7 @@ import { useSettings } from './SettingsContext';
 
 const LanguageContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components -- hook lives alongside its provider by design
 export const useLanguage = () => {
     const context = useContext(LanguageContext);
     if (!context) {
@@ -19,11 +20,12 @@ export const LanguageProvider = ({ children }) => {
         return localStorage.getItem('language') || settings.app_language || 'pt';
     });
 
-    // Update language state when the app property changes
+    // Update language state when the app property changes (e.g. once settings finish loading).
     useEffect(() => {
         if (settings.app_language && settings.app_language !== language) {
             setLanguage(settings.app_language);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- only re-sync when the external setting itself changes
     }, [settings.app_language]);
 
     useEffect(() => {

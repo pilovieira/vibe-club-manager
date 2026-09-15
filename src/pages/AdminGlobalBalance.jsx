@@ -23,7 +23,19 @@ const AdminGlobalBalance = () => {
     }, []);
 
     useEffect(() => {
-        filterTransactions();
+        let filtered = transactions;
+        if (selectedMonth) {
+            filtered = transactions.filter(t => t.date && t.date.startsWith(selectedMonth));
+        }
+        setFilteredTransactions(filtered);
+
+        const incomeSum = filtered
+            .filter(t => t.type === 'income' || t.type === 'revenue')
+            .reduce((acc, curr) => acc + Number(curr.amount), 0);
+        const expenseSum = filtered
+            .filter(t => t.type === 'expense')
+            .reduce((acc, curr) => acc + Number(curr.amount), 0);
+        setTotalBalance(incomeSum - expenseSum);
     }, [selectedMonth, transactions]);
 
     if (loading) {
@@ -58,22 +70,6 @@ const AdminGlobalBalance = () => {
         } catch (err) {
             console.error('Error loading transactions:', err);
         }
-    };
-
-    const filterTransactions = () => {
-        let filtered = transactions;
-        if (selectedMonth) {
-            filtered = transactions.filter(t => t.date && t.date.startsWith(selectedMonth));
-        }
-        setFilteredTransactions(filtered);
-
-        const incomeSum = filtered
-            .filter(t => t.type === 'income' || t.type === 'revenue')
-            .reduce((acc, curr) => acc + Number(curr.amount), 0);
-        const expenseSum = filtered
-            .filter(t => t.type === 'expense')
-            .reduce((acc, curr) => acc + Number(curr.amount), 0);
-        setTotalBalance(incomeSum - expenseSum);
     };
 
     const handleCreateTransaction = (e) => {

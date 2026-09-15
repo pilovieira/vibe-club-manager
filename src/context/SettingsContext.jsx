@@ -3,6 +3,7 @@ import { mockService } from '../services/mockData';
 
 const SettingsContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components -- hook lives alongside its provider by design
 export const useSettings = () => {
     const context = useContext(SettingsContext);
     if (!context) {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { mockService } from '../services/mockData';
 import { storageService } from '../services/storageService';
@@ -152,20 +152,20 @@ const EventGallery = () => {
         };
     };
 
-    const navigatePhoto = (direction) => {
+    const navigatePhoto = useCallback((direction) => {
         if (selectedIndex === null) return;
         let newIndex = selectedIndex + direction;
         if (newIndex < 0) newIndex = photos.length - 1;
         if (newIndex >= photos.length) newIndex = 0;
         setSelectedIndex(newIndex);
-    };
+    }, [selectedIndex, photos.length]);
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = useCallback((e) => {
         if (selectedIndex === null) return;
         if (e.key === 'ArrowLeft') navigatePhoto(-1);
         if (e.key === 'ArrowRight') navigatePhoto(1);
         if (e.key === 'Escape') setSelectedIndex(null);
-    };
+    }, [selectedIndex, navigatePhoto]);
 
     useEffect(() => {
         if (selectedIndex !== null) {
@@ -179,7 +179,7 @@ const EventGallery = () => {
             window.removeEventListener('keydown', handleKeyDown);
             document.body.style.overflow = 'auto';
         };
-    }, [selectedIndex]);
+    }, [selectedIndex, handleKeyDown]);
 
     if (loading) {
         return (

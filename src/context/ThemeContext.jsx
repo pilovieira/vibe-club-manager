@@ -50,6 +50,7 @@ export const ThemeProvider = ({ children }) => {
     );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components -- hook lives alongside its provider by design
 export const useTheme = () => {
     const context = useContext(ThemeContext);
     if (!context) {

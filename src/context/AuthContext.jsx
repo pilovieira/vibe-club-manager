@@ -28,10 +28,12 @@ export const AuthProvider = ({ children }) => {
 
             // Safety timeout to prevent permanent loading state
             const timeoutId = setTimeout(() => {
-                if (isMounted && loading) {
+                if (!isMounted) return;
+                setLoading(prev => {
+                    if (!prev) return prev;
                     console.warn('AuthContext: Initialization timeout reached, forcing loading=false');
-                    setLoading(false);
-                }
+                    return false;
+                });
             }, 5000);
 
             // We no longer call getSession() here to avoid race conditions with onAuthStateChange.
@@ -135,6 +137,7 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components -- hook lives alongside its provider by design
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) throw new Error('useAuth must be used within AuthProvider');

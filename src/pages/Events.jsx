@@ -55,7 +55,7 @@ const Events = () => {
         if (!newEvent.eventType && eventTypes.length > 0) {
             setNewEvent(prev => ({ ...prev, eventType: eventTypes[0] }));
         }
-    }, [eventTypes]);
+    }, [eventTypes, newEvent.eventType]);
 
     const fetchEventsAndMembers = async () => {
         setDataLoading(true);

@@ -7,8 +7,8 @@ import GenericLogo from './GenericLogo';
 import { FaGlobe, FaChevronDown } from 'react-icons/fa';
 
 const Navbar = () => {
-  const { user, login, logout, isFinance } = useAuth();
-  const { language, setLanguage, t } = useLanguage();
+  const { user, logout, isFinance } = useAuth();
+  const { t } = useLanguage();
   const { settings, customPages } = useSettings();
   const navigate = useNavigate();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
