@@ -71,19 +71,25 @@ const AdminAnnualDues = () => {
     });
 
     // Builds the 12-month payment status for one member in the selected year.
+    // "payable" months are any month from when they joined onward, including months still
+    // in the future — members are allowed to pay ahead. "eligible" months are the subset
+    // that's actually due as of today, used for compliance/certificate checks so a future
+    // prepayment never masks a still-outstanding past month.
     const buildMemberYear = (member) => {
         const joinYYYYMM = member.joinDate ? member.joinDate.slice(0, 7) : null;
         const months = Array.from({ length: 12 }, (_, i) => {
             const m = i + 1;
             const key = monthKey(selectedYear, m);
-            const eligible = (!joinYYYYMM || joinYYYYMM <= key) && key <= currentMonthKey;
-            const contribution = eligible ? findContribution(member.id, selectedYear, m) : null;
-            return { month: m, key, eligible, isPaid: !!contribution, contribution };
+            const payable = !joinYYYYMM || joinYYYYMM <= key;
+            const eligible = payable && key <= currentMonthKey;
+            const contribution = payable ? findContribution(member.id, selectedYear, m) : null;
+            return { month: m, key, payable, eligible, isFuture: payable && !eligible, isPaid: !!contribution, contribution };
         });
         const eligibleMonths = months.filter(m => m.eligible);
-        const paidMonths = months.filter(m => m.isPaid);
-        const totalPaid = paidMonths.reduce((sum, m) => sum + (Number(m.contribution.amount) || 0), 0);
-        return { member, months, eligibleCount: eligibleMonths.length, paidCount: paidMonths.length, totalPaid };
+        const paidEligibleMonths = eligibleMonths.filter(m => m.isPaid);
+        const allPaidMonths = months.filter(m => m.isPaid);
+        const totalPaid = allPaidMonths.reduce((sum, m) => sum + (Number(m.contribution.amount) || 0), 0);
+        return { member, months, eligibleCount: eligibleMonths.length, paidCount: paidEligibleMonths.length, totalPaid };
     };
 
     const nonExemptMembers = useMemo(() => members.filter(m => !m.isExempt), [members]);
@@ -112,7 +118,7 @@ const AdminAnnualDues = () => {
         && selectedMemberData.paidCount === selectedMemberData.eligibleCount;
 
     const handleToggle = async (row, monthInfo) => {
-        if (!isFinance || !monthInfo.eligible) return;
+        if (!isFinance || !monthInfo.payable) return;
         const { member } = row;
 
         if (monthInfo.isPaid) {
@@ -238,16 +244,26 @@ const AdminAnnualDues = () => {
                                                 <img src={row.member.avatar} alt="" className="mini-avatar" />
                                                 {row.member.name}
                                             </td>
-                                            {row.months.map(m => (
-                                                <td
-                                                    key={m.key}
-                                                    className={`month-cell ${!m.eligible ? 'na' : m.isPaid ? 'paid' : 'unpaid'} ${isFinance && m.eligible ? 'clickable' : ''}`}
-                                                    onClick={() => handleToggle(row, m)}
-                                                    title={!m.eligible ? t('annual.notApplicable') : (m.isPaid ? t('monthly.paid') : t('monthly.pending'))}
-                                                >
-                                                    {!m.eligible ? '–' : m.isPaid ? '✓' : '✕'}
-                                                </td>
-                                            ))}
+                                            {row.months.map(m => {
+                                                const cellClass = !m.payable ? 'na' : m.isPaid ? 'paid' : m.isFuture ? 'future' : 'unpaid';
+                                                const cellLabel = !m.payable
+                                                    ? t('annual.notApplicable')
+                                                    : m.isPaid
+                                                        ? t('monthly.paid')
+                                                        : m.isFuture
+                                                            ? t('annual.notDueYet')
+                                                            : t('monthly.pending');
+                                                return (
+                                                    <td
+                                                        key={m.key}
+                                                        className={`month-cell ${cellClass} ${isFinance && m.payable ? 'clickable' : ''}`}
+                                                        onClick={() => handleToggle(row, m)}
+                                                        title={cellLabel}
+                                                    >
+                                                        {!m.payable ? '–' : m.isPaid ? '✓' : m.isFuture ? '○' : '✕'}
+                                                    </td>
+                                                );
+                                            })}
                                             <td className="total-cell">{row.paidCount}/{row.eligibleCount}</td>
                                         </tr>
                                     ))}
@@ -287,10 +303,12 @@ const AdminAnnualDues = () => {
                                 <tr key={m.key}>
                                     <td>{monthLongLabel(m.month)}</td>
                                     <td>
-                                        {!m.eligible ? (
+                                        {!m.payable ? (
                                             <span className="text-secondary">{t('annual.notApplicable')}</span>
                                         ) : m.isPaid ? (
                                             <span className="badge-paid">{t('monthly.paid')}</span>
+                                        ) : m.isFuture ? (
+                                            <span className="badge-future">{t('annual.notDueYet')}</span>
                                         ) : (
                                             <span className="badge-pending">{t('monthly.pending')}</span>
                                         )}
@@ -431,6 +449,7 @@ const AdminAnnualDues = () => {
                 }
                 .month-cell.paid { color: var(--success); }
                 .month-cell.unpaid { color: var(--danger); }
+                .month-cell.future { color: var(--accent); opacity: 0.6; }
                 .month-cell.na { color: var(--text-secondary); opacity: 0.4; }
                 .month-cell.clickable { cursor: pointer; }
                 .month-cell.clickable:hover { filter: brightness(1.3); }
@@ -456,6 +475,10 @@ const AdminAnnualDues = () => {
                 }
                 .badge-pending {
                     color: var(--danger);
+                    font-weight: 700;
+                }
+                .badge-future {
+                    color: var(--accent);
                     font-weight: 700;
                 }
                 .certificate-wrapper {
