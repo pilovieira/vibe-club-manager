@@ -189,6 +189,7 @@ const AdminLogBook = () => {
                 .log-table-container {
                     max-height: 600px;
                     overflow-y: auto;
+                    overflow-x: auto;
                 }
                 .log-table {
                     width: 100%;

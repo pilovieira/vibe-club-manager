@@ -198,7 +198,7 @@ const AdminMemberContributions = () => {
                         {contributions.length === 0 ? (
                             <p className="text-secondary text-center">{t('contributions.noHistory')}</p>
                         ) : (
-                            <table className="data-table">
+                            <div className="table-scroll"><table className="data-table">
                                 <thead>
                                     <tr>
                                         <th>{t('contributions.date')}</th>
@@ -229,7 +229,7 @@ const AdminMemberContributions = () => {
                                         </tr>
                                     ))}
                                 </tbody>
-                            </table>
+                            </table></div>
                         )}
                     </div>
                 </div>
@@ -277,6 +277,9 @@ const AdminMemberContributions = () => {
             color: white;
             padding: 0.75rem 1.5rem;
             border-radius: 0.5rem;
+        }
+        .table-scroll {
+            overflow-x: auto;
         }
         .data-table {
             width: 100%;

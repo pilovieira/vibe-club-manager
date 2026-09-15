@@ -196,7 +196,7 @@ const AdminReports = () => {
                 {monthBreakdown.length === 0 ? (
                     <p className="text-secondary text-center">{t('report.noData')}</p>
                 ) : (
-                    <table className="data-table">
+                    <div className="table-scroll"><table className="data-table">
                         <thead>
                             <tr>
                                 <th>{t('monthly.month')}</th>
@@ -213,7 +213,7 @@ const AdminReports = () => {
                                 </tr>
                             ))}
                         </tbody>
-                    </table>
+                    </table></div>
                 )}
             </div>
 
@@ -222,7 +222,7 @@ const AdminReports = () => {
                 {memberBreakdown.filter(m => m.count > 0).length === 0 ? (
                     <p className="text-secondary text-center">{t('report.noData')}</p>
                 ) : (
-                    <table className="data-table">
+                    <div className="table-scroll"><table className="data-table">
                         <thead>
                             <tr>
                                 <th>{t('monthly.member')}</th>
@@ -239,7 +239,7 @@ const AdminReports = () => {
                                 </tr>
                             ))}
                         </tbody>
-                    </table>
+                    </table></div>
                 )}
             </div>
 
@@ -248,7 +248,7 @@ const AdminReports = () => {
                 {rangeGlobalTxs.length === 0 ? (
                     <p className="text-secondary text-center">{t('report.noData')}</p>
                 ) : (
-                    <table className="data-table">
+                    <div className="table-scroll"><table className="data-table">
                         <thead>
                             <tr>
                                 <th>{t('balance.date')}</th>
@@ -269,7 +269,7 @@ const AdminReports = () => {
                                 </tr>
                             ))}
                         </tbody>
-                    </table>
+                    </table></div>
                 )}
             </div>
 
@@ -365,6 +365,9 @@ const AdminReports = () => {
                     margin-bottom: 1rem;
                     padding-bottom: 0.5rem;
                     border-bottom: 1px solid var(--glass-border);
+                }
+                .table-scroll {
+                    overflow-x: auto;
                 }
                 .data-table {
                     width: 100%;

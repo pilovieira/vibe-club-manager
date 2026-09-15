@@ -272,7 +272,7 @@ const AdminAnnualDues = () => {
                         )}
                     </div>
 
-                    <table className="data-table">
+                    <div className="table-scroll"><table className="data-table">
                         <thead>
                             <tr>
                                 <th>{t('monthly.month')}</th>
@@ -299,7 +299,7 @@ const AdminAnnualDues = () => {
                                 </tr>
                             ))}
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
             )}
 

@@ -741,21 +741,12 @@ const MemberProfile = () => {
                     padding: 1.5rem;
                 }
                 
-                .profile-info-list {
-                    grid-template-columns: 1fr;
-                    gap: 0.75rem;
-                }
-                
                 .profile-footer-actions {
                     flex-direction: column;
                 }
-                
+
                 .profile-footer-actions .btn-premium {
                     width: 100%;
-                }
-                
-                .profile-info-list li {
-                    justify-content: center;
                 }
             }
             
@@ -1211,6 +1202,13 @@ const MemberProfile = () => {
                 .vehicles-grid {
                     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
                     gap: 1rem;
+                }
+                .profile-info-list {
+                    grid-template-columns: 1fr;
+                    gap: 0.75rem;
+                }
+                .profile-info-list li {
+                    flex-wrap: wrap;
                 }
             }
         `}</style>

@@ -608,6 +608,11 @@ const EventGallery = () => {
                         align-items: flex-start;
                         gap: 1.5rem;
                     }
+                    .header-left {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 0.75rem;
+                    }
                     .upload-section {
                         width: 100%;
                         align-items: stretch;
