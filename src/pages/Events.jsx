@@ -10,7 +10,7 @@ import { parseSafeDate } from '../utils/dateUtils';
 
 const Events = () => {
     const navigate = useNavigate();
-    const { user, isAdmin } = useAuth();
+    const { user, isAdmin, isSuperuser } = useAuth();
     const { t, language } = useLanguage();
     const confirm = useConfirm();
     const alert = useAlert();
@@ -104,6 +104,23 @@ const Events = () => {
             }
         };
         createOrUpdateEventAsync();
+    };
+
+    const handleDeleteEvent = async (event) => {
+        if (!(await confirm(t('events.confirmDelete').replace('{title}', event.title)))) return;
+
+        try {
+            await mockService.deleteEvent(event.id);
+            setEvents(events.filter(ev => ev.id !== event.id));
+            await mockService.createLog({
+                userId: user.id || user.uid,
+                userName: user.profile?.name || user.email,
+                userEmail: user.email,
+                description: `Deleted event: ${event.title}`
+            });
+        } catch (err) {
+            console.error('Error deleting event:', err);
+        }
     };
 
     const handleStartEdit = (event) => {
@@ -301,6 +318,14 @@ const Events = () => {
                                     onClick={() => handleStartEdit(event)}
                                 >
                                     <span>✏️ {t('common.edit')}</span>
+                                </button>
+                            )}
+                            {isSuperuser && (
+                                <button
+                                    className="action-btn delete-event-btn"
+                                    onClick={() => handleDeleteEvent(event)}
+                                >
+                                    <FaTrash /> <span>{t('common.delete')}</span>
                                 </button>
                             )}
                             {event.attendees.length > 0 && (
@@ -1080,6 +1105,7 @@ const Events = () => {
         .view-attendees-btn:hover { color: var(--primary); }
         .gallery-btn:hover { color: var(--accent); }
         .edit-btn:hover { color: var(--accent); }
+        .delete-event-btn:hover { color: var(--danger); }
 
         @media (max-width: 640px) {
             .event-card-content {

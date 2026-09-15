@@ -9,8 +9,18 @@ import { getLocale } from '../utils/dateUtils';
 import { formatCurrency } from '../utils/currency';
 import { FaPrint, FaCertificate, FaFileInvoiceDollar } from 'react-icons/fa';
 import { APP_NAME } from '../constants';
+import { translations } from '../i18n/translations';
 
 const monthKey = (year, month) => `${year}-${String(month).padStart(2, '0')}`;
+
+// A contribution only counts as a monthly-dues payment when its description is blank
+// or matches the default dues description text (in any app language, since existing
+// records may have been created under a different locale). Anything else is a
+// contribution made for another purpose and must not fill a dues month on this screen.
+const DUES_DESCRIPTIONS = new Set(
+    Object.values(translations).map(block => block['monthly.defaultDescription'])
+);
+const isDuesContribution = (c) => !c.description || DUES_DESCRIPTIONS.has(c.description);
 
 const AdminAnnualDues = () => {
     const { user, isFinance, loading } = useAuth();
@@ -66,7 +76,7 @@ const AdminAnnualDues = () => {
 
     const findContribution = (memberId, year, month) => contributions.find(c => {
         const cMemberId = c.member_id || c.memberId;
-        if (cMemberId !== memberId || !c.date) return false;
+        if (cMemberId !== memberId || !c.date || !isDuesContribution(c)) return false;
         return c.date.slice(0, 7) === monthKey(year, month);
     });
 

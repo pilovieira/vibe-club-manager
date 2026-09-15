@@ -148,7 +148,7 @@ const EventGallery = () => {
         const member = membersById[photo.uploaded_by_id];
         return {
             name: member?.name || photo.uploaded_by_name,
-            avatar: member?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${photo.uploaded_by_id || photo.uploaded_by_name}`
+            avatar: member?.avatar || `https://api.dicebear.com/7.x/notionists/svg?seed=${photo.uploaded_by_id || photo.uploaded_by_name}`
         };
     };
 

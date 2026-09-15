@@ -296,6 +296,24 @@ const MemberProfile = () => {
         }
     };
 
+    const handleDeleteMember = async () => {
+        if (!(await confirm(t('member.confirmDelete').replace('{name}', member.name)))) return;
+
+        try {
+            const deletedName = member.name;
+            await mockService.deleteMember(member.id);
+            await mockService.createLog({
+                userId: user.id || user.uid,
+                userName: user.profile?.name || user.email,
+                description: `Deleted member: ${deletedName}`
+            });
+            navigate('/members');
+        } catch (err) {
+            console.error('Error deleting member:', err);
+            await alert(t('common.error'));
+        }
+    };
+
     if (!member) return <div className="container">{t('common.loading')}</div>;
 
     const isOwnProfile = user && user.id === member.id;
@@ -508,6 +526,11 @@ const MemberProfile = () => {
                         <div className="form-actions">
                             <button type="submit" className="btn btn-primary">{t('profile.saveChanges')}</button>
                             <button type="button" className="btn btn-outline" onClick={() => setIsEditing(false)}>{t('profile.cancel')}</button>
+                            {isSuperuser && !isOwnProfile && (
+                                <button type="button" className="btn btn-danger" onClick={handleDeleteMember}>
+                                    <FaTrash /> {t('member.delete')}
+                                </button>
+                            )}
                         </div>
                     </form>
                 </div>
@@ -631,6 +654,13 @@ const MemberProfile = () => {
             )}
 
             <style>{`
+            .btn-danger {
+                background-color: var(--danger);
+                color: white;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.4rem;
+            }
             .checkbox-group {
                 display: flex;
                 flex-direction: column;

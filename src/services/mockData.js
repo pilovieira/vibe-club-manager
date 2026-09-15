@@ -27,7 +27,7 @@ export const mockService = {
                 id: doc.id,
                 joinDate: data.join_date,
                 dateBirth: data.date_birth,
-                avatar: data.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.username}`
+                avatar: data.avatar || `https://api.dicebear.com/7.x/notionists/svg?seed=${data.username}`
             };
         });
     },
@@ -43,7 +43,7 @@ export const mockService = {
             id: docSnap.id,
             joinDate: data.join_date,
             dateBirth: data.date_birth,
-            avatar: data.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.username}`
+            avatar: data.avatar || `https://api.dicebear.com/7.x/notionists/svg?seed=${data.username}`
         };
     },
 
@@ -54,7 +54,7 @@ export const mockService = {
             date_birth: member.dateBirth || null,
             role: member.role || 'member',
             status: member.status || 'active',
-            avatar: member.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${member.username || Date.now()}`
+            avatar: member.avatar || `https://api.dicebear.com/7.x/notionists/svg?seed=${member.username || Date.now()}`
         };
         delete memberToInsert.joinDate;
         delete memberToInsert.dateBirth;
@@ -109,6 +109,11 @@ export const mockService = {
         const docRef = doc(db, 'members', memberId);
         await updateDoc(docRef, { status });
         return { id: memberId, status };
+    },
+
+    deleteMember: async (memberId) => {
+        const docRef = doc(db, 'members', memberId);
+        await deleteDoc(docRef);
     },
 
     // Properties / Settings
@@ -225,6 +230,11 @@ export const mockService = {
             eventType: updated.data().event_type,
             attendees: event.attendees || []
         };
+    },
+
+    deleteEvent: async (eventId) => {
+        const docRef = doc(db, 'events', eventId);
+        await deleteDoc(docRef);
     },
 
     joinEvent: async (eventId, memberId) => {

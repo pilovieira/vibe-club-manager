@@ -303,6 +303,7 @@ export const translations = {
         'events.beFirst': 'Be the first to join!',
         'events.loginToJoin': 'Login to join events',
         'events.confirmLeave': 'Are you sure you want to leave this event?',
+        'events.confirmDelete': 'Are you sure you want to permanently delete the event "{title}"? This cannot be undone.',
 
         // Login extra
         'login.email': 'Email',
@@ -376,6 +377,8 @@ export const translations = {
         'member.role': 'Role',
         'member.exempt': 'Exempt from dues',
         'member.exemptHint': 'Exempt members are skipped in dues reports and never show as pending.',
+        'member.delete': 'Delete member',
+        'member.confirmDelete': 'Are you sure you want to permanently delete {name}? This cannot be undone.',
         'role.admin': 'Admin',
         'role.member': 'Member',
         'role.financeiro': 'Finance',
@@ -705,6 +708,7 @@ export const translations = {
         'events.beFirst': 'Seja o primeiro a participar!',
         'events.loginToJoin': 'Entre para participar dos eventos',
         'events.confirmLeave': 'Tem certeza que deseja sair deste evento?',
+        'events.confirmDelete': 'Tem certeza que deseja excluir permanentemente o evento "{title}"? Isso não pode ser desfeito.',
 
         // Login extra
         'login.email': 'Email',
@@ -778,6 +782,8 @@ export const translations = {
         'member.role': 'Função',
         'member.exempt': 'Isento de Mensalidade',
         'member.exemptHint': 'Membros isentos são ignorados nos relatórios de mensalidade e nunca aparecem como pendentes.',
+        'member.delete': 'Excluir membro',
+        'member.confirmDelete': 'Tem certeza que deseja excluir permanentemente {name}? Isso não pode ser desfeito.',
         'role.admin': 'Administrador',
         'role.member': 'Membro',
         'role.financeiro': 'Financeiro',
@@ -1107,6 +1113,7 @@ export const translations = {
         'events.beFirst': '¡Sé el primero en unirte!',
         'events.loginToJoin': 'Inicia sesión para unirte a los eventos',
         'events.confirmLeave': '¿Estás seguro de que deseas salir de este evento?',
+        'events.confirmDelete': '¿Seguro que deseas eliminar permanentemente el evento "{title}"? Esto no se puede deshacer.',
 
         // Login extra
         'login.email': 'Correo electrónico',
@@ -1178,6 +1185,8 @@ export const translations = {
         'member.role': 'Rol',
         'member.exempt': 'Exento de Cuota',
         'member.exemptHint': 'Los miembros exentos se omiten en los informes de cuotas y nunca aparecen como pendientes.',
+        'member.delete': 'Eliminar miembro',
+        'member.confirmDelete': '¿Seguro que deseas eliminar permanentemente a {name}? Esto no se puede deshacer.',
         'role.admin': 'Administrador',
         'role.member': 'Miembro',
         'role.financeiro': 'Finanzas',
