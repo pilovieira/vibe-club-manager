@@ -236,7 +236,7 @@ const EventGallery = () => {
                         return (
                         <div key={photo.id} className="gallery-item" onClick={() => setSelectedIndex(index)}>
                             {photo.media_type === 'video' ? (
-                                <video src={photo.url} muted preload="metadata" />
+                                <video src={photo.url} muted playsInline preload="metadata" />
                             ) : (
                                 <img src={photo.url} alt={`Photo ${index}`} loading="lazy" />
                             )}
@@ -499,6 +499,10 @@ const EventGallery = () => {
                     width: 100%;
                     height: 100%;
                     object-fit: cover;
+                    /* Taps must always land on the parent's onClick, never be
+                       swallowed by the media element itself (e.g. iOS Safari's
+                       native video tap handling). */
+                    pointer-events: none;
                 }
                 .video-badge {
                     position: absolute;
@@ -513,6 +517,7 @@ const EventGallery = () => {
                     align-items: center;
                     justify-content: center;
                     font-size: 0.8rem;
+                    pointer-events: none;
                 }
                 .modal-content video {
                     max-width: 100%;
