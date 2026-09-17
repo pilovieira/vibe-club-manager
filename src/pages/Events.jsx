@@ -7,6 +7,7 @@ import { useConfirm, useAlert } from '../context/ConfirmContext';
 import { useSettings } from '../context/SettingsContext';
 import { FaImages, FaLock, FaGlobe, FaUsers, FaTimes, FaImage, FaTrash, FaSpinner } from 'react-icons/fa';
 import { parseSafeDate } from '../utils/dateUtils';
+import MapLocationPicker from '../components/MapLocationPicker';
 
 const Events = () => {
     const navigate = useNavigate();
@@ -36,11 +37,13 @@ const Events = () => {
         title: '',
         date: '',
         location: '',
+        coordinates: null,
         description: '',
         eventType: '',
         visibility: 'private', // default
         coverImage: ''
     });
+    const [showMapPicker, setShowMapPicker] = useState(false);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [isUploadingCover, setIsUploadingCover] = useState(false);
@@ -90,7 +93,7 @@ const Events = () => {
                 }
                 setShowCreateForm(false);
                 setEditingEventId(null);
-                setNewEvent({ title: '', date: '', location: '', description: '', eventType: eventTypes[0] || '', visibility: 'private', coverImage: '' });
+                setNewEvent({ title: '', date: '', location: '', coordinates: null, description: '', eventType: eventTypes[0] || '', visibility: 'private', coverImage: '' });
 
                 // Log operation
                 await mockService.createLog({
@@ -129,6 +132,7 @@ const Events = () => {
             title: event.title,
             date: event.date,
             location: event.location,
+            coordinates: event.coordinates || null,
             description: event.description,
             eventType: event.eventType || eventTypes[0] || '',
             visibility: event.visibility || 'private',
@@ -268,7 +272,18 @@ const Events = () => {
                                 </span>
                             </div>
                         </div>
-                        <p className="event-meta">📍 {event.location}</p>
+                        {event.location && <p className="event-meta">📍 {event.location}</p>}
+                        {event.coordinates && (
+                            <a
+                                className="event-meta map-link"
+                                href={`https://www.openstreetmap.org/?mlat=${event.coordinates.lat}&mlon=${event.coordinates.lng}#map=16/${event.coordinates.lat}/${event.coordinates.lng}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={e => e.stopPropagation()}
+                            >
+                                🗺️ {t('events.viewOnMap')}
+                            </a>
+                        )}
                         <p className="event-desc">{event.description}</p>
 
                         <div className="attendees-section">
@@ -471,7 +486,17 @@ const Events = () => {
                             </div>
                             <div className="form-group">
                                 <label>{t('events.location')}</label>
-                                <input className="input-field" value={newEvent.location} onChange={e => setNewEvent({ ...newEvent, location: e.target.value })} required />
+                                <input className="input-field" value={newEvent.location} onChange={e => setNewEvent({ ...newEvent, location: e.target.value })} />
+                                <div className="map-pick-row">
+                                    <button type="button" className="btn btn-outline btn-sm" onClick={() => setShowMapPicker(true)}>
+                                        📍 {newEvent.coordinates ? t('events.changeLocationOnMap') : t('events.pickLocationOnMap')}
+                                    </button>
+                                    {newEvent.coordinates && (
+                                        <button type="button" className="map-pick-clear" onClick={() => setNewEvent({ ...newEvent, coordinates: null })} title={t('events.clearLocation')}>
+                                            <FaTimes />
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                         </div>
                         <div className="form-row">
@@ -514,6 +539,17 @@ const Events = () => {
                         </button>
                     </form>
                 </div>
+            )}
+
+            {showMapPicker && (
+                <MapLocationPicker
+                    initialPosition={newEvent.coordinates}
+                    onClose={() => setShowMapPicker(false)}
+                    onConfirm={(position) => {
+                        setNewEvent({ ...newEvent, coordinates: position });
+                        setShowMapPicker(false);
+                    }}
+                />
             )}
 
             <div className="events-list-container">
@@ -691,6 +727,36 @@ const Events = () => {
             display: block;
             margin-bottom: 0.5rem;
             color: var(--text-secondary);
+        }
+        .map-pick-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+        .map-pick-clear {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 0.25rem;
+        }
+        .map-pick-clear:hover {
+            color: var(--danger);
+        }
+        .map-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .map-link:hover {
+            text-decoration: underline;
         }
         .form-row {
             display: grid;

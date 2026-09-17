@@ -304,6 +304,13 @@ export const translations = {
         'events.loginToJoin': 'Login to join events',
         'events.confirmLeave': 'Are you sure you want to leave this event?',
         'events.confirmDelete': 'Are you sure you want to permanently delete the event "{title}"? This cannot be undone.',
+        'events.pickLocation': 'Pick location on map',
+        'events.pickLocationHint': 'Click on the map to drop a pin at the event\'s starting point.',
+        'events.clearLocation': 'Clear pin',
+        'events.confirmLocation': 'Confirm location',
+        'events.pickLocationOnMap': 'Pick on map',
+        'events.changeLocationOnMap': 'Change map pin',
+        'events.viewOnMap': 'View on map',
 
         // Login extra
         'login.email': 'Email',
@@ -709,6 +716,13 @@ export const translations = {
         'events.loginToJoin': 'Entre para participar dos eventos',
         'events.confirmLeave': 'Tem certeza que deseja sair deste evento?',
         'events.confirmDelete': 'Tem certeza que deseja excluir permanentemente o evento "{title}"? Isso não pode ser desfeito.',
+        'events.pickLocation': 'Escolher local no mapa',
+        'events.pickLocationHint': 'Clique no mapa para marcar o ponto de partida do evento.',
+        'events.clearLocation': 'Remover marcação',
+        'events.confirmLocation': 'Confirmar local',
+        'events.pickLocationOnMap': 'Escolher no mapa',
+        'events.changeLocationOnMap': 'Alterar marcação no mapa',
+        'events.viewOnMap': 'Ver no mapa',
 
         // Login extra
         'login.email': 'Email',
@@ -1114,6 +1128,13 @@ export const translations = {
         'events.loginToJoin': 'Inicia sesión para unirte a los eventos',
         'events.confirmLeave': '¿Estás seguro de que deseas salir de este evento?',
         'events.confirmDelete': '¿Seguro que deseas eliminar permanentemente el evento "{title}"? Esto no se puede deshacer.',
+        'events.pickLocation': 'Elegir ubicación en el mapa',
+        'events.pickLocationHint': 'Haz clic en el mapa para marcar el punto de partida del evento.',
+        'events.clearLocation': 'Quitar marcador',
+        'events.confirmLocation': 'Confirmar ubicación',
+        'events.pickLocationOnMap': 'Elegir en el mapa',
+        'events.changeLocationOnMap': 'Cambiar marcador en el mapa',
+        'events.viewOnMap': 'Ver en el mapa',
 
         // Login extra
         'login.email': 'Correo electrónico',
