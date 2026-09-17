@@ -4,7 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useSettings } from '../context/SettingsContext';
 import { useState } from 'react';
 import GenericLogo from './GenericLogo';
-import { FaGlobe, FaChevronDown } from 'react-icons/fa';
+import { FaCog } from 'react-icons/fa';
 import { APP_NAME } from '../constants';
 
 const Navbar = () => {
@@ -72,6 +72,9 @@ const Navbar = () => {
               </Link>
             ))}
             {isFinance && <Link to="/admin" className="nav-link admin-link" onClick={handleNavClick}>{t('nav.admin')}</Link>}
+            <Link to="/preferences" className="nav-link prefs-link" onClick={handleNavClick}>
+              <FaCog /> <span className="prefs-label">{t('nav.preferences')}</span>
+            </Link>
           </div>
 
           <div className="nav-auth-wrapper">
@@ -186,6 +189,12 @@ const Navbar = () => {
         
         .nav-link:hover {
           color: var(--accent);
+        }
+
+        .prefs-link {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
         }
         
         .nav-auth-wrapper {

@@ -14,6 +14,7 @@ import AdminGlobalBalance from './pages/AdminGlobalBalance';
 import AdminProperties from './pages/AdminProperties';
 import AdminLogBook from './pages/AdminLogBook';
 import AdminCustomPages from './pages/AdminCustomPages';
+import Preferences from './pages/Preferences';
 import Events from './pages/Events';
 import EventGallery from './pages/EventGallery';
 import CustomPage from './pages/CustomPage';
@@ -52,6 +53,7 @@ function App() {
           {/* Public & Member Routes */}
           <Route path="events" element={<Events />} />
           <Route path="events/:eventId/gallery" element={<EventGallery />} />
+          <Route path="preferences" element={<Preferences />} />
 
           {/* Member & Event Routes (Logged users only) */}
           <Route element={<ProtectedRoute />}>

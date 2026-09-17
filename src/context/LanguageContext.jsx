@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { translations } from '../i18n/translations';
-import { useSettings } from './SettingsContext';
 
 const LanguageContext = createContext();
 
@@ -13,20 +12,12 @@ export const useLanguage = () => {
     return context;
 };
 
+// Language is a personal preference stored in this browser's localStorage,
+// not a shared app-wide setting — each user picks their own.
 export const LanguageProvider = ({ children }) => {
-    const { settings } = useSettings();
     const [language, setLanguage] = useState(() => {
-        // Load from localStorage or default to settings or 'pt'
-        return localStorage.getItem('language') || settings.app_language || 'pt';
+        return localStorage.getItem('language') || 'pt';
     });
-
-    // Update language state when the app property changes (e.g. once settings finish loading).
-    useEffect(() => {
-        if (settings.app_language && settings.app_language !== language) {
-            setLanguage(settings.app_language);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps -- only re-sync when the external setting itself changes
-    }, [settings.app_language]);
 
     useEffect(() => {
         // Save to localStorage whenever language changes

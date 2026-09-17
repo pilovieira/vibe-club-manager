@@ -14,7 +14,6 @@ export const useSettings = () => {
 
 export const SettingsProvider = ({ children }) => {
     const [settings, setSettings] = useState({
-        app_theme: 'mud',
         app_logo: '',
         home_description: ''
     });

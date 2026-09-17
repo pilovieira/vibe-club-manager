@@ -1,50 +1,31 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { mockService } from '../services/mockData';
 
 const ThemeContext = createContext();
 
+const THEME_CLASSES = ['theme-mud', 'theme-day', 'theme-night', 'theme-forest', 'theme-sky', 'theme-desert'];
+
+const applyTheme = (themeName) => {
+    const body = document.body;
+    THEME_CLASSES.forEach(c => body.classList.remove(c));
+    body.classList.add(`theme-${themeName}`);
+};
+
+// Theme is a personal preference stored in this browser's localStorage,
+// not a shared app-wide setting — each user picks their own.
 export const ThemeProvider = ({ children }) => {
-    const [theme, setTheme] = useState('mud');
-    const [loading, setLoading] = useState(true);
-
-    const applyTheme = (themeName) => {
-        const body = document.body;
-        // Remove existing theme classes
-        const themeClasses = ['theme-mud', 'theme-day', 'theme-night', 'theme-forest', 'theme-sky', 'theme-desert'];
-        themeClasses.forEach(c => body.classList.remove(c));
-
-        // Add new theme class
-        body.classList.add(`theme-${themeName}`);
-        setTheme(themeName);
-    };
+    const [theme, setThemeState] = useState(() => localStorage.getItem('theme') || 'mud');
 
     useEffect(() => {
-        const fetchTheme = async () => {
-            try {
-                const savedTheme = await mockService.getProperty('app_theme', 'mud');
-                applyTheme(savedTheme);
-            } catch (error) {
-                console.error('Error fetching theme:', error);
-                applyTheme('mud');
-            } finally {
-                setLoading(false);
-            }
-        };
+        applyTheme(theme);
+    }, [theme]);
 
-        fetchTheme();
-    }, []);
-
-    const updateTheme = async (newTheme) => {
-        try {
-            await mockService.updateProperty('app_theme', newTheme);
-            applyTheme(newTheme);
-        } catch (error) {
-            console.error('Error updating theme:', error);
-        }
+    const setTheme = (newTheme) => {
+        localStorage.setItem('theme', newTheme);
+        setThemeState(newTheme);
     };
 
     return (
-        <ThemeContext.Provider value={{ theme, updateTheme, applyTheme, loading }}>
+        <ThemeContext.Provider value={{ theme, setTheme, loading: false }}>
             {children}
         </ThemeContext.Provider>
     );

@@ -7,6 +7,7 @@ export const translations = {
         'nav.admin': 'Admin',
         'nav.logout': 'Logout',
         'nav.login': 'Login',
+        'nav.preferences': 'Preferences',
 
         'nav.logo': 'App Title',
 
@@ -351,6 +352,14 @@ export const translations = {
         'settings.theme.sky': 'Sky (Blue)',
         'settings.theme.desert': 'Desert (Sand)',
         'settings.updateSuccess': 'Settings updated successfully!',
+
+        // Preferences (personal, saved locally in this browser)
+        'preferences.title': 'Preferences',
+        'preferences.subtitle': 'Personal settings, saved only on this device.',
+        'preferences.language': 'Language',
+        'preferences.languageDesc': 'Choose the language used across the app.',
+        'preferences.theme': 'Theme',
+        'preferences.themeDesc': 'Choose the visual style you see. Only affects your own view.',
         'settings.loadError': 'Failed to load settings',
         'settings.saveError': 'Failed to save setting',
 
@@ -421,6 +430,7 @@ export const translations = {
         'nav.admin': 'Admin',
         'nav.logout': 'Sair',
         'nav.login': 'Entrar',
+        'nav.preferences': 'Preferências',
 
         'nav.logo': 'Título do App',
 
@@ -765,6 +775,14 @@ export const translations = {
         'settings.theme.sky': 'Céu (Azul)',
         'settings.theme.desert': 'Deserto (Areia)',
         'settings.updateSuccess': 'Configurações atualizadas com sucesso!',
+
+        // Preferências (pessoais, salvas só neste navegador)
+        'preferences.title': 'Preferências',
+        'preferences.subtitle': 'Configurações pessoais, salvas apenas neste dispositivo.',
+        'preferences.language': 'Idioma',
+        'preferences.languageDesc': 'Escolha o idioma usado em todo o app.',
+        'preferences.theme': 'Tema',
+        'preferences.themeDesc': 'Escolha o estilo visual que você vê. Afeta só a sua visualização.',
         'settings.loadError': 'Falha ao carregar configurações',
         'settings.saveError': 'Falha ao salvar configuração',
 
@@ -835,6 +853,7 @@ export const translations = {
         'nav.admin': 'Admin',
         'nav.logout': 'Salir',
         'nav.login': 'Entrar',
+        'nav.preferences': 'Preferencias',
 
         'nav.logo': 'Título del App',
 
@@ -1179,6 +1198,14 @@ export const translations = {
         'settings.theme.sky': 'Cielo (Azul)',
         'settings.theme.desert': 'Desierto (Arena)',
         'settings.updateSuccess': '¡Configuraciones actualizadas con éxito!',
+
+        // Preferencias (personales, guardadas solo en este navegador)
+        'preferences.title': 'Preferencias',
+        'preferences.subtitle': 'Configuraciones personales, guardadas solo en este dispositivo.',
+        'preferences.language': 'Idioma',
+        'preferences.languageDesc': 'Elige el idioma usado en toda la app.',
+        'preferences.theme': 'Tema',
+        'preferences.themeDesc': 'Elige el estilo visual que ves. Solo afecta tu propia vista.',
         'settings.loadError': 'Error al cargar las configuraciones',
         'settings.saveError': 'Error al guardar la configuración',
 

@@ -33,8 +33,6 @@ const AdminProperties = () => {
             // Figure out which settings actually changed, for a useful log entry.
             const fieldLabels = {
                 app_logo: t('settings.appLogo'),
-                app_language: t('settings.appLanguage'),
-                app_theme: t('settings.appTheme'),
                 event_types: t('settings.eventTypes'),
                 monthly_contribution_value: t('settings.monthlyContribution')
             };
@@ -165,46 +163,6 @@ const AdminProperties = () => {
                     </div>
 
 
-                    <div className="setting-item">
-                        <div className="setting-info">
-                            <h3>{t('settings.appLanguage') || 'App Language'}</h3>
-                            <p>{t('settings.appLanguageDesc') || 'Set the default language for all users.'}</p>
-                        </div>
-                        <div className="setting-action" style={{ flex: 1, maxWidth: '500px' }}>
-                            <select
-                                className="input-field"
-                                style={{ width: '100%' }}
-                                value={properties.app_language || 'pt'}
-                                onChange={(e) => setProperties({ ...properties, app_language: e.target.value })}
-                            >
-                                <option value="pt">Português (BR)</option>
-                                <option value="en">English (US)</option>
-                                <option value="es">Español (ES)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div className="setting-item">
-                        <div className="setting-info">
-                            <h3>{t('settings.appTheme')}</h3>
-                            <p>{t('settings.appThemeDesc')}</p>
-                        </div>
-                        <div className="setting-action" style={{ flex: 1, maxWidth: '500px' }}>
-                            <select
-                                className="input-field"
-                                style={{ width: '100%' }}
-                                value={properties.app_theme || 'mud'}
-                                onChange={(e) => setProperties({ ...properties, app_theme: e.target.value })}
-                            >
-                                <option value="mud">{t('settings.theme.mud')}</option>
-                                <option value="day">{t('settings.theme.day')}</option>
-                                <option value="night">{t('settings.theme.night')}</option>
-                                <option value="forest">{t('settings.theme.forest')}</option>
-                                <option value="sky">{t('settings.theme.sky')}</option>
-                                <option value="desert">{t('settings.theme.desert')}</option>
-                            </select>
-                        </div>
-                    </div>
                 </div>
 
                 <div className="settings-section divider-top">
