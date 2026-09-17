@@ -18,7 +18,7 @@ const MemberProfile = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [member, setMember] = useState(null);
-    const { user, isAdmin, isSuperuser, loading } = useAuth();
+    const { user, isAdmin, isSuperuser, isFinance, loading } = useAuth();
     const [isEditing, setIsEditing] = useState(location.state?.edit || false);
 
 
@@ -91,8 +91,8 @@ const MemberProfile = () => {
                     ...editData,
                     username: editData.username.toLowerCase().trim(),
                     avatar: editData.avatar.trim() || member.avatar, // Keep old avatar if empty
-                    // Only admin/superuser can grant or revoke the dues exemption.
-                    isExempt: isAdmin ? editData.isExempt : !!member.isExempt
+                    // Only financeiro/admin/superuser can grant or revoke the dues exemption.
+                    isExempt: isFinance ? editData.isExempt : !!member.isExempt
                 });
 
                 setMember(updated);
@@ -108,7 +108,7 @@ const MemberProfile = () => {
                 if (editData.gender !== (member.gender || '')) changedFields.push(t('gender.label'));
                 if (editData.role !== (member.role || '')) changedFields.push(t('member.role'));
                 if (editData.status !== (member.status || '')) changedFields.push(t('members.status'));
-                if (isAdmin && editData.isExempt !== !!member.isExempt) changedFields.push(t('member.exempt'));
+                if (isFinance && editData.isExempt !== !!member.isExempt) changedFields.push(t('member.exempt'));
 
                 const fieldsDescription = changedFields.length > 0 ? ` (${changedFields.join(', ')})` : '';
 
@@ -296,6 +296,21 @@ const MemberProfile = () => {
         }
     };
 
+    const handleToggleExempt = async () => {
+        try {
+            const updated = await mockService.updateMember(member.id, { isExempt: !member.isExempt });
+            setMember(prev => ({ ...prev, isExempt: updated.isExempt }));
+            await mockService.createLog({
+                userId: user.id || user.uid,
+                userName: user.profile?.name || user.email,
+                description: `${updated.isExempt ? 'Marked' : 'Unmarked'} member as dues-exempt: ${member.name}`
+            });
+        } catch (err) {
+            console.error('Error toggling dues exemption:', err);
+            await alert(t('common.error'));
+        }
+    };
+
     const handleDeleteMember = async () => {
         if (!(await confirm(t('member.confirmDelete').replace('{name}', member.name)))) return;
 
@@ -381,7 +396,7 @@ const MemberProfile = () => {
                                     <span className="info-label">{t('member.role')}:</span>
                                     <span className="info-value role-badge">{t(`role.${memberRole}`)}</span>
                                 </li>
-                                {member.isExempt && (
+                                {isFinance && member.isExempt && (
                                     <li>
                                         <span className="info-icon"><FaIdCard /></span>
                                         <span className="info-label">{t('member.exempt')}:</span>
@@ -419,6 +434,11 @@ const MemberProfile = () => {
                         {canEdit && (
                             <button className="btn-premium btn-edit" onClick={() => setIsEditing(true)}>
                                 <FaUserEdit /> {t('profile.editProfile')}
+                            </button>
+                        )}
+                        {isFinance && !isAdmin && !isOwnProfile && (
+                            <button className="btn-premium btn-password" onClick={handleToggleExempt}>
+                                {member.isExempt ? t('member.removeExempt') : t('member.markExempt')}
                             </button>
                         )}
                         {isAdmin && (
@@ -501,7 +521,7 @@ const MemberProfile = () => {
                                 )}
                             </select>
                         </div>
-                        {isAdmin && (
+                        {isFinance && !isOwnProfile && (
                             <div className="form-group checkbox-group">
                                 <label className="checkbox-label">
                                     <input
