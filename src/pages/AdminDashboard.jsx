@@ -35,7 +35,7 @@ const AdminDashboard = () => {
                 </Link>
 
                 <Link to="/admin/annual-dues" className="dashboard-card">
-                    <div className="icon">📆</div>
+                    <div className="icon">💳</div>
                     <h2>{t('admin.annualDues')}</h2>
                     <p>{t('admin.annualDuesDesc')}</p>
                 </Link>
