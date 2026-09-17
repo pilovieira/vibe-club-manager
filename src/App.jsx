@@ -53,12 +53,12 @@ function App() {
           {/* Public & Member Routes */}
           <Route path="events" element={<Events />} />
           <Route path="events/:eventId/gallery" element={<EventGallery />} />
-          <Route path="preferences" element={<Preferences />} />
 
           {/* Member & Event Routes (Logged users only) */}
           <Route element={<ProtectedRoute />}>
             <Route path="members" element={<Members />} />
             <Route path="members/:id" element={<MemberProfile />} />
+            <Route path="preferences" element={<Preferences />} />
           </Route>
 
           {/* Dashboard + Financial Routes (financeiro, admin or superuser) */}

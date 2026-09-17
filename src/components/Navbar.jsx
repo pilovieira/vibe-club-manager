@@ -72,9 +72,11 @@ const Navbar = () => {
               </Link>
             ))}
             {isFinance && <Link to="/admin" className="nav-link admin-link" onClick={handleNavClick}>{t('nav.admin')}</Link>}
-            <Link to="/preferences" className="nav-link prefs-link" onClick={handleNavClick}>
-              <FaCog /> <span className="prefs-label">{t('nav.preferences')}</span>
-            </Link>
+            {user && (
+              <Link to="/preferences" className="nav-link prefs-link" onClick={handleNavClick}>
+                <FaCog /> <span className="prefs-label">{t('nav.preferences')}</span>
+              </Link>
+            )}
           </div>
 
           <div className="nav-auth-wrapper">

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { useParams, useNavigate } from 'react-router-dom';
 import { mockService } from '../services/mockData';
 import { storageService } from '../services/storageService';
@@ -262,8 +263,11 @@ const EventGallery = () => {
                 )}
             </div>
 
-            {/* Expanded Photo View */}
-            {selectedIndex !== null && (
+            {/* Expanded Photo View — rendered via a portal so position:fixed is relative to
+                the real viewport, not this page's own container (whose fade-in animation
+                leaves a `transform` on it, which creates a containing block and would
+                otherwise trap the modal, pushing it down as the page scrolls). */}
+            {selectedIndex !== null && createPortal(
                 <div className="photo-modal-overlay" onClick={() => setSelectedIndex(null)}>
                     <div className="modal-top-actions" onClick={(e) => e.stopPropagation()}>
                         {(isAdmin || user?.id === photos[selectedIndex].uploaded_by_id) && (
@@ -308,7 +312,8 @@ const EventGallery = () => {
                     >
                         <FaChevronRight />
                     </button>
-                </div>
+                </div>,
+                document.body
             )}
 
             <style>{`
@@ -521,7 +526,7 @@ const EventGallery = () => {
                 }
                 .modal-content video {
                     max-width: 100%;
-                    max-height: 80vh;
+                    max-height: 75vh;
                     border-radius: 0.5rem;
                     box-shadow: 0 20px 50px rgba(0,0,0,0.5);
                 }
@@ -563,13 +568,20 @@ const EventGallery = () => {
                     background: rgba(0,0,0,0.95);
                     z-index: 3000;
                     display: flex;
-                    align-items: center;
+                    /* align-items: flex-start + auto margins on .modal-content (instead of
+                       align-items: center) so content taller than the viewport scrolls into
+                       view from the top, rather than being centered-and-clipped with no way
+                       to reach the part that overflowed above the fold. */
+                    align-items: flex-start;
                     justify-content: center;
+                    overflow-y: auto;
+                    padding: 4.5rem 1rem 2rem;
                     backdrop-filter: blur(5px);
                 }
                 .modal-content {
                     max-width: 90vw;
-                    max-height: 80vh;
+                    max-height: 75vh;
+                    margin: auto 0;
                     position: relative;
                     display: flex;
                     flex-direction: column;
@@ -577,7 +589,7 @@ const EventGallery = () => {
                 }
                 .modal-content img {
                     max-width: 100%;
-                    max-height: 80vh;
+                    max-height: 75vh;
                     object-fit: contain;
                     border-radius: 0.5rem;
                     box-shadow: 0 20px 50px rgba(0,0,0,0.5);
@@ -630,6 +642,8 @@ const EventGallery = () => {
                     .nav-btn.prev { left: 1rem; }
                     .nav-btn.next { right: 1rem; }
                     .modal-top-actions { top: 1rem; right: 1rem; }
+                    .photo-modal-overlay { padding: 3.5rem 0.5rem 1.5rem; }
+                    .modal-content, .modal-content img, .modal-content video { max-height: 65vh; }
                 }
             `}</style>
         </div>
